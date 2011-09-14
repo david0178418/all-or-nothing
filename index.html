@@ -1,0 +1,51 @@
+
+<!DOCTYPE html> 
+<html> 
+	<head> 
+		<title>Make a Set</title> 
+		<link rel="stylesheet" href="styles.css" type="text/css" media="screen" title="main" charset="utf-8"> 
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+		<script src="js/game.js"></script> 
+		<script src="js/card.js"></script> 
+		
+	</head> 
+	
+	<body valign="top"> 
+	
+		<script> 
+			var game;
+			$(function(){
+				game = Game();
+				game.start();
+			});
+		
+		</script> 
+	
+		<div id="board"> 
+		
+		</div> 
+		
+		<div id="panel"> 
+			<div id="indicators"> 
+				<span class="label">Deck Count:</span>&nbsp;<span id="deck_count"></span><br/> 
+				<span class="label">Sets Made:</span>&nbsp;&nbsp;<span id="sets_made"></span><br/> 
+			</div> 
+			<div id="buttons"> 
+				<div id="control_button_container"> 
+					<input type="button" value="Shuffle" id="reshuffle"/>&nbsp;<input type="button" value="Set Exists?" id="hint"/> 
+				</div> 
+				<div id="new_game_container"> 
+					<input type="button" value="New Game" id="new_game"/><br/> 
+					<a href="http://www.davidgranado.com/2010/11/make-a-set-game/" target="_blank">Instructions</a> 
+				</div> 
+			</div> 
+			<br clear="all" /> 
+			<br clear="all" /> 
+			<div id="message" style="display: none;"> 
+			</div> 
+		</div> 
+	
+	</body> 
+ 
+ 
+</html> 

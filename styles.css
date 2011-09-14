@@ -1,0 +1,101 @@
+body {
+	background: lightgrey;
+	font-family: "Trebuchet MS";
+}
+
+body > div {
+	margin		: 0 auto;
+}
+
+input {
+	width		: 100px;
+	height		: 29px;
+	margin		: 3px;
+	font-weight	: bold;
+	font-size	: 14px;
+}
+
+#buttons {
+	float: right;
+	width: 360px;
+}
+
+#control_button_container {
+	float: left;
+}
+
+#new_game_container {
+	float: right;
+}
+
+#board {
+	position: relative;
+	padding: 10px;
+	background-color: darkGray;
+	border: 2px solid black;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	height: 370px;
+	width: 795px;
+}
+
+#panel {
+	width: 520px;
+	height: 50px;
+	padding: 15px;
+	background: lightBlue;
+	border-bottom-right-radius: 5px 5px;
+	border-bottom-left-radius: 5px 5px;
+	border-right-width: 2px;
+	border-bottom-width: 2px;
+	border-left-width: 2px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-right-color: black;
+	border-bottom-color: black;
+	border-left-color: black;
+}
+
+.label {
+	font-size: 12px;
+}
+
+#indicators {
+	float:left;
+}
+
+#message {
+	text-align	: center;
+	font-size	: 16pt;
+	font-weight	: bold;
+	color		: #B50000;
+	width		: 100%;
+}
+
+.card {
+	width				: 108px;
+	height				: 160px;
+	border				: 2px solid black;
+	margin				: 5px;
+	padding				: 5px;
+	float				: left;
+	background-color	: #ffffff;
+	border-radius		: 10px;
+	-moz-border-radius	: 10px;
+	-moz-box-shadow		: 3px 3px 4px #000;
+	-webkit-box-shadow	: 3px 3px 4px #000;
+	box-shadow			: 3px 3px 4px #000;
+}
+
+.card div {
+	background-color: white;
+	height: 160px;
+}
+
+.shaded {
+}
+
+.selected {
+	background-color : red;
+}
