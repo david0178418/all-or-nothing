@@ -4,7 +4,6 @@
 	<head>
 		<title>Make a Set</title>
 		<link rel="stylesheet" href="styles.css" type="text/css" media="screen" title="main" charset="utf-8">
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 		<script src="js/game.js"></script>
 		<script src="js/card.js"></script>
 
@@ -14,7 +13,8 @@
 
 		<script>
 			var game;
-			$(function(){
+
+			document.addEventListener('DOMContentLoaded', () => {
 				game = Game();
 				game.start();
 			});
@@ -41,7 +41,7 @@
 			</div>
 			<br clear="all" />
 			<br clear="all" />
-			<div id="message" style="display: none;">
+			<div id="message" hidden>
 			</div>
 		</div>
 

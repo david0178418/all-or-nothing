@@ -8,50 +8,55 @@ function Card(fill, color, shape, count, id) {
 		self,
 		selector = '#card' + id,
 		selected = GLOBAL.selected;
-	
+
 	function deal() {
-		$('#board').append(domRef);
+		document.querySelector('#board')?.append(domRef);
+
 		if(!ctx) {
-			ctx = $(selector + ' canvas')[0].getContext('2d');
-			x = domRef;
+			// @ts-ignore
+			ctx = document.querySelector(selector + ' canvas')?.getContext('2d');
 			draw();
 		}
-		domRef.click(toggleSelect);
+		domRef.addEventListener('click', toggleSelect);
 	}
-	
+
 	function createElement() {
-		domRef = $('<div id="card' + id + '" class="card"><div><canvas width="112px" height="160px"></canvas></div></div>');
+		// domRef = document.createElement('<div id="card' + id + '" class="card"><div><canvas width="112px" height="160px"></canvas></div></div>');
+		domRef = document.createElement('div');
+		domRef.setAttribute('id', `card${id}`);
+		domRef.classList.add('card');
+		domRef.innerHTML = '<div><canvas width="112px" height="160px"></canvas></div>';
 	}
 	function removeElement() {
 		domRef.remove();
 	}
-	
+
 	function toggleSelect() {
-		if(domRef.hasClass('selected')) {
+		if(domRef.classList.contains('selected')) {
 			var index = selected.indexOf(self);
 			selected.splice(index, 1);
-			
-			domRef.removeClass('selected');
+
+			domRef.classList.remove('selected');
 		}
 		else {
-			domRef.addClass('selected');
+			domRef.classList.add('selected');
 			selected.push(self);
 		}
 	}
-	
+
 	function draw() {
 		ctx.strokeStyle = 'rgb(' + colorVal + ')';
-		
-		
+
+
 		if(fillVal == 'shaded') {
 			ctx.fillStyle = 'rgba(' + colorVal + ',.35)';
 		}
 		else {
 			ctx.fillStyle = 'rgb(' + colorVal + ')';
 		}
-		
+
 		ctx.lineWidth = 4;
-		
+
 		switch(countVal) {
 			case 1:
 				ctx.translate(32, 54);
@@ -72,25 +77,25 @@ function Card(fill, color, shape, count, id) {
 				shapeVal();
 			break;
 		}
-		
+
 	}
-	
+
 	function drawShadow() {return;
 		ctx.shadowOffsetX = 3;
 		ctx.shadowOffsetY = 3;
 		ctx.shadowBlur = 5;
 		ctx.shadowColor = "black";
 	}
-	
+
 	function stopShadow() {
 		ctx.shadowOffsetX = 0;
 		ctx.shadowOffsetY = 0;
 		ctx.shadowBlur = 0;
 	}
-	
+
 	function drawSquare() {
 		drawShadow();
-		
+
 		switch(fillVal){
 			case 'clear' :
 				ctx.strokeRect(0, 0, 44, 44);
@@ -104,16 +109,16 @@ function Card(fill, color, shape, count, id) {
 				break;
 		}
 	}
-	
+
 	function drawOval() {
 		drawShadow();
-		
+
 		ctx.beginPath();
 		ctx.arc(24, 24, 24, 0, Math.PI * 2, false);
 		ctx.closePath();
-		
-		
-		
+
+
+
 		switch(fillVal){
 			case 'clear' :
 				ctx.stroke();
@@ -127,17 +132,17 @@ function Card(fill, color, shape, count, id) {
 				break;
 		}
 	}
-	
+
 	function drawTriangle() {
 		drawShadow();
-		
+
 		ctx.beginPath();
-		
+
 		ctx.moveTo(0, 44);
 		ctx.lineTo(22, 0);
 		ctx.lineTo(44, 44);
 		ctx.lineTo(0, 44);
-		
+
 		switch(fillVal){
 			case 'clear' :
 				ctx.stroke();
@@ -151,74 +156,74 @@ function Card(fill, color, shape, count, id) {
 				break;
 		}
 	}
-	
+
 	function getAttributeValues() {
 		var colors	= GLOBAL.cardAttributes.color,
 			fills	= GLOBAL.cardAttributes.fill,
 			shapes	= GLOBAL.cardAttributes.shape,
 			counts	= GLOBAL.cardAttributes.count;
-		
+
 		switch(color) {
 			case colors.red		:
 				colorVal = '201,32,32';
 				break;
-			
+
 			case colors.green	:
 				colorVal = '23,179,33';
 				break;
-			
+
 			case colors.purple	:
 				colorVal = '138,0,166';
 				break;
 		}
-		
+
 		switch(fill) {
 			case fills.clear	:
 				fillVal = 'clear';
 				break;
-				
+
 			case fills.shaded	:
 				fillVal = 'shaded';
 				break;
-				
+
 			case fills.solid	:
 				fillVal = 'solid';
 				break;
 		}
-		
+
 		switch(shape) {
 			case shapes.triangle	:
 				shapeVal = drawTriangle;
 				break;
-			
+
 			case shapes.squiggle	:
 				shapeVal = drawSquare;
 				break;
-				
+
 			case shapes.oval		:
 				shapeVal = drawOval;
 				break;
-				
+
 		}
-		
+
 		switch(count) {
 			case counts.one		:
 				countVal = 1;
 				break;
-				
+
 			case counts.two		:
 				countVal = 2;
 				break;
-				
+
 			case counts.three	:
 				countVal = 3;
 				break;
 		}
 	}
-	
+
 	getAttributeValues();
 	createElement();
-	
+
 	self = {
 		get remove() {
 			return removeElement;
@@ -245,6 +250,6 @@ function Card(fill, color, shape, count, id) {
 			return domRef.hasClass('selected');
 		}
 	};
-	
+
 	return self;
 }
