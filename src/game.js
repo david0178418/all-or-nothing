@@ -1,31 +1,35 @@
-var GLOBAL	= {
-	selected		: [],
-	cardAttributes	: {
-		fill			: {
-			clear			: 1,
-			shaded			: 2,
-			solid			: 4,
+import Card from "./card";
+
+export
+const GLOBAL = {
+	selected: [],
+	cardAttributes: {
+		fill: {
+			clear: 1,
+			shaded: 2,
+			solid: 4,
 		},
-		color			: {
-			red				: 1,
-			green			: 2,
-			purple			: 4,
+		color: {
+			red: 1,
+			green: 2,
+			purple: 4,
 		},
-		shape			: {
-			triangle		: 1,
-			squiggle		: 2,
-			oval			: 4,
+		shape: {
+			triangle: 1,
+			squiggle: 2,
+			oval: 4,
 		},
-		count			:{
-			one				: 1,
-			two				: 2,
-			three			: 4,
+		count:{
+			one: 1,
+			two: 2,
+			three: 4,
 		},
-		width			: 54,
-		height			: 80,
+		width: 54,
+		height: 80,
 	},
 };
 
+export default
 function Game() {
 	var deck,
 		inPlay,

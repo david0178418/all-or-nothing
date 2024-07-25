@@ -1,3 +1,6 @@
+import { GLOBAL } from "./game";
+
+export default
 function Card(fill, color, shape, count, id) {
 	var domRef,
 		ctx,
