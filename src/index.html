@@ -2,37 +2,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<title>Make a Set</title>
-		<link rel="stylesheet" href="./styles.css" type="text/css" media="screen" title="main" charset="utf-8">
-		<script defer type="module" src="./index.js"></script>
+		<script defer type="module" src="./index.tsx"></script>
 	</head>
 
 	<body valign="top">
-		<div id="board">
 
-		</div>
-
-		<div id="panel">
-			<div id="indicators">
-				<span class="label">Deck Count:</span>&nbsp;<span id="deck_count"></span><br/>
-				<span class="label">Sets Made:</span>&nbsp;&nbsp;<span id="sets_made"></span><br/>
-			</div>
-			<div id="buttons">
-				<div id="control_button_container">
-					<input type="button" value="Shuffle" id="reshuffle"/>&nbsp;<input type="button" value="Set Exists?" id="hint"/>
-				</div>
-				<div id="new_game_container">
-					<input type="button" value="New Game" id="new_game"/><br/>
-					<a href="https://web.archive.org/web/20110702055910/http://www.davidgranado.com/2010/11/make-a-set-game/" target="_blank">Instructions (Archive)</a>
-				</div>
-			</div>
-			<br clear="all" />
-			<br clear="all" />
-			<div id="message" hidden>
-			</div>
-		</div>
+		<div id="app"></div>
 
 	</body>
-
 
 </html>
