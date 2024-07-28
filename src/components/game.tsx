@@ -12,9 +12,11 @@ import {
 import { randomizeArray } from 'src/utils';
 import { BitwiseValue, Card, Colors, Counts, Fills, Shapes } from 'src/types';
 import PlayingCard from './playing-card';
+import { usePushToastMsg } from 'src/atoms';
 
 export default
 function Game() {
+	const pushToastMsg = usePushToastMsg();
 	const [deck, setDeck] = useState<Card[]>(createDeck);
 	const [discardPile, setDiscardPile] = useState<Card[]>([]);
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
@@ -117,20 +119,23 @@ function Game() {
 			.filter(card => newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
-			setSelectedCards([]);
 			setDiscardPile([...discardPile, ...newSelectedCards]);
 			setDeck(deck.filter(card => !newSelectedCardIds.includes(card.id)));
+			pushToastMsg('Set found!');
 		} else {
 			setSelectedCards(newSelectedCardIds);
+			pushToastMsg('Not a set.');
 		}
+
+		setSelectedCards([]);
 
 
 		setSelectedCards(newSelectedCardIds);
 	}
 	function handleHintMessage(cards: Card[]) {
 		setExists(cards) ?
-			alert('A set exists!') :
-			alert('No set exists.');
+			pushToastMsg('A set exists!') :
+			pushToastMsg('No set exists.');
 	}
 	function handleRestart() {
 		setDiscardPile([]);

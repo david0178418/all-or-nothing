@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export
 type Enum<T extends object> = T[keyof T];
 
@@ -74,4 +76,11 @@ interface Card {
 	color: Enum<typeof Colors>;
 	fill: Enum<typeof Fills>;
 	count: Enum<typeof Counts>;
+}
+
+export
+interface ToastMesssage {
+	message: ReactNode;
+	delay?: number;
+	onClose?(): void;
 }
