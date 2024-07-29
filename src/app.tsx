@@ -7,6 +7,7 @@ import '@fontsource/roboto/700.css';
 import Game from './components/game';
 import Toast from './components/toast';
 import ReactGA from "react-ga4";
+import HelpDialogTrigger from './components/help-dialog-trigger';
 
 if (process.env.NODE_ENV === "production" && process.env.GOOGLE_ANALYTICS_ID) {
 	ReactGA.initialize(process.env.GOOGLE_ANALYTICS_ID);
@@ -18,6 +19,7 @@ function App() {
 		<>
 			<Game />
 			<Toast />
+			<HelpDialogTrigger />
 		</>
 	);
 }

@@ -3,14 +3,14 @@ import { Card, ColorValues, CountValues, Enum, FillValues, ShapeValues } from 's
 
 interface Props {
 	card: Card;
-	selected: boolean;
-	onClick(): void;
+	selected?: boolean;
+	onClick?(): void;
 }
 
 export default
 function PlayingCard(props: Props) {
 	const {
-		onClick,
+		onClick = () => {},
 		selected,
 		card: {
 			color,

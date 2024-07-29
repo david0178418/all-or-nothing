@@ -1,18 +1,23 @@
 import { useState } from 'react';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import { QuestionMark } from '@mui/icons-material';
+import { randomizeArray } from 'src/utils';
+import PlayingCard from './playing-card';
+import { usePushToastMsg } from 'src/atoms';
+import {
+	BitwiseValue,
+	Card,
+	Colors,
+	Counts,
+	Fills,
+	Shapes,
+} from 'src/types';
 import {
 	Box,
 	Button,
 	ButtonGroup,
 	Container,
-	Fab,
 	Typography,
 } from '@mui/material';
-import { randomizeArray } from 'src/utils';
-import { BitwiseValue, Card, Colors, Counts, Fills, Shapes } from 'src/types';
-import PlayingCard from './playing-card';
-import { usePushToastMsg } from 'src/atoms';
 
 export default
 function Game() {
@@ -82,19 +87,6 @@ function Game() {
 						</Button>
 					</ButtonGroup>
 				</Box>
-				<Fab
-					href="https://web.archive.org/web/20110702055910/http://www.davidgranado.com/2010/11/make-a-set-game/"
-					color="primary"
-					target="_blank"
-					size="small"
-					sx={{
-						position: 'fixed',
-						bottom: 16,
-						right: 16,
-					}}
-				>
-					<QuestionMark />
-				</Fab>
 			</Container>
 		</>
 	);
