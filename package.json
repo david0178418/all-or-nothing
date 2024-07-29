@@ -4,13 +4,28 @@
 	"source": "src/index.html",
 	"browserslist": "> 0.5%, last 2 versions, not dead",
 	"scripts": {
-		"start": "parcel",
+		"dev": "parcel",
 		"build": "parcel build"
 	},
 	"devDependencies": {
-		"parcel": "^2.12.0"
+		"@types/node": "^20.14.12",
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
+		"parcel": "^2.12.0",
+		"process": "^0.11.10"
 	},
 	"author": "",
 	"license": "ISC",
-	"description": ""
+	"description": "",
+	"dependencies": {
+		"@emotion/react": "^11.13.0",
+		"@emotion/styled": "^11.13.0",
+		"@fontsource/roboto": "^5.0.13",
+		"@mui/icons-material": "^5.16.5",
+		"@mui/material": "^5.16.5",
+		"jotai": "^2.9.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-ga4": "^2.1.0"
+	}
 }
