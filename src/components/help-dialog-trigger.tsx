@@ -238,7 +238,7 @@ function HelpDialogTrigger() {
 							</Grid>
 							<Grid xs={1}>
 								<Typography>
-									<Check /> Shapes - All Circles
+									<Check /> Shapes - All Trangles
 								</Typography>
 							</Grid>
 						</Grid>
