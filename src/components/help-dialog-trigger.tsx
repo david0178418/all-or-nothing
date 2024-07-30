@@ -8,7 +8,6 @@ import { Unstable_Grid2 as Grid,
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	DialogTitle,
 	Fab,
 	Typography,
@@ -46,30 +45,28 @@ function HelpDialogTrigger() {
 					How to Play
 				</DialogTitle>
 				<DialogContent>
-					<DialogContentText>
+					<Typography>
+						The object of the game is to identify a set of 3 cards from the 12 cards dealt.
+						Each card has a variation of the following four features:
+					</Typography>
+					<Box marginLeft={2} marginY={2}>
 						<Typography>
-							The object of the game is to identify a set of 3 cards from the 12 cards dealt.
-							Each card has a variation of the following four features:
+							<strong>Color:</strong> Red, Green, or Purple.
 						</Typography>
-						<Box marginLeft={2} marginY={2}>
-							<Typography>
-								<strong>Color:</strong> Red, Green, or Purple.
-							</Typography>
-							<Typography>
-								<strong>Symbol:</strong> Circles, Squares, or Triangles.
-							</Typography>
-							<Typography>
-								<strong>Count:</strong> One, Two, or Three Shapes
-							</Typography>
-							<Typography>
-								<strong>Shading:</strong> Solid, Clear, or Shaded
-							</Typography>
-						</Box>
 						<Typography>
-							A "set" consists of three cards in which each feature is <strong>EITHER</strong> the
-							same on each card <strong>OR</strong> is different on each card.
+							<strong>Symbol:</strong> Circles, Squares, or Triangles.
 						</Typography>
-					</DialogContentText>
+						<Typography>
+							<strong>Count:</strong> One, Two, or Three Shapes
+						</Typography>
+						<Typography>
+							<strong>Shading:</strong> Solid, Clear, or Shaded
+						</Typography>
+					</Box>
+					<Typography>
+						A "set" consists of three cards in which each feature is <strong>EITHER</strong> the
+						same on each card <strong>OR</strong> is different on each card.
+					</Typography>
 					<Grid container columns={3} sx={{ marginX: 3 }} spacing={1}>
 						<Grid
 							xs={3}
