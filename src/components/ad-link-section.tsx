@@ -39,7 +39,7 @@ function AdLinkSection(props: Props) {
 		setIsOpen(true);
 	}, [content, revealed]);
 
-	useTimeout(handleTimeout, 3_000);
+	useTimeout(handleTimeout, 15_000);
 
 	useEffect(() => {
 		fetch(contentUrl)
