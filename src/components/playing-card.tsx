@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { Card, ColorValues, CountValues, Enum, FillValues, ShapeValues } from 'src/types';
+import { Card, ColorValues, CountValues, Enum, FillValues, ShapeValues } from '../types';
 
 interface Props {
 	card: Card;

@@ -1,30 +1,42 @@
 import { useState } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import { randomizeArray } from 'src/utils';
 import PlayingCard from './playing-card';
-import { usePushToastMsg } from 'src/atoms';
+import { usePushToastMsg } from '../atoms';
+import { useRxData, } from 'rxdb-hooks';
+import { generateDeck } from '../app';
 import {
 	BitwiseValue,
 	Card,
-	Colors,
-	Counts,
-	Fills,
-	Shapes,
-} from 'src/types';
+	SetOrders,
+} from '../types';
 import {
+	Grid,
 	Box,
 	Button,
 	ButtonGroup,
 	Container,
 	Typography,
 } from '@mui/material';
+import { shuffleArray } from 'rxdb';
 
 export default
 function Game() {
+	const { result: setOrders, isFetching } = useRxData<SetOrders>('setorders', collection => collection.find());
 	const pushToastMsg = usePushToastMsg();
-	const [deck, setDeck] = useState<Card[]>(createDeck);
-	const [discardPile, setDiscardPile] = useState<Card[]>([]);
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
+
+	if(!setOrders || isFetching) {
+		return null;
+	}
+
+	const deckOrder = setOrders.find(order => order.name === 'deck');
+	const discardOrder = setOrders.find(order => order.name === 'discard');
+
+	if(!(deckOrder && discardOrder)) {
+		return null;
+	}
+
+	const deck = deckOrder.order.map(id => ({ id, ...JSON.parse(id) }));
+
 	const dealtCards = deck.slice(0, 12);
 
 	return (
@@ -33,12 +45,7 @@ function Game() {
 				maxWidth="md"
 				sx={{ xs: { padding: 0 } }}
 			>
-				<Box sx={{
-					// backgroundColor: '#a9a9a9',
-					// border: '2px solid black',
-					// borderRadius: 1,
-					// paddingY: 2,
-				}}>
+				<Box>
 					<Grid
 						container
 						rowSpacing={1}
@@ -49,6 +56,7 @@ function Game() {
 					>
 						{dealtCards.map(card => (
 							<Grid
+								item
 								xs={1}
 								key={card.id}
 								display="flex"
@@ -82,7 +90,17 @@ function Game() {
 						<Button onClick={() => handleHintMessage(dealtCards)}>
 							Set Exists?
 						</Button>
-						<Button onClick={handleRestart}>
+						<Button onClick={async () => {
+							await Promise.all([
+									deckOrder?.patch({
+									order: generateDeck(),
+								}),
+								discardOrder?.patch({
+									order: [],
+								})
+							]);
+							setSelectedCards([]);
+						}}>
 							New Game
 						</Button>
 					</ButtonGroup>
@@ -93,7 +111,9 @@ function Game() {
 
 	function handleReshuffle() {
 		setSelectedCards([]);
-		setDeck(randomizeArray(deck));
+		deckOrder?.patch({
+			order: shuffleArray(deckOrder.order),
+		});
 	}
 	function toggleSelected(cardId: string) {
 		const selected = selectedCards.includes(cardId);
@@ -115,8 +135,14 @@ function Game() {
 			.filter(card => newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
-			setDiscardPile([...discardPile, ...newSelectedCards]);
-			setDeck(deck.filter(card => !newSelectedCardIds.includes(card.id)));
+			// setDiscardPile([...discardPile, ...newSelectedCards]);
+			// setDeck(deck.filter(card => !newSelectedCardIds.includes(card.id)));
+			deckOrder?.patch({
+				order: deckOrder.order.filter(id => !newSelectedCardIds.includes(id)),
+			});
+			discardOrder?.patch({
+				order: [...discardOrder.order, ...newSelectedCardIds],
+			});
 			pushToastMsg('Set found!');
 		} else {
 			setSelectedCards(newSelectedCardIds);
@@ -132,11 +158,6 @@ function Game() {
 		setExists(cards) ?
 			pushToastMsg('A set exists!') :
 			pushToastMsg('No set exists.');
-	}
-	function handleRestart() {
-		setDiscardPile([]);
-		setSelectedCards([]);
-		setDeck(createDeck());
 	}
 }
 
@@ -175,26 +196,4 @@ function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 		// all are different (bits OR to '111' (7)")
 		((a | b | c) == 7)
 	);
-}
-
-function createDeck() {
-	const newDeck: Card[] = [];
-
-	Object.values(Fills).forEach(fill => {
-		Object.values(Colors).forEach(color => {
-			Object.values(Shapes).forEach(shape => {
-				Object.values(Counts).forEach(count => {
-					newDeck.push({
-						id: `fill${fill}-color${color}-shape${shape}-count${count}`,
-						fill,
-						color,
-						shape,
-						count,
-					});
-				});
-			});
-		});
-	});
-
-	return randomizeArray(newDeck);
 }

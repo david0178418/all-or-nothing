@@ -1,9 +1,10 @@
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { useState } from "react";
 import PlayingCard from "./playing-card";
-import { Colors, Counts, Fills, Shapes } from "src/types";
+import { Colors, Counts, Fills, Shapes } from "../types";
 import { Check, Clear } from "@mui/icons-material";
-import { Unstable_Grid2 as Grid,
+import {
+	Grid,
 	Button,
 	Dialog,
 	DialogActions,
@@ -69,39 +70,40 @@ function HelpDialogTrigger() {
 					</Typography>
 					<Grid container columns={3} sx={{ marginX: 3 }} spacing={1}>
 						<Grid
+							item
+							container
 							xs={3}
 							color="green"
-							container
 							textAlign="center"
 							columns={2}
 						>
-							<Grid xs={3}>
+							<Grid item xs={3}>
 								<Typography>
 								<Check />  MATCH!
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Color - All Red
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Count - All Three
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 								<Check /> Fill - All Solid
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Shapes - All Different
 								</Typography>
 							</Grid>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-1-1',
@@ -112,7 +114,7 @@ function HelpDialogTrigger() {
 								}}
 							/>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-1-2',
@@ -123,7 +125,7 @@ function HelpDialogTrigger() {
 								}}
 							/>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-1-3',
@@ -135,6 +137,7 @@ function HelpDialogTrigger() {
 							/>
 						</Grid>
 						<Grid
+							item
 							marginTop={3}
 							paddingTop={3}
 							borderTop="1px solid black"
@@ -144,33 +147,33 @@ function HelpDialogTrigger() {
 							columns={2}
 							textAlign="center"
 						>
-							<Grid xs={3}>
+							<Grid item xs={3}>
 								<Typography>
 								<Check />  MATCH!
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Color - All Different
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Count - All Different
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 								<Check /> Fill - All Different
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Shapes - All Circles
 								</Typography>
 							</Grid>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-2-1',
@@ -181,7 +184,7 @@ function HelpDialogTrigger() {
 								}}
 							/>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-2-2',
@@ -192,7 +195,7 @@ function HelpDialogTrigger() {
 								}}
 							/>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-2-3',
@@ -204,6 +207,7 @@ function HelpDialogTrigger() {
 							/>
 						</Grid>
 						<Grid
+							item
 							marginTop={3}
 							paddingTop={3}
 							borderTop="1px solid black"
@@ -213,33 +217,33 @@ function HelpDialogTrigger() {
 							columns={2}
 							textAlign="center"
 						>
-							<Grid xs={3} color="red">
+							<Grid item xs={3} color="red">
 								<Typography>
 								<Clear />  NOT A MATCH!
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Color - All Different
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Count - All Different
 								</Typography>
 							</Grid>
-							<Grid xs={1} color="red">
+							<Grid item xs={1} color="red">
 								<Typography>
 									<Clear /> Fill - Two Solid, One Outline
 								</Typography>
 							</Grid>
-							<Grid xs={1}>
+							<Grid item xs={1}>
 								<Typography>
 									<Check /> Shapes - All Trangles
 								</Typography>
 							</Grid>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-3-1',
@@ -250,7 +254,7 @@ function HelpDialogTrigger() {
 								}}
 							/>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-3-2',
@@ -261,7 +265,7 @@ function HelpDialogTrigger() {
 								}}
 							/>
 						</Grid>
-						<Grid xs={1} display="flex" justifyContent="center">
+						<Grid item xs={1} display="flex" justifyContent="center">
 							<PlayingCard
 								card={{
 									id: 'example-3-3',
