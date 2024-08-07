@@ -7,6 +7,7 @@ import { generateDeck, isSet, setExists } from '@/core';
 import { Card, SetOrders } from '@/types';
 import { useInterval } from '../hooks';
 import FormattedTime from './formatted-time';
+import AdLinkSection from './ad-link-section';
 import {
 	Grid,
 	Box,
@@ -20,7 +21,6 @@ import {
 	DialogContentText,
 	DialogActions,
 } from '@mui/material';
-import AdLinkSection from './ad-link-section';
 
 const {
 	VITE_AD_CONTENT_URL = '',
@@ -36,7 +36,12 @@ function Game() {
 	const time = gameData?.find(doc => doc.id === 'time');
 	const deckOrder = setOrders.find(order => order.name === 'deck');
 	const discardOrder = setOrders.find(order => order.name === 'discard');
-	const gameComplete = !deckOrder?.order.length;
+	const deck = deckOrder?.order.map<Card>(id => ({ id, ...JSON.parse(id) }));
+	const dealtCards = deck?.slice(0, 12);
+	// Todo: Clean this all up.
+	const gameComplete = !deckOrder?.order.length || (
+		(!!deck && deck.length <= 12) && !!dealtCards && !setExists(dealtCards)
+	);
 	const runTimer = time && !gameComplete && !paused;
 
 	useInterval(() => {
@@ -45,12 +50,9 @@ function Game() {
 		});
 	}, runTimer ? 1000 : null);
 
-	if(!(deckOrder && discardOrder && time)) {
+	if(!(deckOrder && discardOrder && time && dealtCards && deck)) {
 		return null;
 	}
-
-	const deck = deckOrder.order.map<Card>(id => ({ id, ...JSON.parse(id) }));
-	const dealtCards = deck.slice(0, 12);
 
 	return (
 		<>
@@ -125,6 +127,7 @@ function Game() {
 				</Grid>
 			</Container>
 			<GameOverDialog
+				remainingCards={dealtCards.length}
 				isGameOver={gameComplete}
 				time={time.value}
 				onRestart={handleReset}
@@ -174,7 +177,7 @@ function Game() {
 		}
 
 		const newSelectedCards = dealtCards
-			.filter(card => newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
+			?.filter(card => newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
 			deckOrder?.patch({
@@ -234,6 +237,7 @@ function PauseDialog(props: PauseDialogProps) {
 interface GameOverDialogProps {
 	isGameOver: boolean;
 	time: number;
+	remainingCards: number;
 	onRestart(): void;
 }
 
@@ -242,6 +246,7 @@ function GameOverDialog(props: GameOverDialogProps) {
 	const {
 		isGameOver,
 		time,
+		remainingCards,
 		onRestart,
 	} = props;
 
@@ -249,6 +254,11 @@ function GameOverDialog(props: GameOverDialogProps) {
 		<Dialog open={isGameOver}>
 			<DialogTitle>Game Over</DialogTitle>
 			<DialogContent>
+				{!!remainingCards && (
+					<DialogContentText>
+						No sets in the remaining {remainingCards} cards.
+					</DialogContentText>
+				)}
 				<FormattedTime label="Completed in " value={time} />
 			</DialogContent>
 			<DialogActions>
