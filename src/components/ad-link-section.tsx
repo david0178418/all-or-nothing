@@ -58,7 +58,9 @@ function AdLinkSection(props: Props) {
 			position="fixed"
 			left="50%"
 			bottom={0}
-			zIndex={10}
+			// Fab is 1050.
+			// TODO: Base z-index on theme.
+			zIndex={1051}
 			maxHeight={isOpen ? 100 : 0}
 			sx={{
 				transform: "translateX(-50%)",
@@ -68,10 +70,16 @@ function AdLinkSection(props: Props) {
 			<Box
 				position="absolute"
 				top={0}
-				right={0}
+				right={{
+					xs: '50%',
+					sm: 0,
+				}}
 				zIndex={-1}
 				sx={{
-					translate: "0  -75%",
+					translate: {
+						xs: "50% -75%",
+						sm: "0 -75%",
+					},
 					cursor: 'pointer',
 				}}
 			>
