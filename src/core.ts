@@ -84,8 +84,6 @@ async function initialize() {
 		storage: getRxStorageDexie()
 	});
 
-	console.log('db.collections', )
-
 	if(db.collections.setorders) {
 		console.log('foo');
 		return db;
