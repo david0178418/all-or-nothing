@@ -5,6 +5,8 @@ import { useRxData, } from 'rxdb-hooks';
 import { shuffleArray } from 'rxdb';
 import { generateDeck, isSet, setExists } from '@/core';
 import { Card, SetOrders } from '@/types';
+import { useInterval } from '../hooks';
+import FormattedTime from './formatted-time';
 import {
 	Grid,
 	Box,
@@ -18,8 +20,6 @@ import {
 	DialogContentText,
 	DialogActions,
 } from '@mui/material';
-import { useInterval } from '../hooks';
-import FormattedTime from './formatted-time';
 
 export default
 function Game() {
