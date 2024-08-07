@@ -22,8 +22,13 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"incremental": true,
-		"paths": {},
-		"plugins": []
+		"plugins": [],
+		"paths": {
+			"@/*": [
+				"./*",
+				"src/*"
+			]
+		},
 	},
 	"include": [
 		"**/*.ts",

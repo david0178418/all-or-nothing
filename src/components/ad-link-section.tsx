@@ -8,7 +8,7 @@ import {
 	CardMedia,
 	Typography,
 } from "@mui/material";
-import { useTimeout } from "../utils";
+import { useTimeout } from "@/utils";
 
 interface Props {
 	contentUrl: string;

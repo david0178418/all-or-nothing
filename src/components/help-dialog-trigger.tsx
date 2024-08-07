@@ -1,7 +1,7 @@
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { useState } from "react";
 import PlayingCard from "./playing-card";
-import { Colors, Counts, Fills, Shapes } from "../types";
+import { Colors, Counts, Fills, Shapes } from "@/types";
 import { Check, Clear } from "@mui/icons-material";
 import {
 	Grid,

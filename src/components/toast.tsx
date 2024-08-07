@@ -3,11 +3,8 @@ import { useEffect, useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { clearCurrentToastMsgAtom, toastMsgAtom } from '../atoms';
-import {
-	useAtomValue,
-	useSetAtom,
-} from 'jotai';
+import { clearCurrentToastMsgAtom, toastMsgAtom } from '@/atoms';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 export default
 function Toast() {
