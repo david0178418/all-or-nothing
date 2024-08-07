@@ -13,21 +13,26 @@ import {
 	Container,
 	Typography,
 } from '@mui/material';
+import { useInterval } from '../hooks';
 
 export default
 function Game() {
-	const { result: setOrders, isFetching } = useRxData<SetOrders>('setorders', collection => collection.find());
+	const { result: setOrders } = useRxData<SetOrders>('setorders', collection => collection.find());
+	const { result: settings  } = useRxData<{id: string; value: number}>('settings', collection => collection.find({ selector: { id: 'time' } }));
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
+	const time = settings?.find(doc => doc.id === 'time');
 
-	if(!setOrders || isFetching) {
-		return null;
-	}
+	useInterval(() => {
+		time?.patch({
+			value: time.value + 1,
+		});
+	}, time ? 1000 : null);
 
 	const deckOrder = setOrders.find(order => order.name === 'deck');
 	const discardOrder = setOrders.find(order => order.name === 'discard');
 
-	if(!(deckOrder && discardOrder)) {
+	if(!(deckOrder && discardOrder && time)) {
 		return null;
 	}
 
@@ -78,6 +83,7 @@ function Game() {
 					}}
 				>
 					<Grid item xs={1} textAlign={{ xs: 'center', sm: 'left' }}>
+						<Time value={time.value} />
 						<Typography variant="subtitle1" sx={{marginTop: 1}}>
 							{deck.length} cards left in the deck
 						</Typography>
@@ -93,12 +99,15 @@ function Game() {
 								</Button>
 								<Button onClick={async () => {
 									await Promise.all([
-											deckOrder?.patch({
+											deckOrder.patch({
 											order: generateDeck(),
 										}),
-										discardOrder?.patch({
+										discardOrder.patch({
 											order: [],
-										})
+										}),
+										time.patch({
+											value: 0,
+										}),
 									]);
 									setSelectedCards([]);
 								}}>
@@ -154,7 +163,6 @@ function Game() {
 
 		setSelectedCards([]);
 
-
 		setSelectedCards(newSelectedCardIds);
 	}
 	function handleHintMessage(cards: Card[]) {
@@ -162,4 +170,18 @@ function Game() {
 			pushToastMsg('A set exists!') :
 			pushToastMsg('No set exists.');
 	}
+}
+
+interface Props {
+	value: number;
+}
+
+function Time(props: Props) {
+	const { value } = props;
+
+	return (
+		<Typography variant="subtitle1">
+			Time: {value / 60 | 0}:{(value % 60).toString().padStart(2, '0')}
+		</Typography>
+	);
 }

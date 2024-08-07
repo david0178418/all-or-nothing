@@ -57,10 +57,25 @@ function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 
 interface DbCollections {
 	setorders: RxCollection<SetOrders>;
+	settings: RxCollection<{id: string; value: number;}>;
 }
 
 export
 async function initialize() {
+	const SettingsSchema: RxJsonSchema<{id: string; value: number;}> = {
+		version: 0,
+		primaryKey: 'id',
+		type: 'object',
+		properties: {
+			id: {
+				type: 'string',
+				maxLength: 24,
+			},
+			value: {
+				type: 'number',
+			},
+		},
+	};
 	const SetOrdersSchema: RxJsonSchema<SetOrders> = {
 		version: 0,
 		primaryKey: 'name',
@@ -80,16 +95,18 @@ async function initialize() {
 	};
 
 	const db = await createRxDatabase<DbCollections>({
-		name: 'mydatabase',
+		name: 'make-a-set-v0',
 		storage: getRxStorageDexie()
 	});
 
 	if(db.collections.setorders) {
-		console.log('foo');
 		return db;
 	}
 
 	await db.addCollections({
+		settings: {
+			schema: SettingsSchema,
+		},
 		setorders: {
 			schema: SetOrdersSchema,
 		},
@@ -107,6 +124,11 @@ async function initialize() {
 	db.setorders.insert({
 		name: 'discard',
 		order: [],
+	});
+
+	db.settings.insert({
+		id: 'time',
+		value: 0,
 	});
 
 	return db;
