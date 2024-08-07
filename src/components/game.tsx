@@ -19,6 +19,7 @@ import {
 	DialogActions,
 } from '@mui/material';
 import { useInterval } from '../hooks';
+import FormattedTime from './formatted-time';
 
 export default
 function Game() {
@@ -91,7 +92,7 @@ function Game() {
 					}}
 				>
 					<Grid item xs={1} textAlign={{ xs: 'center', sm: 'left' }}>
-						<Time value={time.value} />
+						<FormattedTime label="Time:" value={time.value} />
 						<Typography variant="subtitle1" sx={{marginTop: 1}}>
 							{deck.length} cards left in the deck
 						</Typography>
@@ -110,20 +111,7 @@ function Game() {
 								<Button onClick={handleReshuffle}>
 									Shuffle
 								</Button>
-								<Button onClick={async () => {
-									await Promise.all([
-											deckOrder.patch({
-											order: generateDeck(),
-										}),
-										discardOrder.patch({
-											order: [],
-										}),
-										time.patch({
-											value: 0,
-										}),
-									]);
-									setSelectedCards([]);
-								}}>
+								<Button onClick={handleReset}>
 									New Game
 								</Button>
 							</ButtonGroup>
@@ -131,8 +119,26 @@ function Game() {
 					</Grid>
 				</Grid>
 			</Container>
+			<GameOverDialog
+				isGameOver={gameComplete}
+				time={time.value}
+				onRestart={handleReset}
+			/>
 		</>
 	);
+
+	function handleReset() {
+		deckOrder?.patch({
+			order: generateDeck(),
+		});
+		discardOrder?.patch({
+			order: [],
+		});
+		time?.patch({
+			value: 0,
+		});
+		setSelectedCards([]);
+	}
 
 	function handleReshuffle() {
 		setSelectedCards([]);
@@ -180,20 +186,6 @@ function Game() {
 	}
 }
 
-interface Props {
-	value: number;
-}
-
-function Time(props: Props) {
-	const { value } = props;
-
-	return (
-		<Typography variant="subtitle1">
-			Time: <strong>{value / 60 | 0}:{(value % 60).toString().padStart(2, '0')}</strong>
-		</Typography>
-	);
-}
-
 interface PauseDialogProps {
 	paused: boolean;
 	onPause(): void;
@@ -212,11 +204,10 @@ function PauseDialog(props: PauseDialogProps) {
 			<Button onClick={onPause}>
 				Pause
 			</Button>
-			<Dialog open={paused} onClose={onUnpause}>
-				<DialogTitle>Paused</DialogTitle>
+			<Dialog  open={paused} onClose={onUnpause}>
 				<DialogContent>
 					<DialogContentText>
-						Your game has been paused.
+						Paused
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
@@ -226,5 +217,34 @@ function PauseDialog(props: PauseDialogProps) {
 				</DialogActions>
 			</Dialog>
 		</>
+	);
+}
+
+interface GameOverDialogProps {
+	isGameOver: boolean;
+	time: number;
+	onRestart(): void;
+}
+
+export
+function GameOverDialog(props: GameOverDialogProps) {
+	const {
+		isGameOver,
+		time,
+		onRestart,
+	} = props;
+
+	return (
+		<Dialog open={isGameOver}>
+			<DialogTitle>Game Over</DialogTitle>
+			<DialogContent>
+				<FormattedTime label="Completed in " value={time} />
+			</DialogContent>
+			<DialogActions>
+				<Button variant="contained" onClick={onRestart}>
+					New Game
+				</Button>
+			</DialogActions>
+		</Dialog>
 	);
 }
