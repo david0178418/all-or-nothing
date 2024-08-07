@@ -2,9 +2,7 @@ import { useState } from 'react';
 import PlayingCard from './playing-card';
 import { usePushToastMsg } from '../atoms';
 import { useRxData, } from 'rxdb-hooks';
-import { generateDeck } from '../app';
 import {
-	BitwiseValue,
 	Card,
 	SetOrders,
 } from '../types';
@@ -17,6 +15,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { shuffleArray } from 'rxdb';
+import { generateDeck, isSet, setExists } from '../core';
 
 export default
 function Game() {
@@ -35,7 +34,7 @@ function Game() {
 		return null;
 	}
 
-	const deck = deckOrder.order.map(id => ({ id, ...JSON.parse(id) }));
+	const deck = deckOrder.order.map<Card>(id => ({ id, ...JSON.parse(id) }));
 
 	const dealtCards = deck.slice(0, 12);
 
@@ -159,41 +158,4 @@ function Game() {
 			pushToastMsg('A set exists!') :
 			pushToastMsg('No set exists.');
 	}
-}
-
-function setExists(cards: Card[]) {
-	if(cards.length < 3) {
-		return false;
-	}
-
-	for(let a = 0; a < cards.length - 2; a++) {
-		for(let b = a + 1; b < cards.length - 1; b++) {
-			for(let c = b + 1; c < cards.length; c++) {
-				// @ts-ignore
-				if(isSet(cards[a], cards[b], cards[c])) {
-					return true;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-function isSet(a: Card, b: Card, c: Card) {
-	return (
-		allSameOrDifferent(a.color, b.color, c.color) &&
-		allSameOrDifferent(a.fill, b.fill, c.fill) &&
-		allSameOrDifferent(a.shape, b.shape, c.shape) &&
-		allSameOrDifferent(a.count, b.count, c.count)
-	);
-}
-
-function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
-	return (
-		// all are the same (bits AND to 'a'")
-		((a & b & c) == a) ||
-		// all are different (bits OR to '111' (7)")
-		((a | b | c) == 7)
-	);
 }
