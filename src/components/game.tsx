@@ -181,7 +181,7 @@ function Time(props: Props) {
 
 	return (
 		<Typography variant="subtitle1">
-			Time: {value / 60 | 0}:{(value % 60).toString().padStart(2, '0')}
+			Time: <strong>{value / 60 | 0}:{(value % 60).toString().padStart(2, '0')}</strong>
 		</Typography>
 	);
 }
