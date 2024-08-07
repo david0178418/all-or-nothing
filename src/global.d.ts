@@ -9,7 +9,6 @@ interface ImportMetaEnv {
 	readonly SSR: boolean;
 	readonly VITE_AD_CONTENT_URL: string;
 	readonly VITE_GOOGLE_ANALYTICS_ID: string;
-	readonly VITE_USER_NODE_ENV: "development";
 }
 
 interface ImportMeta {

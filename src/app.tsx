@@ -9,11 +9,9 @@ import Toast from './components/toast';
 import ReactGA from "react-ga4";
 import HelpDialogTrigger from './components/help-dialog-trigger';
 import AdLinkSection from './components/ad-link-section';
-import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { Provider } from 'rxdb-hooks';
 import { useEffect, useState } from 'react';
 import { AsyncReturnType } from './types';
-import { addRxPlugin } from 'rxdb';
 import { initialize } from './core';
 
 const {
@@ -28,7 +26,13 @@ if (PROD && VITE_GOOGLE_ANALYTICS_ID) {
 }
 
 if(DEV) {
-	addRxPlugin(RxDBDevModePlugin);
+	Promise.all([
+		import('rxdb/plugins/dev-mode'),
+		import('rxdb'),
+	]).then(([{ RxDBDevModePlugin }, { addRxPlugin }]) => {
+		console.log('Adding RxDB dev mode plugin');
+		addRxPlugin(RxDBDevModePlugin);
+	});
 }
 
 export default
