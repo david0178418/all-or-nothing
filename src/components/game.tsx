@@ -32,7 +32,6 @@ function Game() {
 	}
 
 	const deck = deckOrder.order.map<Card>(id => ({ id, ...JSON.parse(id) }));
-
 	const dealtCards = deck.slice(0, 12);
 
 	return (
@@ -73,7 +72,10 @@ function Game() {
 					container
 					paddingTop={3}
 					paddingBottom={20}
-					columns={{ xs: 1, sm: 2 }}
+					columns={{
+						xs: 1,
+						sm: 2,
+					}}
 				>
 					<Grid item xs={1} textAlign={{ xs: 'center', sm: 'left' }}>
 						<Typography variant="subtitle1" sx={{marginTop: 1}}>
