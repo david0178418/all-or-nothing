@@ -11,6 +11,7 @@ import {
 import { useTimeout } from "@/utils";
 
 interface Props {
+	open?: boolean;
 	contentUrl: string;
 }
 
@@ -23,7 +24,10 @@ interface Content {
 
 export default
 function AdLinkSection(props: Props) {
-	const { contentUrl } = props;
+	const {
+		contentUrl,
+		open,
+	} = props;
 	const [content, setContent] = useState<Content[]>([]);
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [isOpen, setIsOpen] = useState(false);
@@ -32,8 +36,6 @@ function AdLinkSection(props: Props) {
 		if(!content.length || revealed) {
 			return;
 		}
-
-		console.log(content.length, revealed);
 
 		setRevealed(true);
 		setIsOpen(true);
@@ -47,6 +49,16 @@ function AdLinkSection(props: Props) {
 			.then(setContent);
 	}, []);
 
+	useEffect(() => {
+		if(!open) {
+			setIsOpen(false);
+			return;
+		}
+
+		setRevealed(true);
+		setIsOpen(true);
+	}, [open]);
+
 	if(!content.length) {
 		return null;
 	}
@@ -58,9 +70,9 @@ function AdLinkSection(props: Props) {
 			position="fixed"
 			left="50%"
 			bottom={0}
-			// Fab is 1050.
+			// Modal backdrop is 1300.
 			// TODO: Base z-index on theme.
-			zIndex={1051}
+			zIndex={1301}
 			maxHeight={isOpen ? 100 : 0}
 			sx={{
 				transform: "translateX(-50%)",

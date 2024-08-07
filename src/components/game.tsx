@@ -20,6 +20,11 @@ import {
 	DialogContentText,
 	DialogActions,
 } from '@mui/material';
+import AdLinkSection from './ad-link-section';
+
+const {
+	VITE_AD_CONTENT_URL = '',
+} = import.meta.env;
 
 export default
 function Game() {
@@ -124,6 +129,12 @@ function Game() {
 				time={time.value}
 				onRestart={handleReset}
 			/>
+			{VITE_AD_CONTENT_URL && (
+				<AdLinkSection
+					open={gameComplete || paused}
+					contentUrl={VITE_AD_CONTENT_URL}
+				/>
+			)}
 		</>
 	);
 
