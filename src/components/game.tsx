@@ -69,38 +69,43 @@ function Game() {
 						))}
 					</Grid>
 				</Box>
-				<Typography variant="subtitle1" sx={{marginTop: 1}}>
-					{deck.length} cards left in the deck
-				</Typography>
-				<Box sx={{
-					paddingY: 2,
-					paddingX: {
-						xs: 0,
-						md: 10,
-					},
-				}}>
-					<ButtonGroup variant="contained">
-						<Button onClick={handleReshuffle}>
-							Shuffle
-						</Button>
-						<Button onClick={() => handleHintMessage(dealtCards)}>
-							Set Exists?
-						</Button>
-						<Button onClick={async () => {
-							await Promise.all([
-									deckOrder?.patch({
-									order: generateDeck(),
-								}),
-								discardOrder?.patch({
-									order: [],
-								})
-							]);
-							setSelectedCards([]);
-						}}>
-							New Game
-						</Button>
-					</ButtonGroup>
-				</Box>
+				<Grid
+					container
+					paddingTop={3}
+					paddingBottom={20}
+					columns={{ xs: 1, sm: 2 }}
+				>
+					<Grid item xs={1} textAlign={{ xs: 'center', sm: 'left' }}>
+						<Typography variant="subtitle1" sx={{marginTop: 1}}>
+							{deck.length} cards left in the deck
+						</Typography>
+					</Grid>
+					<Grid item xs={1} textAlign={{ xs: 'center', sm: 'right' }}>
+						<Box width="100%">
+							<ButtonGroup variant="contained">
+								<Button onClick={handleReshuffle}>
+									Shuffle
+								</Button>
+								<Button onClick={() => handleHintMessage(dealtCards)}>
+									Set Exists?
+								</Button>
+								<Button onClick={async () => {
+									await Promise.all([
+											deckOrder?.patch({
+											order: generateDeck(),
+										}),
+										discardOrder?.patch({
+											order: [],
+										})
+									]);
+									setSelectedCards([]);
+								}}>
+									New Game
+								</Button>
+							</ButtonGroup>
+						</Box>
+					</Grid>
+				</Grid>
 			</Container>
 		</>
 	);
