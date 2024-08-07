@@ -2,10 +2,9 @@ import { useState } from 'react';
 import PlayingCard from './playing-card';
 import { usePushToastMsg } from '@/atoms';
 import { useRxData, } from 'rxdb-hooks';
-import {
-	Card,
-	SetOrders,
-} from '@/types';
+import { shuffleArray } from 'rxdb';
+import { generateDeck, isSet, setExists } from '@/core';
+import { Card, SetOrders } from '@/types';
 import {
 	Grid,
 	Box,
@@ -14,8 +13,6 @@ import {
 	Container,
 	Typography,
 } from '@mui/material';
-import { shuffleArray } from 'rxdb';
-import { generateDeck, isSet, setExists } from '@/core';
 
 export default
 function Game() {
