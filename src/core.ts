@@ -57,12 +57,12 @@ function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 
 interface DbCollections {
 	setorders: RxCollection<SetOrders>;
-	settings: RxCollection<{id: string; value: number;}>;
+	gamedata: RxCollection<{id: string; value: number;}>;
 }
 
 export
 async function initialize() {
-	const SettingsSchema: RxJsonSchema<{id: string; value: number;}> = {
+	const GameDataSchema: RxJsonSchema<{id: string; value: number;}> = {
 		version: 0,
 		primaryKey: 'id',
 		type: 'object',
@@ -104,8 +104,8 @@ async function initialize() {
 	}
 
 	await db.addCollections({
-		settings: {
-			schema: SettingsSchema,
+		gamedata: {
+			schema: GameDataSchema,
 		},
 		setorders: {
 			schema: SetOrdersSchema,
@@ -126,7 +126,7 @@ async function initialize() {
 		order: [],
 	});
 
-	db.settings.insert({
+	db.gamedata.insert({
 		id: 'time',
 		value: 0,
 	});

@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { Card, ColorValues, CountValues, Enum, FillValues, ShapeValues } from '@/types';
 
 interface Props {
+	flipped?: boolean;
 	card: Card;
 	selected?: boolean;
 	onClick?(): void;
@@ -12,6 +13,7 @@ function PlayingCard(props: Props) {
 	const {
 		onClick = () => {},
 		selected,
+		flipped,
 		card: {
 			color,
 			count,
@@ -43,8 +45,13 @@ function PlayingCard(props: Props) {
 				flexDirection="column"
 				justifyContent="center"
 				alignItems="center"
+				sx={{
+					background: flipped ?
+						`repeating-linear-gradient(45deg, #606dbc, #606dbc 10px, #465298 10px,#465298 20px)` :
+						''
+				}}
 			>
-				{Array(CountValues[count]).fill(0).map((_, i) => (
+				{!flipped && Array(CountValues[count]).fill(0).map((_, i) => (
 					<Shape
 						key={i}
 						color={ColorValues[color]}

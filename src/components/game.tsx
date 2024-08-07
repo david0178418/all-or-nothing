@@ -12,25 +12,32 @@ import {
 	ButtonGroup,
 	Container,
 	Typography,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogContentText,
+	DialogActions,
 } from '@mui/material';
 import { useInterval } from '../hooks';
 
 export default
 function Game() {
+	const [paused, setPaused] = useState(false);
 	const { result: setOrders } = useRxData<SetOrders>('setorders', collection => collection.find());
-	const { result: settings  } = useRxData<{id: string; value: number}>('settings', collection => collection.find({ selector: { id: 'time' } }));
+	const { result: gameData  } = useRxData<{id: string; value: number}>('gamedata', collection => collection.find({ selector: { id: 'time' } }));
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
-	const time = settings?.find(doc => doc.id === 'time');
+	const time = gameData?.find(doc => doc.id === 'time');
+	const deckOrder = setOrders.find(order => order.name === 'deck');
+	const discardOrder = setOrders.find(order => order.name === 'discard');
+	const gameComplete = !deckOrder?.order.length;
+	const runTimer = time && !gameComplete && !paused;
 
 	useInterval(() => {
 		time?.patch({
 			value: time.value + 1,
 		});
-	}, time ? 1000 : null);
-
-	const deckOrder = setOrders.find(order => order.name === 'deck');
-	const discardOrder = setOrders.find(order => order.name === 'discard');
+	}, runTimer ? 1000 : null);
 
 	if(!(deckOrder && discardOrder && time)) {
 		return null;
@@ -64,6 +71,7 @@ function Game() {
 							>
 								<Box maxWidth="80%">
 									<PlayingCard
+										flipped={paused}
 										card={card}
 										selected={selectedCards.includes(card.id)}
 										onClick={() => toggleSelected(card.id)}
@@ -91,11 +99,16 @@ function Game() {
 					<Grid item xs={1} textAlign={{ xs: 'center', sm: 'right' }}>
 						<Box width="100%">
 							<ButtonGroup variant="contained">
-								<Button onClick={handleReshuffle}>
-									Shuffle
-								</Button>
+								<PauseDialog
+									paused={paused}
+									onPause={() => setPaused(true)}
+									onUnpause={() => setPaused(false)}
+								/>
 								<Button onClick={() => handleHintMessage(dealtCards)}>
 									Set Exists?
+								</Button>
+								<Button onClick={handleReshuffle}>
+									Shuffle
 								</Button>
 								<Button onClick={async () => {
 									await Promise.all([
@@ -147,8 +160,6 @@ function Game() {
 			.filter(card => newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
-			// setDiscardPile([...discardPile, ...newSelectedCards]);
-			// setDeck(deck.filter(card => !newSelectedCardIds.includes(card.id)));
 			deckOrder?.patch({
 				order: deckOrder.order.filter(id => !newSelectedCardIds.includes(id)),
 			});
@@ -156,14 +167,11 @@ function Game() {
 				order: [...discardOrder.order, ...newSelectedCardIds],
 			});
 			pushToastMsg('Set found!');
+			setSelectedCards([]);
 		} else {
 			setSelectedCards(newSelectedCardIds);
 			pushToastMsg('Not a set.');
 		}
-
-		setSelectedCards([]);
-
-		setSelectedCards(newSelectedCardIds);
 	}
 	function handleHintMessage(cards: Card[]) {
 		setExists(cards) ?
@@ -183,5 +191,40 @@ function Time(props: Props) {
 		<Typography variant="subtitle1">
 			Time: <strong>{value / 60 | 0}:{(value % 60).toString().padStart(2, '0')}</strong>
 		</Typography>
+	);
+}
+
+interface PauseDialogProps {
+	paused: boolean;
+	onPause(): void;
+	onUnpause(): void;
+}
+
+function PauseDialog(props: PauseDialogProps) {
+	const {
+		paused,
+		onPause,
+		onUnpause,
+	} = props;
+
+	return (
+		<>
+			<Button onClick={onPause}>
+				Pause
+			</Button>
+			<Dialog open={paused} onClose={onUnpause}>
+				<DialogTitle>Paused</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Your game has been paused.
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={onUnpause}>
+						Resume
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</>
 	);
 }
