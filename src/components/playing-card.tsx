@@ -107,12 +107,12 @@ function Shape(props: ShapeProps) {
 	);
 }
 
-interface FooProps {
+interface SvgShapeProps {
 	stroke: string;
 	fill: string;
 }
 
-function Triangle(props: FooProps) {
+function Triangle(props: SvgShapeProps) {
 	const { fill, stroke } = props;
 	return (
 		<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
@@ -126,7 +126,7 @@ function Triangle(props: FooProps) {
 	);
 }
 
-function Circle(props: FooProps) {
+function Circle(props: SvgShapeProps) {
 	const { fill, stroke } = props;
 	return (
 		<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
@@ -142,7 +142,7 @@ function Circle(props: FooProps) {
 	);
 }
 
-function Square(props: FooProps) {
+function Square(props: SvgShapeProps) {
 	const { fill, stroke } = props;
 	return (
 		<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">

@@ -3,11 +3,13 @@ import PlayingCard from './playing-card';
 import { usePushToastMsg } from '@/atoms';
 import { useRxData, } from 'rxdb-hooks';
 import { shuffleArray } from 'rxdb';
-import { generateDeck, isSet, setExists } from '@/core';
 import { Card, SetOrders } from '@/types';
 import { useInterval } from '../hooks';
 import FormattedTime from './formatted-time';
 import AdLinkSection from './ad-link-section';
+import PauseDialog from './pause-dialog';
+import GameOverDialog from './game-over-dialog';
+import { generateDeck, isSet, setExists } from '@/core';
 import {
 	Grid,
 	Box,
@@ -15,11 +17,6 @@ import {
 	ButtonGroup,
 	Container,
 	Typography,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogContentText,
-	DialogActions,
 } from '@mui/material';
 
 const {
@@ -198,74 +195,4 @@ function Game() {
 			pushToastMsg('A set exists!') :
 			pushToastMsg('No set exists.');
 	}
-}
-
-interface PauseDialogProps {
-	paused: boolean;
-	onPause(): void;
-	onUnpause(): void;
-}
-
-function PauseDialog(props: PauseDialogProps) {
-	const {
-		paused,
-		onPause,
-		onUnpause,
-	} = props;
-
-	return (
-		<>
-			<Button onClick={onPause}>
-				Pause
-			</Button>
-			<Dialog  open={paused} onClose={onUnpause}>
-				<DialogContent>
-					<DialogContentText>
-						Paused
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={onUnpause}>
-						Resume
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</>
-	);
-}
-
-interface GameOverDialogProps {
-	isGameOver: boolean;
-	time: number;
-	remainingCards: number;
-	onRestart(): void;
-}
-
-export
-function GameOverDialog(props: GameOverDialogProps) {
-	const {
-		isGameOver,
-		time,
-		remainingCards,
-		onRestart,
-	} = props;
-
-	return (
-		<Dialog open={isGameOver}>
-			<DialogTitle>Game Over</DialogTitle>
-			<DialogContent>
-				{!!remainingCards && (
-					<DialogContentText>
-						No sets in the remaining {remainingCards} cards.
-					</DialogContentText>
-				)}
-				<FormattedTime label="Completed in " value={time} />
-			</DialogContent>
-			<DialogActions>
-				<Button variant="contained" onClick={onRestart}>
-					New Game
-				</Button>
-			</DialogActions>
-		</Dialog>
-	);
 }
