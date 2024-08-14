@@ -1,4 +1,3 @@
-'use client';
 import { useEffect, useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
