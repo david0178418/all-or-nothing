@@ -12,6 +12,7 @@ import { Provider } from 'rxdb-hooks';
 import { useEffect, useState } from 'react';
 import { AsyncReturnType } from './types';
 import { initialize } from './core';
+import PauseDialog from './components/pause-dialog';
 
 const {
 	DEV,
@@ -45,6 +46,7 @@ function App() {
 		<Provider db={db}>
 			<Game />
 			<Toast />
+			<PauseDialog/>
 			<HelpDialogTrigger />
 		</Provider>
 	);

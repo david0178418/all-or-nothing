@@ -1,10 +1,15 @@
 'use client';
 
-import { atom, useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { ToastMesssage } from './types';
 
 export
-const loadingAtom = atom(false);
+const pausedAtom = atom(false);
+
+export
+function usePausedState() {
+	return useAtom(pausedAtom);
+}
 
 const toastQueueAtom = atom<ToastMesssage[]>([]);
 

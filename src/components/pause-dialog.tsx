@@ -5,38 +5,24 @@ import {
 	DialogContentText,
 	DialogActions,
 } from '@mui/material';
-
-interface Props {
-	paused: boolean;
-	onPause(): void;
-	onUnpause(): void;
-}
+import { usePausedState } from '../atoms';
 
 export default
-function PauseDialog(props: Props) {
-	const {
-		paused,
-		onPause,
-		onUnpause,
-	} = props;
+function PauseDialog() {
+	const [paused, setPaused] = usePausedState();
 
 	return (
-		<>
-			<Button onClick={onPause}>
-				Pause
-			</Button>
-			<Dialog  open={paused} onClose={onUnpause}>
-				<DialogContent>
-					<DialogContentText>
-						Paused
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={onUnpause}>
-						Resume
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</>
+		<Dialog  open={paused} onClose={() => setPaused(false)}>
+			<DialogContent>
+				<DialogContentText>
+					Paused
+				</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={() => setPaused(false)}>
+					Resume
+				</Button>
+			</DialogActions>
+		</Dialog>
 	);
 }

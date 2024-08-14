@@ -1,4 +1,4 @@
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
 import { useState } from "react";
 import PlayingCard from "./playing-card";
 import { Colors, Counts, Fills, Shapes } from "@/types";
@@ -35,7 +35,7 @@ function HelpDialogTrigger() {
 				}}
 				onClick={() => setOpen(true)}
 			>
-				<QuestionMarkIcon />
+				<InfoIcon />
 			</Fab>
 			<Dialog
 				fullScreen={fullScreen}
@@ -279,7 +279,10 @@ function HelpDialogTrigger() {
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => setOpen(false)}>
+					<Button
+						variant="contained"
+						onClick={() => setOpen(false)}
+					>
 						Close
 					</Button>
 				</DialogActions>
