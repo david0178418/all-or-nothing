@@ -285,5 +285,5 @@ function HelpDialogTrigger() {
 				</DialogActions>
 			</Dialog>
 		</>
-	)
+	);
 }
