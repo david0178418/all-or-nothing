@@ -68,7 +68,7 @@ function HelpDialogTrigger() {
 						A "set" consists of three cards in which each feature is <strong>EITHER</strong> the
 						same on each card <strong>OR</strong> is different on each card.
 					</Typography>
-					<Grid container columns={3} sx={{ marginX: 3 }} spacing={1}>
+					<Grid container columns={3} sx={{ marginX: 0 }} spacing={0}>
 						<Grid
 							item
 							container
