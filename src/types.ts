@@ -18,6 +18,17 @@ export
 type BitwiseValue = Enum<typeof BitwiseValues>;
 
 export
+const Screens = {
+	Title: 'title',
+	GameNew: 'game-new',
+	GameContinue: 'game-continue',
+	// TODO: Settings: 'settings',
+} as const;
+
+export
+type Screens = Enum<typeof Screens>;
+
+export
 interface SetOrders {
 	name: string;
 	order: string[];
@@ -88,7 +99,7 @@ const CountValues = {
 
 export
 interface Card {
-	id: string;
+	id?: string;
 	shape: Enum<typeof Shapes>;
 	color: Enum<typeof Colors>;
 	fill: Enum<typeof Fills>;

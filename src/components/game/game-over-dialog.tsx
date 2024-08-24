@@ -1,4 +1,4 @@
-import FormattedTime from './formatted-time';
+import FormattedTime from '@/components/formatted-time';
 import {
 	Button,
 	Dialog,

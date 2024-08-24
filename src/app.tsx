@@ -4,50 +4,23 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+import TitleScreen from './components/screens/title-screen';
+import { useActiveScreen } from './atoms';
+import { Screens } from './types';
 import Game from './components/game';
-import Toast from './components/toast';
-import ReactGA from "react-ga4";
-import HelpDialogTrigger from './components/help-dialog-trigger';
-import { Provider } from 'rxdb-hooks';
-import { useEffect, useState } from 'react';
-import { AsyncReturnType } from './types';
-import { initialize } from './core';
-import PauseDialog from './components/pause-dialog';
 
-const {
-	DEV,
-	PROD,
-	VITE_GOOGLE_ANALYTICS_ID = '',
-} = import.meta.env;
-
-if (PROD && VITE_GOOGLE_ANALYTICS_ID) {
-	ReactGA.initialize(VITE_GOOGLE_ANALYTICS_ID);
-}
-
-if(DEV) {
-	Promise.all([
-		import('rxdb/plugins/dev-mode'),
-		import('rxdb'),
-	]).then(([{ RxDBDevModePlugin }, { addRxPlugin }]) => {
-		console.log('Adding RxDB dev mode plugin');
-		addRxPlugin(RxDBDevModePlugin);
-	});
-}
+const ScreenComponents = {
+	[Screens.Title]: TitleScreen,
+	[Screens.GameNew]: Game,
+	[Screens.GameContinue]: () => <Game loadSavedGame />
+} as const;
 
 export default
 function App() {
-	const [db, setDb] = useState<AsyncReturnType<typeof initialize>>();
-
-	useEffect(() => {
-		initialize().then(setDb);
-	}, []);
+	const activeScreen = useActiveScreen();
+	const ActiveScreenComponent = ScreenComponents[activeScreen];
 
 	return (
-		<Provider db={db}>
-			<Game />
-			<Toast />
-			<PauseDialog/>
-			<HelpDialogTrigger />
-		</Provider>
+		<ActiveScreenComponent />
 	);
 }

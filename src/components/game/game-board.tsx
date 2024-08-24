@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import PlayingCard from './playing-card';
+import PlayingCard from '@/components/playing-card';
 import { usePausedState, usePushToastMsg } from '@/atoms';
 import { useRxData, } from 'rxdb-hooks';
 import { shuffleArray } from 'rxdb';
 import { Card, SetOrders } from '@/types';
-import { useInterval } from '../hooks';
-import FormattedTime from './formatted-time';
-import AdLinkSection from './ad-link-section';
+import { useInterval } from '@/hooks';
+import FormattedTime from '@/components/formatted-time';
+import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
 import { generateDeck, isSet, setExists } from '@/core';
 import {
@@ -37,7 +37,7 @@ const {
 } = import.meta.env;
 
 export default
-function Game() {
+function GameBoard() {
 	const [paused] = usePausedState();
 	const { result: setOrders } = useRxData<SetOrders>('setorders', collection => collection.find());
 	const { result: gameData  } = useRxData<{id: string; value: number}>('gamedata', collection => collection.find({ selector: { id: 'time' } }));
@@ -91,8 +91,8 @@ function Game() {
 									<PlayingCard
 										flipped={paused}
 										card={card}
-										selected={selectedCards.includes(card.id)}
-										onClick={() => toggleSelected(card.id)}
+										selected={!!card.id && selectedCards.includes(card.id)}
+										onClick={() => card.id && toggleSelected(card.id)}
 									/>
 								</Box>
 							</Grid>
@@ -170,7 +170,7 @@ function Game() {
 		}
 
 		const newSelectedCards = dealtCards
-			?.filter(card => newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
+			?.filter(card => !!card.id && newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
 			deckOrder?.patch({

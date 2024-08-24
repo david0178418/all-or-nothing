@@ -3,7 +3,7 @@ import { Card, ColorValues, CountValues, Enum, FillValues, ShapeValues } from '@
 
 interface Props {
 	flipped?: boolean;
-	card: Card;
+	card?: Card;
 	selected?: boolean;
 	onClick?(): void;
 }
@@ -11,16 +11,14 @@ interface Props {
 export default
 function PlayingCard(props: Props) {
 	const {
-		onClick = () => {},
+		onClick,
 		selected,
-		flipped,
-		card: {
-			color,
-			count,
-			fill,
-			shape,
-		}
+		// TODO: Integrate "flipping" animation into this component.
+		flipped: flippedOverride,
+		// TODO: Rename prop when batch of work is done.
+		card: face,
 	} = props;
+	const flipped = flippedOverride || !face;
 
 	return (
 		<Box
@@ -34,7 +32,7 @@ function PlayingCard(props: Props) {
 			onClick={onClick}
 			bgcolor={selected ? 'red' : 'white'}
 			sx={{
-				cursor: 'pointer',
+				cursor: onClick && 'pointer',
 				aspectRatio: '.65',
 			}}
 		>
@@ -51,12 +49,12 @@ function PlayingCard(props: Props) {
 						''
 				}}
 			>
-				{!flipped && Array(CountValues[count]).fill(0).map((_, i) => (
+				{!flipped && Array(CountValues[face.count]).fill(0).map((_, i) => (
 					<Shape
 						key={i}
-						color={ColorValues[color]}
-						fill={FillValues[fill]}
-						type={ShapeValues[shape]}
+						color={ColorValues[face.color]}
+						fill={FillValues[face.fill]}
+						type={ShapeValues[face.shape]}
 					/>
 				))}
 			</Box>

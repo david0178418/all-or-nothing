@@ -1,8 +1,21 @@
-import { atom, useAtom, useSetAtom } from 'jotai';
-import { ToastMesssage } from './types';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { Screens, ToastMesssage } from './types';
 
 export
 const pausedAtom = atom(false);
+
+export
+const activeScreenAtom = atom<Screens>(Screens.Title);
+
+export
+function useActiveScreen() {
+	return useAtomValue(activeScreenAtom);
+}
+
+export
+function useSetActiveScreen() {
+	return useSetAtom(activeScreenAtom);
+}
 
 export
 function usePausedState() {
