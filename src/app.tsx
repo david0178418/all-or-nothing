@@ -11,11 +11,13 @@ import { lazy, Suspense } from 'react';
 import Loader from './components/loader';
 const Game = lazy(() => import('./components/screens/game-screen'));
 const About = lazy(() => import('./components/screens/about-screen'));
+const Help = lazy(() => import('./components/screens/help-screen'));
 
 const ScreenComponents = {
 	[Screens.Title]: TitleScreen,
 	[Screens.Game]: Game,
 	[Screens.About]: About,
+	[Screens.Help]: Help,
 } as const;
 
 export default

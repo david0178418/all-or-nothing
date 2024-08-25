@@ -8,6 +8,7 @@ import {
 	RotateLeft as RotateLeftIcon,
 	PlayArrow as PlayArrowIcon,
 	Info as InfoIcon,
+	QuestionMark as QuestionMarkIcon,
 } from '@mui/icons-material';
 import {
 	ReactNode,
@@ -82,6 +83,13 @@ export default function Landing() {
 						}}
 					>
 						New Game
+					</Button>
+					<Button
+						startIcon={<QuestionMarkIcon />}
+						variant="outlined"
+						onClick={async () => setActiveScreen(Screens.Help)}
+					>
+						How to Play
 					</Button>
 					<Button
 						startIcon={<InfoIcon />}

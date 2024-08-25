@@ -22,6 +22,7 @@ const Screens = {
 	Title: 'title',
 	Game: 'game',
 	About: 'about',
+	Help: 'help',
 	// TODO: Settings: 'settings',
 } as const;
 
