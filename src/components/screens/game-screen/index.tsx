@@ -5,7 +5,7 @@ import { Provider } from 'rxdb-hooks';
 import { useState } from 'react';
 import { getDb } from '@/core';
 import PauseDialog from '@/components/pause-dialog';
-import GameBoard from './game-board';
+import GamePlayArea from './game-play-area';
 
 const {
 	DEV,
@@ -33,7 +33,7 @@ function Game() {
 
 	return (
 		<Provider db={db}>
-			<GameBoard />
+			<GamePlayArea />
 			<Toast />
 			<PauseDialog/>
 			<HelpDialogTrigger />
