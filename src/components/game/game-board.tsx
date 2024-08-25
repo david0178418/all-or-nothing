@@ -297,7 +297,7 @@ function Foo(props: FooProps) {
 								<QuestionMarkIcon />
 							</ListItemIcon>
 							<ListItemText>
-								Set Exists?
+								Hint
 							</ListItemText>
 						</ListItemButton>
 					</ListItem>
