@@ -21,6 +21,7 @@ export
 const Screens = {
 	Title: 'title',
 	Game: 'game',
+	About: 'about',
 	// TODO: Settings: 'settings',
 } as const;
 

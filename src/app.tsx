@@ -9,11 +9,13 @@ import { useActiveScreen } from './atoms';
 import { Screens } from './types';
 import { lazy, Suspense } from 'react';
 import Loader from './components/loader';
-const Game = lazy(() => import('./components/game'));
+const Game = lazy(() => import('./components/screens/game-screen'));
+const About = lazy(() => import('./components/screens/about-screen'));
 
 const ScreenComponents = {
 	[Screens.Title]: TitleScreen,
 	[Screens.Game]: Game,
+	[Screens.About]: About,
 } as const;
 
 export default

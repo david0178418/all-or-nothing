@@ -7,6 +7,7 @@ import { SavedGameKey } from '@/constants';
 import {
 	RotateLeft as RotateLeftIcon,
 	PlayArrow as PlayArrowIcon,
+	Info as InfoIcon,
 } from '@mui/icons-material';
 import {
 	ReactNode,
@@ -81,6 +82,13 @@ export default function Landing() {
 						}}
 					>
 						New Game
+					</Button>
+					<Button
+						startIcon={<InfoIcon />}
+						variant="outlined"
+						onClick={async () => setActiveScreen(Screens.About)}
+					>
+						About
 					</Button>
 				</Box>
 			</Box>
