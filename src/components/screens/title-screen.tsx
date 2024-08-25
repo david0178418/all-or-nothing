@@ -2,6 +2,8 @@ import PlayingCard from '../playing-card';
 import { Card, Screens } from '../../types';
 import { resetGame, useInterval } from '../../utils';
 import { useSetActiveScreen } from '../../atoms';
+import FormattedTime from '../formatted-time';
+import { SavedGameKey } from '@/constants';
 import {
 	RotateLeft as RotateLeftIcon,
 	PlayArrow as PlayArrowIcon,
@@ -21,6 +23,7 @@ import {
 export default function Landing() {
 	const [flipped, setFlipped] = useState(false);
 	const [demoCard, setDemoCard] = useState(generateRandomCard);
+	const [savedGameTime] = useState(getSavedGameTime)
 	const setActiveScreen = useSetActiveScreen();
 
 	useInterval(() => {
@@ -62,11 +65,12 @@ export default function Landing() {
 			>
 				<Box display="flex" flexDirection="column" gap={2}>
 					<Button
+						disabled={!savedGameTime}
 						startIcon={<RotateLeftIcon/>}
 						variant="outlined"
 						onClick={() => setActiveScreen(Screens.Game)}
 					>
-						Continue
+						Continue {!!savedGameTime && <FormattedTime label=" - " value={savedGameTime} />}
 					</Button>
 					<Button
 						startIcon={<PlayArrowIcon />}
@@ -82,6 +86,10 @@ export default function Landing() {
 			</Box>
 		</Container>
 	);
+}
+
+function getSavedGameTime() {
+	return +(localStorage.getItem(SavedGameKey) || '0');
 }
 
 function generateRandomCard(): Card {

@@ -8,7 +8,7 @@ import { useInterval } from '@/hooks';
 import FormattedTime from '@/components/formatted-time';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
-import { isSet, setExists } from '@/core';
+import { isSet, setExists, updateTime } from '@/core';
 import {
 	Menu as MenuIcon,
 	Pause as PauseIcon,
@@ -218,9 +218,11 @@ function Timer(props: Props) {
 	const runTimer = time && !gameComplete && !paused;
 
 	useInterval(() => {
-		time?.patch({
-			value: time.value + 1,
-		});
+		if(!time) {
+			return;
+		}
+
+		updateTime(time.value + 1);
 	}, runTimer ? 1000 : null);
 
 	if(!time) {

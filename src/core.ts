@@ -14,6 +14,7 @@ import {
 	SetOrders,
 	Shapes,
 } from './types';
+import { DbCollectionItemNameGameDataTime, DbCollectionItemNameSetOrdersDeck, DbCollectionItemNameSetOrdersDiscard, DbName, SavedGameKey } from './constants';
 
 export
 function setExists(cards: Card[]) {
@@ -101,7 +102,7 @@ async function initDb() {
 	};
 
 	const db = await createRxDatabase<DbCollections>({
-		name: 'make-a-set-v0',
+		name: DbName,
 		storage: getRxStorageDexie()
 	});
 
@@ -119,17 +120,17 @@ async function initDb() {
 	}
 
 	db.setorders.upsert({
-		name: 'deck',
+		name: DbCollectionItemNameSetOrdersDeck,
 		order: generateDeck(),
 	});
 
 	db.setorders.upsert({
-		name: 'discard',
+		name: DbCollectionItemNameSetOrdersDiscard,
 		order: [],
 	});
 
 	db.gamedata.upsert({
-		id: 'time',
+		id: DbCollectionItemNameGameDataTime,
 		value: 0,
 	});
 
@@ -138,20 +139,31 @@ async function initDb() {
 
 export
 async function resetGameCore() {
+	localStorage.removeItem(SavedGameKey);
 	db.setorders.upsert({
-		name: 'deck',
+		name: DbCollectionItemNameSetOrdersDeck,
 		order: generateDeck(),
 	});
 
 	db.setorders.upsert({
-		name: 'discard',
+		name: DbCollectionItemNameSetOrdersDiscard,
 		order: [],
 	});
 
 	db.gamedata.upsert({
-		id: 'time',
+		id: DbCollectionItemNameGameDataTime,
 		value: 0,
 	});
+}
+
+export
+async function updateTime(newTime: number) {
+	await db.gamedata.upsert({
+		id: DbCollectionItemNameGameDataTime,
+		value: newTime,
+	});
+
+	localStorage.setItem(SavedGameKey, newTime.toString());
 }
 
 export
