@@ -1,3 +1,21 @@
+import { useEffect, useLayoutEffect, useRef } from 'react'
+
+export
+function moveAndOverwriteItem<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
+	if (fromIndex < 0 || fromIndex >= arr.length || toIndex < 0 || toIndex >= arr.length) {
+		console.warn("Indices are out of bounds. Returning original array.");
+		return [...arr]; // Return a copy of the original array
+	}
+
+	const newArr = [...arr];
+
+	const [item] = newArr.splice(fromIndex, 1) as [T];
+
+	newArr[toIndex] = item;
+
+	return newArr;
+}
+
 export
 function randomizeArray<T>(array: T[]): T[] {
 	const newArray = array.slice();
@@ -11,8 +29,6 @@ function randomizeArray<T>(array: T[]): T[] {
 
 	return newArray;
 }
-
-import { useEffect, useLayoutEffect, useRef } from 'react'
 
 export function useTimeout(callback: () => void, delay: number | null): void {
 	const savedCallback = useRef(callback);

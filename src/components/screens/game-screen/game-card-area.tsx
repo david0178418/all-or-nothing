@@ -36,12 +36,14 @@ function GameCardArea(props: Props) {
 					justifyContent="center"
 				>
 					<Box maxWidth="80%">
-						<PlayingCard
-							flipped={paused}
-							card={card}
-							selected={!!card.id && selectedCards.includes(card.id)}
-							onClick={() => onSelected(card)}
-						/>
+						{card && (
+							<PlayingCard
+								flipped={paused}
+								card={card}
+								selected={!!card.id && selectedCards.includes(card.id)}
+								onClick={() => onSelected(card)}
+							/>
+						)}
 					</Box>
 				</Grid>
 			))}

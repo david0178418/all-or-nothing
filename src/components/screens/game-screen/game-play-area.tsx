@@ -15,10 +15,13 @@ import {
 	Container,
 	Typography,
 } from '@mui/material';
+import { moveAndOverwriteItem } from '@/utils';
 
 const {
 	VITE_AD_CONTENT_URL = '',
 } = import.meta.env;
+
+const BoardCardCount = 12
 
 export default
 function GamePlayArea() {
@@ -31,7 +34,9 @@ function GamePlayArea() {
 	const deckOrder = setOrders.find(order => order.name === 'deck');
 	const discardOrder = setOrders.find(order => order.name === 'discard');
 	const deck = deckOrder?.order.map<Card>(id => ({ id, ...JSON.parse(id) }));
-	const dealtCards = deck?.slice(0, 12);
+	const dealtCards = deck?.slice(0, BoardCardCount
+
+	);
 	// Todo: Clean this all up.
 	const gameComplete = !deckOrder?.order.length || (
 		(!!deck && deck.length <= 12) && !!dealtCards && !setExists(dealtCards)
@@ -94,6 +99,10 @@ function GamePlayArea() {
 		});
 	}
 	function toggleSelected(cardId: string) {
+		if(!(deckOrder && discardOrder && dealtCards)) {
+			return;
+		}
+
 		const selected = selectedCards.includes(cardId);
 
 		if (!selected && selectedCards.length >= 3) {
@@ -109,14 +118,19 @@ function GamePlayArea() {
 			return;
 		}
 
-		const newSelectedCards = dealtCards
-			?.filter(card => !!card.id && newSelectedCardIds.includes(card.id)) as [Card, Card, Card];
+		const newSelectedCards = dealtCards.filter(
+			card => !!card.id && newSelectedCardIds.includes(card.id)
+		) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
-			deckOrder?.patch({
-				order: deckOrder.order.filter(id => !newSelectedCardIds.includes(id)),
+			const selectedIndexes = newSelectedCardIds.map(selectedId => deckOrder.order.indexOf(selectedId) || 0) as [number, number, number];
+
+			deckOrder.patch({
+				order: deckOrder.order.length > BoardCardCount ?
+					dealNewCards(deckOrder.order, selectedIndexes, BoardCardCount):
+					deckOrder.order.filter(id => !newSelectedCardIds.includes(id)),
 			});
-			discardOrder?.patch({
+			discardOrder.patch({
 				order: [...discardOrder.order, ...newSelectedCardIds],
 			});
 			pushToastMsg('Set found!');
@@ -131,4 +145,10 @@ function GamePlayArea() {
 			pushToastMsg('A set exists!') :
 			pushToastMsg('No set exists.');
 	}
+}
+
+function dealNewCards(cardOrderIds: string[], removeCardIndexes: [number, number, number], dealtCardCount: number) {
+	const foo1 = moveAndOverwriteItem(cardOrderIds, dealtCardCount, removeCardIndexes[0]);
+	const foo2 = moveAndOverwriteItem(foo1, dealtCardCount, removeCardIndexes[1]);
+	return moveAndOverwriteItem(foo2, dealtCardCount, removeCardIndexes[2]);
 }
