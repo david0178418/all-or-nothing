@@ -1,5 +1,5 @@
+import { resetGame } from '@/utils';
 import { usePausedState, useSetActiveScreen } from '../atoms';
-import { resetGame } from '../core';
 import { Screens } from '../types';
 import {
 	PlayArrow as PlayArrowIcon,

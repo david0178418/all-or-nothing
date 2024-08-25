@@ -72,8 +72,6 @@ export default function Landing() {
 						startIcon={<PlayArrowIcon />}
 						variant="outlined"
 						onClick={async () => {
-							const { resetGame } = await import('@/core');
-							await resetGame();
 							setActiveScreen(Screens.Game);
 						}}
 					>

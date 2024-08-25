@@ -1,5 +1,5 @@
 import FormattedTime from '@/components/formatted-time';
-import { resetGame } from '@/core';
+import { resetGame } from '@/utils';
 import {
 	Button,
 	Dialog,

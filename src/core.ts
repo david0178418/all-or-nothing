@@ -137,7 +137,7 @@ async function initDb() {
 }
 
 export
-async function resetGame() {
+async function resetGameCore() {
 	db.setorders.upsert({
 		name: 'deck',
 		order: generateDeck(),

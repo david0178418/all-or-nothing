@@ -66,3 +66,9 @@ function useInterval(callback: () => void, delay: number | null) {
 		return () => clearInterval(id);
 	}, [delay])
 }
+
+export
+async function resetGame() {
+	const { resetGameCore } = await import('@/core');
+	await resetGameCore();
+}

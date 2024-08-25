@@ -7,7 +7,9 @@ import '@fontsource/roboto/700.css';
 import TitleScreen from './components/screens/title-screen';
 import { useActiveScreen } from './atoms';
 import { Screens } from './types';
-import Game from './components/game';
+import { lazy, Suspense } from 'react';
+import Loader from './components/loader';
+const Game = lazy(() => import('./components/game'));
 
 const ScreenComponents = {
 	[Screens.Title]: TitleScreen,
@@ -20,6 +22,8 @@ function App() {
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
 
 	return (
-		<ActiveScreenComponent />
+		<Suspense fallback={<Loader/>}>
+			<ActiveScreenComponent />
+		</Suspense>
 	);
 }
