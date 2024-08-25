@@ -1,6 +1,6 @@
 import PlayingCard from '../playing-card';
 import { Card, Screens } from '../../types';
-import { useInterval } from '../../utils';
+import { resetGame, useInterval } from '../../utils';
 import { useSetActiveScreen } from '../../atoms';
 import {
 	RotateLeft as RotateLeftIcon,
@@ -72,6 +72,7 @@ export default function Landing() {
 						startIcon={<PlayArrowIcon />}
 						variant="outlined"
 						onClick={async () => {
+							await resetGame();
 							setActiveScreen(Screens.Game);
 						}}
 					>

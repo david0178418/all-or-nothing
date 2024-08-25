@@ -40,8 +40,8 @@ function PauseDialog() {
 						<Button
 							variant="outlined"
 							startIcon={<RestartIcon />}
-							onClick={() => {
-								resetGame();
+							onClick={async () => {
+								await resetGame();
 								setPaused(false);
 							}}
 						>
