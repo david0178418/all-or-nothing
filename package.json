@@ -2,7 +2,7 @@
 	"name": "make-a-set-game",
 	"version": "1.0.0",
 	"type": "module",
-	"browserslist": "> 0.5%, last 2 versions, not dead",
+	"browserslist": "last 5 versions",
 	"scripts": {
 		"build": "vite build",
 		"preview": "vite preview",
