@@ -1,4 +1,5 @@
 import FormattedTime from '@/components/formatted-time';
+import { resetGame } from '@/core';
 import {
 	Button,
 	Dialog,
@@ -13,7 +14,6 @@ interface Props {
 	isGameOver: boolean;
 	time: number;
 	remainingCards: number;
-	onRestart(): void;
 }
 
 export default
@@ -22,7 +22,6 @@ function GameOverDialog(props: Props) {
 		isGameOver,
 		time,
 		remainingCards,
-		onRestart,
 	} = props;
 
 	return (
@@ -37,7 +36,7 @@ function GameOverDialog(props: Props) {
 				<FormattedTime label="Completed in " value={time} />
 			</DialogContent>
 			<DialogActions>
-				<Button variant="contained" onClick={onRestart}>
+				<Button variant="contained" onClick={resetGame}>
 					New Game
 				</Button>
 			</DialogActions>

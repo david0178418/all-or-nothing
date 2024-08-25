@@ -20,8 +20,7 @@ type BitwiseValue = Enum<typeof BitwiseValues>;
 export
 const Screens = {
 	Title: 'title',
-	GameNew: 'game-new',
-	GameContinue: 'game-continue',
+	Game: 'game',
 	// TODO: Settings: 'settings',
 } as const;
 

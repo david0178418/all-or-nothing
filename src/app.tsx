@@ -11,8 +11,7 @@ import Game from './components/game';
 
 const ScreenComponents = {
 	[Screens.Title]: TitleScreen,
-	[Screens.GameNew]: Game,
-	[Screens.GameContinue]: () => <Game loadSavedGame />
+	[Screens.Game]: Game,
 } as const;
 
 export default

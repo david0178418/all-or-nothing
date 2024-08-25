@@ -60,8 +60,14 @@ interface DbCollections {
 	gamedata: RxCollection<{id: string; value: number;}>;
 }
 
+const db = await initDb();
+
 export
-async function initialize() {
+function getDb() {
+	return db;
+}
+
+async function initDb() {
 	const GameDataSchema: RxJsonSchema<{id: string; value: number;}> = {
 		version: 0,
 		primaryKey: 'id',
@@ -99,10 +105,6 @@ async function initialize() {
 		storage: getRxStorageDexie()
 	});
 
-	if(db.collections.setorders) {
-		return db;
-	}
-
 	await db.addCollections({
 		gamedata: {
 			schema: GameDataSchema,
@@ -116,22 +118,40 @@ async function initialize() {
 		return db;
 	}
 
-	db.setorders.insert({
+	db.setorders.upsert({
 		name: 'deck',
 		order: generateDeck(),
 	});
 
-	db.setorders.insert({
+	db.setorders.upsert({
 		name: 'discard',
 		order: [],
 	});
 
-	db.gamedata.insert({
+	db.gamedata.upsert({
 		id: 'time',
 		value: 0,
 	});
 
 	return db;
+}
+
+export
+async function resetGame() {
+	db.setorders.upsert({
+		name: 'deck',
+		order: generateDeck(),
+	});
+
+	db.setorders.upsert({
+		name: 'discard',
+		order: [],
+	});
+
+	db.gamedata.upsert({
+		id: 'time',
+		value: 0,
+	});
 }
 
 export

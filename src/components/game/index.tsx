@@ -2,9 +2,8 @@ import Toast from '@/components/toast';
 import ReactGA from "react-ga4";
 import HelpDialogTrigger from '@/components/help-dialog-trigger';
 import { Provider } from 'rxdb-hooks';
-import { useEffect, useState } from 'react';
-import { AsyncReturnType } from '@/types';
-import { initialize } from '@/core';
+import { useState } from 'react';
+import { getDb } from '@/core';
 import PauseDialog from '@/components/pause-dialog';
 import GameBoard from './game-board';
 
@@ -28,18 +27,9 @@ if(DEV) {
 	});
 }
 
-interface Props {
-	loadSavedGame?: boolean;
-}
-
 export default
-function Game(props: Props) {
-	// const { loadSavedGame } = props;
-	const [db, setDb] = useState<AsyncReturnType<typeof initialize>>();
-
-	useEffect(() => {
-		initialize().then(setDb);
-	}, []);
+function Game() {
+	const [db] = useState(getDb);
 
 	return (
 		<Provider db={db}>

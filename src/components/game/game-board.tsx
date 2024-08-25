@@ -8,11 +8,10 @@ import { useInterval } from '@/hooks';
 import FormattedTime from '@/components/formatted-time';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
-import { generateDeck, isSet, setExists } from '@/core';
+import { isSet, setExists } from '@/core';
 import {
 	Menu as MenuIcon,
 	Pause as PauseIcon,
-	PlayArrow as PlayArrowIcon,
 	QuestionMark as QuestionMarkIcon,
 	Shuffle as ShuffleIcon,
 } from '@mui/icons-material';
@@ -52,13 +51,6 @@ function GameBoard() {
 	const gameComplete = !deckOrder?.order.length || (
 		(!!deck && deck.length <= 12) && !!dealtCards && !setExists(dealtCards)
 	);
-	const runTimer = time && !gameComplete && !paused;
-
-	useInterval(() => {
-		time?.patch({
-			value: time.value + 1,
-		});
-	}, runTimer ? 1000 : null);
 
 	if(!(deckOrder && discardOrder && time && dealtCards && deck)) {
 		return null;
@@ -103,27 +95,24 @@ function GameBoard() {
 					paddingTop={3}
 					textAlign={{ xs: 'center', sm: 'left' }}
 				>
-					<FormattedTime label="Time:" value={time.value} />
+					<Timer gameComplete={gameComplete} />
 					<Typography variant="subtitle1" sx={{marginTop: 1}}>
 						{deck.length} cards left in the deck
 					</Typography>
 				</Box>
 				<Bar
 					onReshuffle={handleReshuffle}
-					onRestart={handleReset}
 					onHintMessage={() => handleHintMessage(dealtCards)}
 				/>
 			</Container>
 			<Foo
 				onReshuffle={handleReshuffle}
-				onRestart={handleReset}
 				onHintMessage={() => handleHintMessage(dealtCards)}
 			/>
 			<GameOverDialog
 				remainingCards={dealtCards.length}
 				isGameOver={gameComplete}
 				time={time.value}
-				onRestart={handleReset}
 			/>
 			{VITE_AD_CONTENT_URL && (
 				<AdLinkSection
@@ -133,19 +122,6 @@ function GameBoard() {
 			)}
 		</>
 	);
-
-	function handleReset() {
-		deckOrder?.patch({
-			order: generateDeck(),
-		});
-		discardOrder?.patch({
-			order: [],
-		});
-		time?.patch({
-			value: 0,
-		});
-		setSelectedCards([]);
-	}
 
 	function handleReshuffle() {
 		setSelectedCards([]);
@@ -195,7 +171,6 @@ function GameBoard() {
 
 interface BarProps {
 	onReshuffle(): void;
-	onRestart(): void;
 	onHintMessage(): void;
 }
 
@@ -203,7 +178,6 @@ function Bar(props: BarProps) {
 	const [, setIsPaused] = usePausedState();
 	const {
 		onReshuffle,
-		onRestart,
 		onHintMessage,
 	} = props;
 
@@ -217,27 +191,49 @@ function Bar(props: BarProps) {
 				sm: 'block',
 			}}
 		>
-			<ButtonGroup variant="contained">
+			<ButtonGroup variant="outlined">
 				<Button onClick={() => setIsPaused(true)} startIcon={<PauseIcon/>}>
 					Pause
 				</Button>
 				<Button onClick={onHintMessage} startIcon={<QuestionMarkIcon />}>
-					Set?
+					Hint
 				</Button>
 				<Button onClick={onReshuffle} startIcon={<ShuffleIcon />}>
 					Shuffle
 				</Button>
-				<Button onClick={onRestart} startIcon={<PlayArrowIcon />}>
-					New Game
-				</Button>
 			</ButtonGroup>
 		</Box>
-	)
+	);
+}
+
+interface Props {
+	gameComplete?: boolean;
+}
+
+function Timer(props: Props) {
+	const { gameComplete } = props;
+	const [paused] = usePausedState();
+	const { result: gameData  } = useRxData<{id: string; value: number}>('gamedata', collection => collection.find({ selector: { id: 'time' } }));
+	const time = gameData?.find(doc => doc.id === 'time');
+	const runTimer = time && !gameComplete && !paused;
+
+	useInterval(() => {
+		time?.patch({
+			value: time.value + 1,
+		});
+	}, runTimer ? 1000 : null);
+
+	if(!time) {
+		return null;
+	}
+
+	return (
+		<FormattedTime label="Time:" value={time.value} />
+	);
 }
 
 interface FooProps {
 	onReshuffle(): void;
-	onRestart(): void;
 	onHintMessage(): void;
 }
 
@@ -246,7 +242,6 @@ function Foo(props: FooProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const {
 		onReshuffle,
-		onRestart,
 		onHintMessage,
 	} = props;
 
@@ -318,21 +313,6 @@ function Foo(props: FooProps) {
 							</ListItemIcon>
 							<ListItemText>
 								Sufffle
-							</ListItemText>
-						</ListItemButton>
-					</ListItem>
-					<ListItem>
-						<ListItemButton
-							onClick={() => {
-								setIsOpen(false);
-								onRestart();
-							}}
-						>
-							<ListItemIcon>
-								<PlayArrowIcon />
-							</ListItemIcon>
-							<ListItemText>
-								New Game
 							</ListItemText>
 						</ListItemButton>
 					</ListItem>

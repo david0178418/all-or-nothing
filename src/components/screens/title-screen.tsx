@@ -30,7 +30,7 @@ export default function Landing() {
 		} else {
 			setFlipped(true);
 		}
-	}, flipped ? 1_500 : 3_000);
+	}, flipped ? 1_000 : 3_000);
 
 	return (
 		<Container sx={{textAlign: 'center'}}>
@@ -62,16 +62,20 @@ export default function Landing() {
 			>
 				<Box display="flex" flexDirection="column" gap={2}>
 					<Button
-						disabled
 						startIcon={<RotateLeftIcon/>}
 						variant="outlined"
+						onClick={() => setActiveScreen(Screens.Game)}
 					>
 						Continue
 					</Button>
 					<Button
 						startIcon={<PlayArrowIcon />}
 						variant="outlined"
-						onClick={() => setActiveScreen(Screens.GameNew)}
+						onClick={async () => {
+							const { resetGame } = await import('@/core');
+							await resetGame();
+							setActiveScreen(Screens.Game);
+						}}
 					>
 						New Game
 					</Button>
