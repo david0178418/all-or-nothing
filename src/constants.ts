@@ -1,4 +1,4 @@
-export const DbName = 'make-a-set-v0';
+export const DbName = 'all-or-nothing-v0';
 export const DbCollectionNameGameData = 'gamedata';
 export const DbCollectionItemNameSetOrdersDeck = 'deck';
 export const DbCollectionItemNameSetOrdersDiscard = 'discard';

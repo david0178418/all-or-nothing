@@ -36,7 +36,7 @@ export default function Landing() {
 	return (
 		<Container sx={{textAlign: 'center'}}>
 			<Box
-				paddingTop={20}
+				paddingTop={15}
 				height={200}
 				display="inline-block"
 			>
@@ -48,7 +48,7 @@ export default function Landing() {
 			</Box>
 			<Box paddingY={7}>
 				<Typography fontWeight={100} variant="h1" fontSize={40}>
-					Make a <em>Set</em>
+					All <em>or</em> Nothing
 				</Typography>
 			</Box>
 			<Box

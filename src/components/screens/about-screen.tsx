@@ -10,7 +10,7 @@ function AboutScreen() {
 	return (
 		<Container sx={{textAlign: 'center', paddingTop: 10}}>
 			<Typography fontWeight={100} variant="h1" fontSize={40}>
-				Make a <em>Set</em>
+				All <em>or</em> Nothing
 			</Typography>
 			<Typography>
 				version {version}

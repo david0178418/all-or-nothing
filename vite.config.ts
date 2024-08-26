@@ -13,7 +13,7 @@ export default defineConfig({
 		VitePWA({
 			registerType: 'autoUpdate',
 			manifest: {
-				name: 'Make a Set',
+				name: 'All or Nothing',
 				id: '/?source=pwa',
 				start_url: '/?source=pwa',
 				theme_color: '#ffffff',
