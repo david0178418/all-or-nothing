@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePausedState, usePushToastMsg } from '@/atoms';
 import { useRxData, } from 'rxdb-hooks';
 import { shuffleArray } from 'rxdb';
@@ -34,10 +34,14 @@ function GamePlayArea() {
 	const deckOrder = setOrders.find(order => order.name === 'deck');
 	const discardOrder = setOrders.find(order => order.name === 'discard');
 	const deck = deckOrder?.order.map<Card>(id => ({ id, ...JSON.parse(id) }));
-	const dealtCards = deck?.slice(0, BoardCardCount
-
-	);
+	const [dealtCards, setDealtCards] = useState(() => deck?.slice(0, BoardCardCount));
+	// const dealtCards = deck?.slice(0, BoardCardCount);
 	// Todo: Clean this all up.
+
+	useEffect(() => {
+		setDealtCards(deck?.slice(0, BoardCardCount));
+	}, [setOrders]);
+
 	const gameComplete = !deckOrder?.order.length || (
 		(!!deck && deck.length <= 12) && !!dealtCards && !setExists(dealtCards)
 	);

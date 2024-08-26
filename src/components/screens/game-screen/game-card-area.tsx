@@ -1,6 +1,8 @@
 import PlayingCard from '@/components/playing-card';
 import { Card } from '@/types';
+import { useInterval } from '@/utils';
 import { Grid, Box } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 interface Props {
 	cards: Card[];
@@ -12,11 +14,26 @@ interface Props {
 export default
 function GameCardArea(props: Props) {
 	const {
-		cards,
+		cards: rawCards,
 		paused,
 		selectedCards,
 		onSelected,
 	} = props;
+	const [cards, setCards] = useState<Card[]>([]);
+	const [newCards, setNewCards] = useState<Card[]>([]);
+
+	useEffect(() => {
+		if(rawCards)
+
+		setNewCards(
+			rawCards.filter(rawCard => !cards.find(card => card.id === rawCard.id)),
+		);
+		setCards(rawCards);
+	}, [rawCards]);
+
+	useInterval(() => {
+		setNewCards(newCards.slice(1));
+	}, newCards.length ? 100 : null);
 
 	return (
 		<Grid
@@ -39,7 +56,7 @@ function GameCardArea(props: Props) {
 						{card && (
 							<PlayingCard
 								card={card}
-								flipped={paused}
+								flipped={paused || !!newCards.find(newCard => newCard.id === card.id)}
 								selected={!!card.id && selectedCards.includes(card.id)}
 								onClick={() => onSelected(card)}
 							/>
