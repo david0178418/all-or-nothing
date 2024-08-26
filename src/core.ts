@@ -1,5 +1,6 @@
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { randomizeArray } from './utils';
+import { DbCollectionItemNameGameDataTime, DbCollectionItemNameSetOrdersDeck, DbCollectionItemNameSetOrdersDiscard, DbName, SavedGameKey } from './constants';
 import {
 	createRxDatabase,
 	RxCollection,
@@ -14,7 +15,6 @@ import {
 	SetOrders,
 	Shapes,
 } from './types';
-import { DbCollectionItemNameGameDataTime, DbCollectionItemNameSetOrdersDeck, DbCollectionItemNameSetOrdersDiscard, DbName, SavedGameKey } from './constants';
 
 export
 function setExists(cards: Card[]) {
