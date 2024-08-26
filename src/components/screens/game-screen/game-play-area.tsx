@@ -54,7 +54,12 @@ function GamePlayArea() {
 		<>
 			<Container
 				maxWidth="md"
-				sx={{ xs: { padding: 0 } }}
+				sx={{
+					padding: 0,
+					marginTop: {
+						sm: 10,
+					}
+				}}
 			>
 				<Box>
 					<GameCardArea
