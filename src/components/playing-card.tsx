@@ -106,14 +106,6 @@ interface FlipperProps {
 function Flipper({ children, backside, flipped }: FlipperProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 
-	// useEffect(() => {
-	// 	if (flipped) {
-	// 	// This could be where you handle the transition halfway point
-	// 	// For simplicity, we're not adding complex logic here, but you could
-	// 	// use animation events to trigger the reveal of the backside.
-	// 	}
-	// }, [flipped]);
-
 	return (
 		<Box
 			ref={containerRef}
@@ -143,7 +135,9 @@ function Flipper({ children, backside, flipped }: FlipperProps) {
 				height: '100%',
 				backfaceVisibility: 'hidden',
 				transform: 'rotateY(180deg)',
-			}}>{backside}</Box>
+			}}>
+				{backside}
+			</Box>
 		</Box>
 	);
 }
