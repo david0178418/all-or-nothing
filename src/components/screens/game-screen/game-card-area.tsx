@@ -38,8 +38,8 @@ function GameCardArea(props: Props) {
 					<Box maxWidth="80%">
 						{card && (
 							<PlayingCard
-								flipped={paused}
 								card={card}
+								flipped={paused}
 								selected={!!card.id && selectedCards.includes(card.id)}
 								onClick={() => onSelected(card)}
 							/>

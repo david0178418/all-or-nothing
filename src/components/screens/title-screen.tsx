@@ -4,17 +4,13 @@ import { resetGame, useInterval } from '../../utils';
 import { useSetActiveScreen } from '../../atoms';
 import FormattedTime from '../formatted-time';
 import { SavedGameKey } from '@/constants';
+import { useState } from 'react';
 import {
 	RotateLeft as RotateLeftIcon,
 	PlayArrow as PlayArrowIcon,
 	Info as InfoIcon,
 	QuestionMark as QuestionMarkIcon,
 } from '@mui/icons-material';
-import {
-	ReactNode,
-	useRef,
-	useState,
-} from 'react';
 import {
 	Button,
 	Container,
@@ -41,20 +37,14 @@ export default function Landing() {
 		<Container sx={{textAlign: 'center'}}>
 			<Box
 				paddingTop={20}
-				width={108}
 				height={200}
 				display="inline-block"
 			>
-				<FlipCard
+				<PlayingCard
+					width={130}
 					flipped={flipped}
-					backside={
-						<PlayingCard/>
-					}
-				>
-					<PlayingCard
-						card={demoCard}
-					/>
-				</FlipCard>
+					card={demoCard}
+				/>
 			</Box>
 			<Box paddingY={7}>
 				<Typography fontWeight={100} variant="h1" fontSize={40}>
@@ -125,54 +115,3 @@ function chooseRandom<T>(...items: T[]) {
     const randomIndex = Math.floor(Math.random() * items.length);
     return items[randomIndex] as T;
 }
-
-interface FlipCardProps {
-	children: ReactNode;
-	backside: ReactNode;
-	flipped: boolean;
-}
-
-function FlipCard({ children, backside, flipped }: FlipCardProps) {
-	const containerRef = useRef<HTMLDivElement>(null);
-
-	// useEffect(() => {
-	// 	if (flipped) {
-	// 	// This could be where you handle the transition halfway point
-	// 	// For simplicity, we're not adding complex logic here, but you could
-	// 	// use animation events to trigger the reveal of the backside.
-	// 	}
-	// }, [flipped]);
-
-	return (
-		<Box
-			ref={containerRef}
-			sx={{
-				position: 'relative',
-				width: '100%',
-				height: '100%',
-				transformStyle: 'preserve-3d',
-				transition: 'transform 0.6s',
-				transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-			}}
-		>
-			<Box
-				sx={{
-					position: 'absolute',
-					width: '100%',
-					height: '100%',
-					backfaceVisibility: 'hidden',
-					transform: 'rotateY(0deg)',
-				}}
-			>
-				{children}
-			</Box>
-			<Box sx={{
-				position: 'absolute',
-				width: '100%',
-				height: '100%',
-				backfaceVisibility: 'hidden',
-				transform: 'rotateY(180deg)',
-			}}>{backside}</Box>
-		</Box>
-	);
-};

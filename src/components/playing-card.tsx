@@ -1,15 +1,51 @@
 import { Box } from '@mui/material';
 import { Card, ColorValues, CountValues, Enum, FillValues, ShapeValues } from '@/types';
+import { ReactNode, useRef } from 'react';
 
 interface Props {
 	flipped?: boolean;
 	card?: Card;
 	selected?: boolean;
 	onClick?(): void;
+	width?: number | string;
 }
 
 export default
 function PlayingCard(props: Props) {
+	const {
+		onClick,
+		selected,
+		width = 150,
+		// TODO: Integrate "flipping" animation into this component.
+		flipped: flippedOverride,
+		// TODO: Rename prop when batch of work is done.
+		card: face,
+	} = props;
+	const flipped = flippedOverride || !face;
+
+	return (
+		<Box
+			width={width}
+			maxWidth="100%"
+			sx={{aspectRatio: '.65'}}
+		>
+			<Flipper
+				flipped={flipped}
+				backside={
+					<CardSurface/>
+				}
+			>
+				<CardSurface
+					card={face}
+					onClick={onClick}
+					selected={selected}
+				/>
+			</Flipper>
+		</Box>
+	);
+}
+
+function CardSurface(props: Props) {
 	const {
 		onClick,
 		selected,
@@ -22,18 +58,18 @@ function PlayingCard(props: Props) {
 
 	return (
 		<Box
-			width="108px"
-			maxWidth="100%"
 			border="2px solid black"
-			padding="5px"
 			display="flex"
+			padding="5px"
+			boxSizing="border-box"
 			borderRadius="10px"
 			boxShadow="3px 3px 4px #000"
 			onClick={onClick}
 			bgcolor={selected ? 'red' : 'white'}
+			width="100%"
+			height="100%"
 			sx={{
 				cursor: onClick && 'pointer',
-				aspectRatio: '.65',
 			}}
 		>
 			<Box
@@ -58,6 +94,57 @@ function PlayingCard(props: Props) {
 					/>
 				))}
 			</Box>
+		</Box>
+	);
+}
+
+interface FlipperProps {
+	children: ReactNode;
+	backside: ReactNode;
+	flipped?: boolean;
+}
+
+function Flipper({ children, backside, flipped }: FlipperProps) {
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	// useEffect(() => {
+	// 	if (flipped) {
+	// 	// This could be where you handle the transition halfway point
+	// 	// For simplicity, we're not adding complex logic here, but you could
+	// 	// use animation events to trigger the reveal of the backside.
+	// 	}
+	// }, [flipped]);
+
+	return (
+		<Box
+			ref={containerRef}
+			sx={{
+				position: 'relative',
+				width: '100%',
+				height: '100%',
+				transformStyle: 'preserve-3d',
+				transition: 'transform 0.6s',
+				transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+			}}
+		>
+			<Box
+				sx={{
+					position: 'absolute',
+					width: '100%',
+					height: '100%',
+					backfaceVisibility: 'hidden',
+					transform: 'rotateY(0deg)',
+				}}
+			>
+				{children}
+			</Box>
+			<Box sx={{
+				position: 'absolute',
+				width: '100%',
+				height: '100%',
+				backfaceVisibility: 'hidden',
+				transform: 'rotateY(180deg)',
+			}}>{backside}</Box>
 		</Box>
 	);
 }
