@@ -28,6 +28,9 @@
 				"src/*"
 			]
 		},
+		"types": [
+			"vite-plugin-pwa/react"
+		]
 	},
 	"include": [
 		"**/*.ts",
