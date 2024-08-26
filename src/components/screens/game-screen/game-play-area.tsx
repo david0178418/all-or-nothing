@@ -35,6 +35,7 @@ function GamePlayArea() {
 	const discardOrder = setOrders.find(order => order.name === 'discard');
 	const deck = deckOrder?.order.map<Card>(id => ({ id, ...JSON.parse(id) }));
 	const [dealtCards, setDealtCards] = useState(() => deck?.slice(0, BoardCardCount));
+	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount;
 	// const dealtCards = deck?.slice(0, BoardCardCount);
 	// Todo: Clean this all up.
 
@@ -79,6 +80,7 @@ function GamePlayArea() {
 					</Typography>
 				</Box>
 				<GameOptions
+					canShuffle={canShuffle}
 					onReshuffle={handleReshuffle}
 					onHintMessage={() => handleHintMessage(dealtCards)}
 				/>

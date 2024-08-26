@@ -23,10 +23,13 @@ function GameCardArea(props: Props) {
 	const [newCards, setNewCards] = useState<Card[]>([]);
 
 	useEffect(() => {
-		if(rawCards)
+		const insertedCards = rawCards.filter(rawCard => !cards.find(card => card.id === rawCard.id));
 
 		setNewCards(
-			rawCards.filter(rawCard => !cards.find(card => card.id === rawCard.id)),
+			// TODO Figure out a more solid way of doing this.
+			insertedCards.length > 3 ?
+				rawCards :
+				insertedCards,
 		);
 		setCards(rawCards);
 	}, [rawCards]);

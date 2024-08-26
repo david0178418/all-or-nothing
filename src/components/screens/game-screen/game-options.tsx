@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 
 interface Props {
+	canShuffle?: boolean;
 	onReshuffle(): void;
 	onHintMessage(): void;
 }
@@ -19,6 +20,7 @@ export default
 function GameOptions(props: Props) {
 	const [, setIsPaused] = usePausedState();
 	const {
+		canShuffle,
 		onReshuffle,
 		onHintMessage,
 	} = props;
@@ -40,7 +42,7 @@ function GameOptions(props: Props) {
 				<Button onClick={onHintMessage} startIcon={<QuestionMarkIcon />}>
 					Hint
 				</Button>
-				<Button onClick={onReshuffle} startIcon={<ShuffleIcon />}>
+				<Button disabled={!canShuffle} onClick={onReshuffle} startIcon={<ShuffleIcon />}>
 					Shuffle
 				</Button>
 			</ButtonGroup>
