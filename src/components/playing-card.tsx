@@ -16,7 +16,6 @@ function PlayingCard(props: Props) {
 		onClick,
 		selected,
 		width = 150,
-		// TODO: Integrate "flipping" animation into this component.
 		flipped: flippedOverride,
 		// TODO: Rename prop when batch of work is done.
 		card: face,
