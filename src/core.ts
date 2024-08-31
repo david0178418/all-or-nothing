@@ -40,7 +40,6 @@ function setExists(cards: Card[]) {
 
 export
 function isSet(a: Card, b: Card, c: Card) {
-	return true;
 	return (
 		allSameOrDifferent(a.color, b.color, c.color) &&
 		allSameOrDifferent(a.fill, b.fill, c.fill) &&
