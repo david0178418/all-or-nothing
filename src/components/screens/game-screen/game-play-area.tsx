@@ -38,13 +38,13 @@ function GamePlayArea() {
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
 	const deckOrder = setOrders?.find(order => order.name === DbCollectionItemNameSetOrdersDeck);
-	const discardCards = setOrders?.find(order => order.name === DbCollectionItemNameSetOrdersDiscard);
+	const discardPile = setOrders?.find(order => order.name === DbCollectionItemNameSetOrdersDiscard);
 	const dealtCards = deck?.slice(0, BoardCardCount);
 	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount;
 
 	const gameComplete = (
-		!!discardCards &&
-		discardCards.order.length > 10 &&
+		!!discardPile &&
+		discardPile.order.length > 10 &&
 		!!deck &&
 		deck.length <= 12 &&
 		!setExists(dealtCards)
