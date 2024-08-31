@@ -1,10 +1,10 @@
 import { usePausedState } from '@/atoms';
-import { useRxData, } from 'rxdb-hooks';
 import { useInterval } from '@/hooks';
 import FormattedTime from '@/components/formatted-time';
 import { updateTime } from '@/core';
 import { useTimeout } from '@/utils';
 import { useState } from 'react';
+import { useTime } from './game-play-area';
 
 interface Props {
 	gameComplete?: boolean;
@@ -15,9 +15,8 @@ function GameTimer(props: Props) {
 	const { gameComplete } = props;
 	const [paused] = usePausedState();
 	const [passedCardRevealDelay, setPassedCardRevealDelay] = useState(false);
-	const { result: gameData  } = useRxData<{id: string; value: number}>('gamedata', collection => collection.find({ selector: { id: 'time' } }));
-	const time = gameData?.find(doc => doc.id === 'time');
-	const runTimer = passedCardRevealDelay && time && !gameComplete && !paused;
+	const time = useTime();
+	const runTimer = passedCardRevealDelay && !gameComplete && !paused;
 
 	useTimeout(() => {
 		// wait until cards reveal to run timer
@@ -25,11 +24,7 @@ function GameTimer(props: Props) {
 	}, 1200);
 
 	useInterval(() => {
-		if(!time) {
-			return;
-		}
-
-		updateTime(time.value + 1);
+		updateTime(time + 1);
 	}, runTimer ? 1000 : null);
 
 	if(!time) {
@@ -37,6 +32,6 @@ function GameTimer(props: Props) {
 	}
 
 	return (
-		<FormattedTime label="Time:" value={time.value} />
+		<FormattedTime label="Time:" value={time} />
 	);
 }

@@ -1,11 +1,13 @@
-import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { randomizeArray } from './utils';
-import { DbCollectionItemNameGameDataTime, DbCollectionItemNameSetOrdersDeck, DbCollectionItemNameSetOrdersDiscard, DbName, SavedGameKey } from './constants';
+import { moveAndOverwriteItem, randomizeArray } from './utils';
+import Dexie, { EntityTable } from 'dexie';
 import {
-	createRxDatabase,
-	RxCollection,
-	RxJsonSchema,
-} from 'rxdb';
+	DbCollectionItemNameGameDataShuffleCount,
+	DbCollectionItemNameGameDataTime,
+	DbCollectionItemNameSetOrdersDeck,
+	DbCollectionItemNameSetOrdersDiscard,
+	DbName,
+	SavedGameKey,
+} from './constants';
 import {
 	BitwiseValue,
 	Card,
@@ -38,6 +40,7 @@ function setExists(cards: Card[]) {
 
 export
 function isSet(a: Card, b: Card, c: Card) {
+	return true;
 	return (
 		allSameOrDifferent(a.color, b.color, c.color) &&
 		allSameOrDifferent(a.fill, b.fill, c.fill) &&
@@ -56,82 +59,50 @@ function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 	);
 }
 
-interface DbCollections {
-	setorders: RxCollection<SetOrders>;
-	gamedata: RxCollection<{id: string; value: number;}>;
-}
 
-const db = await initDb();
+const db = new Dexie(DbName) as Dexie & {
+	setorders: EntityTable<
+		SetOrders,
+		'name'
+	>;
+	gamedata: EntityTable<
+		{id: string; value: number;},
+		'id'
+	>
+};
+await initDb();
 
 export
 function getDb() {
 	return db;
 }
 
-async function initDb() {
-	const GameDataSchema: RxJsonSchema<{id: string; value: number;}> = {
-		version: 0,
-		primaryKey: 'id',
-		type: 'object',
-		properties: {
-			id: {
-				type: 'string',
-				maxLength: 24,
-			},
-			value: {
-				type: 'number',
-			},
-		},
-	};
-	const SetOrdersSchema: RxJsonSchema<SetOrders> = {
-		version: 0,
-		primaryKey: 'name',
-		type: 'object',
-		properties: {
-			name: {
-				type: 'string',
-				maxLength: 12,
-			},
-			order: {
-				type: 'array',
-				items: {
-					type: 'string',
-				},
-			},
-		},
-	};
-
-	const db = await createRxDatabase<DbCollections>({
-		name: DbName,
-		storage: getRxStorageDexie()
+async function initDb() {;
+// Schema declaration:
+	db.version(1).stores({
+		setorders: '++name, order', // primary key "id" (for the runtime!)
+		gamedata: '++id, value',
 	});
 
-	await db.addCollections({
-		gamedata: {
-			schema: GameDataSchema,
-		},
-		setorders: {
-			schema: SetOrdersSchema,
-		},
-	});
-
-	if(await db.setorders.count().exec()) {
-		return db;
+	if(await db.setorders.get(DbCollectionItemNameSetOrdersDeck)) {
+		return;
 	}
 
-	db.setorders.upsert({
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataTime,
+		value: 0,
+	});
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataShuffleCount,
+		value: 0,
+	});
+	db.setorders.add({
 		name: DbCollectionItemNameSetOrdersDeck,
 		order: generateDeck(),
 	});
-
-	db.setorders.upsert({
+	db.setorders.add({
 		name: DbCollectionItemNameSetOrdersDiscard,
-		order: [],
-	});
-
-	db.gamedata.upsert({
-		id: DbCollectionItemNameGameDataTime,
-		value: 0,
+		order: generateDeck(),
 	});
 
 	return db;
@@ -140,30 +111,68 @@ async function initDb() {
 export
 async function resetGameCore() {
 	localStorage.removeItem(SavedGameKey);
-	db.setorders.upsert({
-		name: DbCollectionItemNameSetOrdersDeck,
-		order: generateDeck(),
-	});
-
-	db.setorders.upsert({
-		name: DbCollectionItemNameSetOrdersDiscard,
-		order: [],
-	});
-
-	db.gamedata.upsert({
-		id: DbCollectionItemNameGameDataTime,
-		value: 0,
-	});
+	await Promise.all([
+		db.gamedata.update(DbCollectionItemNameGameDataTime, { value: 0 }),
+		db.setorders.update(DbCollectionItemNameSetOrdersDeck, { order: generateDeck() }),
+		db.setorders.update(DbCollectionItemNameSetOrdersDiscard, { order: generateDeck() }),
+	])
 }
 
 export
 async function updateTime(newTime: number) {
-	await db.gamedata.upsert({
-		id: DbCollectionItemNameGameDataTime,
+	await db.gamedata.update(DbCollectionItemNameGameDataTime, {
 		value: newTime,
 	});
 
 	localStorage.setItem(SavedGameKey, newTime.toString());
+}
+
+export
+async function shuffleDeck() {
+	const deck = await db.setorders.get(DbCollectionItemNameSetOrdersDeck);
+	const shuffleCount = await db.gamedata.get(DbCollectionItemNameGameDataShuffleCount);
+
+	if(!(deck && shuffleCount)) {
+		return;
+	}
+
+	await Promise.all([
+		db.setorders.update(DbCollectionItemNameSetOrdersDeck, {
+			order: randomizeArray(deck.order),
+		}),
+		db.gamedata.update(DbCollectionItemNameGameDataShuffleCount, {
+			value: shuffleCount.value + 1,
+		}),
+	]);
+}
+
+export
+async function discardCards(discardCardIds: string[], boardSize: number) {
+	const deckOrder = await db.setorders.get(DbCollectionItemNameSetOrdersDeck);
+	const discardPile = await db.setorders.get(DbCollectionItemNameSetOrdersDiscard);
+
+	if(!(deckOrder && discardPile)) {
+		return;
+	}
+
+	const selectedIndexes = discardCardIds.map(selectedId => deckOrder.order.indexOf(selectedId) || 0) as [number, number, number];
+
+	await Promise.all([
+		db.setorders.update(DbCollectionItemNameSetOrdersDeck, {
+			order: deckOrder.order.length > boardSize ?
+				dealNewCards(deckOrder.order, selectedIndexes, boardSize):
+				deckOrder.order.filter(id => !discardCardIds.includes(id)),
+		}),
+		db.setorders.update(DbCollectionItemNameSetOrdersDiscard, {
+			order: [...discardPile.order, ...discardCardIds]
+		}),
+	]);
+}
+
+function dealNewCards(cardOrderIds: string[], removeCardIndexes: [number, number, number], dealtCardCount: number) {
+	const foo1 = moveAndOverwriteItem(cardOrderIds, dealtCardCount, removeCardIndexes[0]);
+	const foo2 = moveAndOverwriteItem(foo1, dealtCardCount, removeCardIndexes[1]);
+	return moveAndOverwriteItem(foo2, dealtCardCount, removeCardIndexes[2]);
 }
 
 export
