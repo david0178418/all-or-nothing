@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { usePausedState, usePushToastMsg } from '@/atoms';
+import { useIsPaused, usePushToastMsg } from '@/atoms';
 import { Card } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
@@ -32,7 +32,7 @@ function GamePlayArea() {
 	const deck = useDeck();
 	const time = useTime();
 	const shuffleCount = useShuffleCount();
-	const [paused] = usePausedState();
+	const paused = useIsPaused();
 	const setOrders = useLiveQuery(() => db.setorders.toArray());
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
@@ -40,8 +40,10 @@ function GamePlayArea() {
 	const dealtCards = deck?.slice(0, BoardCardCount);
 	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount;
 
-	const gameComplete = !deckOrder?.order.length || (
-		(!!deck && deck.length <= 12) && !!dealtCards && !setExists(dealtCards)
+	const gameComplete = (deckOrder && !deckOrder.order.length) || (
+		(!!deck && deck.length <= 12) &&
+		!!dealtCards &&
+		!setExists(dealtCards)
 	);
 
 	return (

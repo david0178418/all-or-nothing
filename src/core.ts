@@ -112,6 +112,7 @@ async function resetGameCore() {
 	localStorage.removeItem(SavedGameKey);
 	await Promise.all([
 		db.gamedata.update(DbCollectionItemNameGameDataTime, { value: 0 }),
+		db.gamedata.update(DbCollectionItemNameGameDataShuffleCount, { value: 0 }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDeck, { order: generateDeck() }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDiscard, { order: generateDeck() }),
 	])

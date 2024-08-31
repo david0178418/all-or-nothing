@@ -1,4 +1,4 @@
-import { usePausedState } from '@/atoms';
+import { useIsPaused } from '@/atoms';
 import { useInterval } from '@/hooks';
 import FormattedTime from '@/components/formatted-time';
 import { updateTime } from '@/core';
@@ -13,7 +13,7 @@ interface Props {
 export default
 function GameTimer(props: Props) {
 	const { gameComplete } = props;
-	const [paused] = usePausedState();
+	const paused = useIsPaused();
 	const [passedCardRevealDelay, setPassedCardRevealDelay] = useState(false);
 	const time = useTime();
 	const runTimer = passedCardRevealDelay && !gameComplete && !paused;

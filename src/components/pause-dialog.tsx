@@ -1,6 +1,10 @@
 import { resetGame } from '@/utils';
-import { usePausedState, useSetActiveScreen } from '../atoms';
 import { Screens } from '../types';
+import {
+	useIsPaused,
+	useSetActiveScreen,
+	useSetIsPaused,
+} from '../atoms';
 import {
 	PlayArrow as PlayArrowIcon,
 	RestartAlt as RestartIcon,
@@ -16,7 +20,8 @@ import {
 
 export default
 function PauseDialog() {
-	const [paused, setPaused] = usePausedState();
+	const paused = useIsPaused();
+	const setPaused = useSetIsPaused();
 	const setActiveScreen = useSetActiveScreen();
 
 	return (

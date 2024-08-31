@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { usePausedState } from '@/atoms';
+import { useSetIsPaused } from '@/atoms';
 import {
 	Menu as MenuIcon,
 	Pause as PauseIcon,
@@ -23,7 +23,7 @@ interface Props {
 
 export default
 function GameOptionsMobile(props: Props) {
-	const [, setIsPaused] = usePausedState();
+	const setIsPaused = useSetIsPaused();
 	const [isOpen, setIsOpen] = useState(false);
 	const {
 		onReshuffle,

@@ -1,4 +1,4 @@
-import { usePausedState } from '@/atoms';
+import { useSetIsPaused } from '@/atoms';
 import {
 	Pause as PauseIcon,
 	QuestionMark as QuestionMarkIcon,
@@ -18,7 +18,7 @@ interface Props {
 
 export default
 function GameOptions(props: Props) {
-	const [, setIsPaused] = usePausedState();
+	const setIsPaused = useSetIsPaused();
 	const {
 		canShuffle,
 		onReshuffle,
