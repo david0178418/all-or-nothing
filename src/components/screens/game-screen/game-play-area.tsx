@@ -18,6 +18,7 @@ import {
 	DbCollectionItemNameGameDataShuffleCount,
 	DbCollectionItemNameGameDataTime,
 	DbCollectionItemNameSetOrdersDeck,
+	DbCollectionItemNameSetOrdersDiscard,
 } from '@/constants';
 
 const {
@@ -36,13 +37,16 @@ function GamePlayArea() {
 	const setOrders = useLiveQuery(() => db.setorders.toArray());
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
-	const deckOrder = setOrders?.find(order => order.name === 'deck');
+	const deckOrder = setOrders?.find(order => order.name === DbCollectionItemNameSetOrdersDeck);
+	const discardCards = setOrders?.find(order => order.name === DbCollectionItemNameSetOrdersDiscard);
 	const dealtCards = deck?.slice(0, BoardCardCount);
 	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount;
 
-	const gameComplete = (deckOrder && !deckOrder.order.length) || (
-		(!!deck && deck.length <= 12) &&
-		!!dealtCards &&
+	const gameComplete = (
+		!!discardCards &&
+		discardCards.order.length > 10 &&
+		!!deck &&
+		deck.length <= 12 &&
 		!setExists(dealtCards)
 	);
 
