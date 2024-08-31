@@ -44,6 +44,9 @@ function GamePlayArea() {
 
 	const gameComplete = (
 		!!discardPile &&
+		// TODO This is an arbitrary limit. But basically, it's a placeholder for
+		// "the game has loaded" flag since "deck" will initially be an empty array.
+		// But this works well enough for now.
 		discardPile.order.length > 10 &&
 		!!deck &&
 		deck.length <= 12 &&
