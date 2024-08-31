@@ -29,6 +29,7 @@ function AboutScreen() {
 						variant="outlined"
 						startIcon={<GitHubIcon/>}
 						endIcon={<LaunchIcon />}
+						target="_blank"
 						href="https://github.com/david0178418/all-or-nothing"
 					>
 						Github Repo
