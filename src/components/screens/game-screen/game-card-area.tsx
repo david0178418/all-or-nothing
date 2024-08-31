@@ -29,7 +29,6 @@ function GameCardArea(props: Props) {
 	const [newCards, setNewCards] = useState<Card[]>([]);
 
 	useEffect(() => {
-		console.log(111);
 		setCards(rawCards);
 
 		const insertedCards = rawCards.filter(rawCard => !cards.find(card => card.id === rawCard.id));
