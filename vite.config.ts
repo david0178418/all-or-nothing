@@ -14,6 +14,7 @@ export default defineConfig({
 			registerType: 'autoUpdate',
 			manifest: {
 				name: 'All or Nothing',
+				orientation: 'portrait',
 				short_name: 'All|Nothing',
 				id: '/?source=pwa',
 				start_url: '/?source=pwa',
