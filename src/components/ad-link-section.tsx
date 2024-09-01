@@ -180,6 +180,12 @@ function AdLinkSection(props: Props) {
 							<Typography variant="subtitle2">
 								{activeItem.subLabel}
 							</Typography>
+							<Typography
+								component="small"
+								fontSize={12}
+							>
+								<em>(paid link)</em>
+							</Typography>
 						</Box>
 					</Box>
 				</Box>
