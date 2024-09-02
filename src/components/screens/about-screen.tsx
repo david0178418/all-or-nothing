@@ -48,6 +48,18 @@ function AboutScreen() {
 						Sounds by floraphonic
 					</Button>
 				</Box>
+				<Box paddingTop={3}>
+					<Button
+						fullWidth
+						variant="outlined"
+						startIcon={<GraphicEqIcon/>}
+						endIcon={<LaunchIcon />}
+						target="_blank"
+						href="https://pixabay.com/sound-effects/success-221935/"
+					>
+						Sounds by updatepelgo
+					</Button>
+				</Box>
 				<Box paddingTop={5}>
 					<Button
 						fullWidth
