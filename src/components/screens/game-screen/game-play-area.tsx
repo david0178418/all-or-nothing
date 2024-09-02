@@ -20,6 +20,7 @@ import {
 	DbCollectionItemNameSetOrdersDeck,
 	DbCollectionItemNameSetOrdersDiscard,
 } from '@/constants';
+import { useSoundEffects } from '@/hooks';
 
 const {
 	VITE_AD_CONTENT_URL = '',
@@ -32,6 +33,7 @@ export default
 function GamePlayArea() {
 	const deck = useDeck();
 	const time = useTime();
+	const soundEffects = useSoundEffects();
 	const shuffleCount = useShuffleCount();
 	const paused = useIsPaused();
 	const setOrders = useLiveQuery(() => db.setorders.toArray());
@@ -142,6 +144,7 @@ function GamePlayArea() {
 		if(isSet(...newSelectedCards)) {
 			discardCards(newSelectedCardIds, BoardCardCount);
 			pushToastMsg('Set found!');
+			soundEffects('success');
 			setSelectedCards([]);
 		} else {
 			setSelectedCards(newSelectedCardIds);

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import debounce from 'lodash.debounce';
-import soundfx from './card-sounds.mp3';
+import soundfx from './soundfx.mp3';
 import useSound from 'use-sound';
 
 export
@@ -39,6 +39,7 @@ const SpriteMap: Record<string, [number, number]> = {
 	flip1: [1500, 130],
 	flip2: [2100, 100],
 	flip3: [2200, 100],
+	success: [8600, 900],
 } as const;
 
 export function useSoundEffects() {
