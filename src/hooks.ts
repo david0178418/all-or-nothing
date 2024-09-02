@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import debounce from 'lodash.debounce';
 import soundfx from './soundfx.mp3';
 import useSound from 'use-sound';
+import { useIsSoundEnabled } from './atoms';
 
 export
 // From https://usehooks-ts.com/react-hook/use-interval
@@ -43,11 +44,18 @@ const SpriteMap: Record<string, [number, number]> = {
 } as const;
 
 export function useSoundEffects() {
+	const isSoundEnabled = useIsSoundEnabled();
 	const [play] = useSound(soundfx, {
 		sprite: SpriteMap,
 	});
 
-	return (id: keyof typeof SpriteMap) => play({id});
+	return (id: keyof typeof SpriteMap) => {
+		if(!isSoundEnabled) {
+			return;
+		}
+
+		play({id});
+	};
 }
 
 export function useDebouncedValue<T>(value: T, delay = 250) {

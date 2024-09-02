@@ -1,10 +1,20 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { Screens, ToastMesssage } from './types';
 
-export
-const pausedAtom = atom(false);
+const soundAtom = atom(true);
 
 export
+function useIsSoundEnabled() {
+	return useAtomValue(soundAtom);
+}
+
+export
+function useSetIsSoundEnabled() {
+	return useSetAtom(soundAtom);
+}
+
+const pausedAtom = atom(false);
+
 const activeScreenAtom = atom<Screens>(Screens.Title);
 
 export

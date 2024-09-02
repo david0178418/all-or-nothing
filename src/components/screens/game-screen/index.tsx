@@ -2,6 +2,7 @@ import Toast from '@/components/toast';
 import ReactGA from "react-ga4";
 import PauseDialog from '@/components/pause-dialog';
 import GamePlayArea from './game-play-area';
+import SoundToggle from '@/components/sound-toggle';
 
 const {
 	PROD,
@@ -19,6 +20,7 @@ function Game() {
 			<GamePlayArea />
 			<Toast />
 			<PauseDialog/>
+			<SoundToggle />
 		</>
 	);
 }
