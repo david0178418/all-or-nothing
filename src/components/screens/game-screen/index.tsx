@@ -1,6 +1,5 @@
 import Toast from '@/components/toast';
 import ReactGA from "react-ga4";
-import HelpDialogTrigger from '@/components/help-dialog-trigger';
 import PauseDialog from '@/components/pause-dialog';
 import GamePlayArea from './game-play-area';
 
@@ -20,7 +19,6 @@ function Game() {
 			<GamePlayArea />
 			<Toast />
 			<PauseDialog/>
-			<HelpDialogTrigger />
 		</>
 	);
 }

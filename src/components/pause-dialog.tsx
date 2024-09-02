@@ -17,6 +17,7 @@ import {
 	DialogContentText,
 	Box,
 } from '@mui/material';
+import HelpDialogTrigger from './help-dialog-trigger';
 
 export default
 function PauseDialog() {
@@ -52,6 +53,7 @@ function PauseDialog() {
 						>
 							New Game
 						</Button>
+						<HelpDialogTrigger />
 						<Button
 							variant="outlined"
 							startIcon={<BackIcon />}

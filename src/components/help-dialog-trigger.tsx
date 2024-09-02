@@ -7,7 +7,6 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	Fab,
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
@@ -20,18 +19,14 @@ function HelpDialogTrigger() {
 
 	return (
 		<>
-			<Fab
-				color="primary"
-				size="small"
-				sx={{
-					position: 'fixed',
-					bottom: 16,
-					right: 16,
-				}}
+
+			<Button
+				variant="outlined"
+				startIcon={<InfoIcon />}
 				onClick={() => setOpen(true)}
 			>
-				<InfoIcon />
-			</Fab>
+				How to Play
+			</Button>
 			<Dialog
 				fullScreen={fullScreen}
 				open={open}
