@@ -5,6 +5,7 @@ import { Screens } from "@/types";
 import {
 	ArrowBack as ArrowBackIcon,
 	GitHub as GitHubIcon,
+	GraphicEq as GraphicEqIcon,
 	Launch as LaunchIcon,
 } from "@mui/icons-material";
 
@@ -34,8 +35,20 @@ function AboutScreen() {
 					>
 						Github Repo
 					</Button>
-				</Box><br/>
+				</Box>
 				<Box paddingTop={3}>
+					<Button
+						fullWidth
+						variant="outlined"
+						startIcon={<GraphicEqIcon/>}
+						endIcon={<LaunchIcon />}
+						target="_blank"
+						href="https://pixabay.com/sound-effects/book-foley-turn-pages-7-189812/"
+					>
+						Sounds by floraphonic
+					</Button>
+				</Box>
+				<Box paddingTop={5}>
 					<Button
 						fullWidth
 						variant="outlined"
