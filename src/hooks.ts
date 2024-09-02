@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import debounce from 'lodash.debounce';
+import soundfx from './card-sounds.mp3';
+import useSound from 'use-sound';
 
 export
 // From https://usehooks-ts.com/react-hook/use-interval
@@ -16,17 +18,35 @@ function useInterval(callback: () => void, delay: number | null) {
 		// Don't schedule if no delay is specified.
 		// Note: 0 is a valid value for delay.
 		if (delay === null) {
-			return
+			return;
 		}
 
 		const id = setInterval(() => {
 			savedCallback.current()
-		}, delay)
+		}, delay);
 
 		return () => {
 			clearInterval(id)
 		}
 	}, [delay])
+}
+
+const SpriteMap: Record<string, [number, number]> = {
+	deal1: [0, 120],
+	deal2: [1350, 50],
+	deal3: [250, 170],
+	deal4: [1830, 100],
+	flip1: [1500, 130],
+	flip2: [2100, 100],
+	flip3: [2200, 100],
+} as const;
+
+export function useSoundEffects() {
+	const [play] = useSound(soundfx, {
+		sprite: SpriteMap,
+	});
+
+	return (id: keyof typeof SpriteMap) => play({id});
 }
 
 export function useDebouncedValue<T>(value: T, delay = 250) {

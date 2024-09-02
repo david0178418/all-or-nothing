@@ -74,7 +74,6 @@ function GameCardArea(props: Props) {
 							x: 1,
 							y: 1,
 							transition: {
-								// duration: 55,
 								delay: newCards.findIndex(nc => nc.id === card.id) * .15,
 							},
 							transitionEnd: {
@@ -94,6 +93,7 @@ function GameCardArea(props: Props) {
 							{card && (
 								<PlayingCard
 									card={card}
+									dealt={!newCards.find(newCard => newCard.id === card.id)}
 									flipped={paused || !!newCards.find(newCard => newCard.id === card.id)}
 									selected={!!card.id && selectedCards.includes(card.id)}
 									onClick={() => onSelected(card)}

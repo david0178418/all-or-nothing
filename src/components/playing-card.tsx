@@ -1,9 +1,19 @@
 import { Box } from '@mui/material';
-import { Card, ColorValues, CountValues, Enum, FillValues, ShapeValues } from '@/types';
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
+import { useSoundEffects } from '@/hooks';
+import { getRandom } from '@/utils';
+import {
+	Card,
+	ColorValues,
+	CountValues,
+	Enum,
+	FillValues,
+	ShapeValues,
+} from '@/types';
 
 interface Props {
 	flipped?: boolean;
+	dealt?:boolean;
 	card?: Card;
 	selected?: boolean;
 	onClick?(): void;
@@ -12,15 +22,25 @@ interface Props {
 
 export default
 function PlayingCard(props: Props) {
+	const play = useSoundEffects();
 	const {
 		onClick,
 		selected,
+		dealt = false,
 		width = 150,
 		flipped: flippedOverride,
 		// TODO: Rename prop when batch of work is done.
 		card: face,
 	} = props;
 	const flipped = flippedOverride || !face;
+
+	useEffect(() => {
+		if(!dealt) {
+			return;
+		}
+
+		play(`deal${getRandom(1, 4)}`);
+	}, [dealt]);
 
 	return (
 		<Box
