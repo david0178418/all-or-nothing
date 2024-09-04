@@ -8,7 +8,7 @@ export default
 function HelpScreen() {
 	const setActiveScreen = useSetActiveScreen();
 	return (
-		<Container>
+		<Container sx={{ maxHeight: '100vh', overflow: 'auto' }}>
 			<Typography variant="h1" fontSize={40}>
 				How to Play
 			</Typography>
