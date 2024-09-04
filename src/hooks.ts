@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import debounce from 'lodash.debounce';
-import soundfx from './soundfx.mp3';
 import useSound from 'use-sound';
 import { useIsSoundEnabled } from './atoms';
+import soundfx from './soundfx.mp3';
 
 export
 // From https://usehooks-ts.com/react-hook/use-interval

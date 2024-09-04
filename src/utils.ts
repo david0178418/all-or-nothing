@@ -19,8 +19,8 @@ function moveAndOverwriteItem<T>(arr: T[], fromIndex: number, toIndex: number): 
 export
 function getRandom(min: number, max: number) {
 	min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export
@@ -88,6 +88,17 @@ function useInterval(callback: () => void, delay: number | null) {
 
 		return () => clearInterval(id);
 	}, [delay])
+}
+
+export
+function randomChoice<T>(...items: T[]): T {
+	if (items.length === 0) {
+		throw new Error("At least one argument is required");
+	}
+
+	const randomIndex = Math.floor(Math.random() * items.length);
+
+	return items[randomIndex] as T;
 }
 
 export

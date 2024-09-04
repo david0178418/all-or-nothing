@@ -13,6 +13,18 @@ function useSetIsSoundEnabled() {
 	return useSetAtom(soundAtom);
 }
 
+const musicAtom = atom(true);
+
+export
+function useIsMusicEnabled() {
+	return useAtomValue(musicAtom);
+}
+
+export
+function useSetIsMusicEnabled() {
+	return useSetAtom(musicAtom);
+}
+
 const pausedAtom = atom(false);
 
 const activeScreenAtom = atom<Screens>(Screens.Title);
