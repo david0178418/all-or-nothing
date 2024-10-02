@@ -81,10 +81,11 @@ function GamePlayArea() {
 					/>
 				</Box>
 				<Box
-					paddingTop={3}
+					marginTop={3}
 					textAlign={{ xs: 'center', sm: 'left' }}
+					sx={{backgroundColor: '#ffffffbb', display: 'inline-block', paddingX: 1}}
 				>
-					<GameTimer gameComplete={gameComplete} />
+					<GameTimer gameComplete={gameComplete} /><br/>
 					<Typography variant="subtitle1" sx={{marginTop: 1}}>
 						{deck.length} cards left in the deck
 					</Typography>

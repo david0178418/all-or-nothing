@@ -9,6 +9,8 @@ import { useActiveScreen } from './atoms';
 import { Screens } from './types';
 import { lazy, Suspense } from 'react';
 import Loader from './components/loader';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material';
 const Game = lazy(() => import('./components/screens/game-screen'));
 const About = lazy(() => import('./components/screens/about-screen'));
 const Help = lazy(() => import('./components/screens/help-screen'));
@@ -26,8 +28,22 @@ function App() {
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
 
 	return (
-		<Suspense fallback={<Loader/>}>
-			<ActiveScreenComponent />
-		</Suspense>
+		<ThemeProvider theme={theme}>
+			<Suspense fallback={<Loader/>}>
+				<ActiveScreenComponent />
+			</Suspense>
+		</ThemeProvider>
 	);
 }
+
+
+const theme = createTheme({
+	palette: {
+		primary: {
+			main: '#EB6123',
+			light: '#85E21F',
+			dark: '#881EE4',
+			contrastText: '#fff',
+		}
+	},
+});;
