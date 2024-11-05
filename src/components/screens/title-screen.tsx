@@ -59,14 +59,14 @@ export default function Landing() {
 					<Button
 						disabled={!savedGameTime}
 						startIcon={<RotateLeftIcon/>}
-						variant="contained"
+						variant="outlined"
 						onClick={() => setActiveScreen(Screens.Game)}
 					>
 						Continue {!!savedGameTime && <FormattedTime label=" - " value={savedGameTime} />}
 					</Button>
 					<Button
 						startIcon={<PlayArrowIcon />}
-						variant="contained"
+						variant="outlined"
 						onClick={async () => {
 							await resetGame();
 							setActiveScreen(Screens.Game);
@@ -76,14 +76,14 @@ export default function Landing() {
 					</Button>
 					<Button
 						startIcon={<QuestionMarkIcon />}
-						variant="contained"
+						variant="outlined"
 						onClick={async () => setActiveScreen(Screens.Help)}
 					>
 						How to Play
 					</Button>
 					<Button
 						startIcon={<InfoIcon />}
-						variant="contained"
+						variant="outlined"
 						onClick={async () => setActiveScreen(Screens.About)}
 					>
 						About

@@ -35,7 +35,7 @@ function GameOptions(props: Props) {
 				sm: 'block',
 			}}
 		>
-			<ButtonGroup variant="contained">
+			<ButtonGroup variant="outlined">
 				<Button onClick={() => setIsPaused(true)} startIcon={<PauseIcon/>}>
 					Pause
 				</Button>

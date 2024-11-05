@@ -1,13 +1,7 @@
 body {
 	margin: 0;
 	padding: 0;
-	/* TODO: Implement theming */
-	/* background: lightgrey; */
-	background-position: center center;
-	background-repeat: no-repeat;
-	background-image: url('/assets/halloween-background.svg');
-	background-size: cover;
-	background-color: #0C0A0C;
+	background: lightgrey;
 }
 
 body,

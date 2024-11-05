@@ -65,13 +65,9 @@ const Colors = {
 
 export
 const ColorValues = {
-	// TODO Implement themeing
-	// [Colors.Red]: '#C92020',
-	// [Colors.Green]: '#17B321',
-	// [Colors.Blue]: '#8A00A6',
-	[Colors.Red]: '#EB6123',
-	[Colors.Green]: '#85E21F',
-	[Colors.Blue]: '#881EE4',
+	[Colors.Red]: '#C92020',
+	[Colors.Green]: '#17B321',
+	[Colors.Blue]: '#8A00A6',
 } as const;
 
 export
