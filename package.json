@@ -1,6 +1,6 @@
 {
 	"name": "all-or-nothing-game",
-	"version": "1.7.0",
+	"version": "1.7.1",
 	"type": "module",
 	"browserslist": "last 5 versions",
 	"scripts": {
