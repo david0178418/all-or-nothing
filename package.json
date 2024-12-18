@@ -9,14 +9,6 @@
 		"dev": "vite --open"
 	},
 	"devDependencies": {
-		"@types/node": "^20.14.12",
-		"@types/react": "^18.3.3",
-		"@types/react-dom": "^18.3.0",
-		"@vitejs/plugin-react": "^4.3.1",
-		"parcel": "^2.12.0",
-		"parcel-reporter-static-files-copy": "^1.5.3",
-		"process": "^0.11.10",
-		"vite": "^5.3.5"
 	},
 	"author": "",
 	"license": "ISC",
@@ -29,16 +21,21 @@
 		"@mui/material": "^6.0.1",
 		"@types/howler": "^2.2.11",
 		"@types/lodash.debounce": "^4.0.9",
-		"dexie": "^4.0.8",
+		"@types/node": "^20.14.12",
+		"@types/react-dom": "^18.3.0",
+		"@types/react": "^18.3.3",
+		"@vitejs/plugin-react": "^4.3.1",
 		"dexie-react-hooks": "^1.1.7",
+		"dexie": "^4.0.8",
 		"framer-motion": "^11.3.30",
 		"jotai": "^2.9.1",
 		"lodash.debounce": "^4.0.8",
-		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-ga4": "^2.1.0",
+		"react": "^18.3.1",
 		"rxjs": "^7.8.1",
 		"use-sound": "^4.0.3",
-		"vite-plugin-pwa": "^0.20.1"
+		"vite-plugin-pwa": "^0.20.1",
+		"vite": "^5.3.5"
 	}
 }
