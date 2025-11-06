@@ -5,3 +5,6 @@ firebase*
 dynamic/
 dist/
 .env*
+
+*.local
+*.local.*
