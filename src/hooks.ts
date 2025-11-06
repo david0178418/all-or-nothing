@@ -74,12 +74,6 @@ export function useDebouncedValue<T>(value: T, delay = 250) {
 	return debouncedValue;
 }
 
-type DebounceOptions = {
-	leading?: boolean
-	trailing?: boolean
-	maxWait?: number
-}
-
 type ControlFunctions = {
 	cancel: () => void
 	flush: () => void
