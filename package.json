@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "vite build",
 		"preview": "vite preview",
-		"dev": "vite --open"
+		"dev": "vite"
 	},
 	"author": "",
 	"license": "ISC",
