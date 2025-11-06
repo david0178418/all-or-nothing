@@ -61,10 +61,9 @@ function GameCardArea(props: Props) {
 					<Grid
 						key={`${shuffleCount}-${card.id}`}
 						component={motion.div}
-						item
-						xs={1}
 						display="flex"
 						justifyContent="center"
+						size={1}
 						initial={{
 							x: '100vw',
 							y: '-50vh',
