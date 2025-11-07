@@ -1,6 +1,11 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
-import { getFocusManager, FocusableElement } from './focus-manager';
-import { useFocusContext } from './focus-context';
+import { useEffect, useRef, useState } from 'react';
+import {
+	FocusableElement,
+	useCurrentFocusId,
+	useRegisterElement,
+	useUnregisterElement,
+	useFocusElement,
+} from '@/atoms';
 
 interface UseFocusableOptions {
 	id: string;
@@ -26,8 +31,10 @@ export function useFocusable({
 }: UseFocusableOptions) {
 	const elementRef = useRef<HTMLElement>(null);
 	const [isFocused, setIsFocused] = useState(false);
-	const { currentFocusId } = useFocusContext();
-	const focusManager = getFocusManager();
+	const currentFocusId = useCurrentFocusId();
+	const registerElement = useRegisterElement();
+	const unregisterElement = useUnregisterElement();
+	const focusElement = useFocusElement();
 
 	// Store the latest onSelect callback in a ref to avoid re-registration
 	const onSelectRef = useRef(onSelect);
@@ -46,7 +53,7 @@ export function useFocusable({
 	// Register/unregister the element
 	useEffect(() => {
 		if (disabled) {
-			focusManager.unregister(id);
+			unregisterElement(id);
 			return;
 		}
 
@@ -66,12 +73,12 @@ export function useFocusable({
 			},
 		};
 
-		focusManager.register(focusableElement);
+		registerElement(focusableElement);
 
 		return () => {
-			focusManager.unregister(id);
+			unregisterElement(id);
 		};
-	}, [id, group, gridPositionKey, order, disabled, focusManager]);
+	}, [id, group, gridPositionKey, order, disabled, registerElement, unregisterElement]);
 
 	// Handle auto-focus separately - only run once when autoFocus is first true
 	const hasAutoFocused = useRef(false);
@@ -79,16 +86,16 @@ export function useFocusable({
 		if (autoFocus && !hasAutoFocused.current && !disabled) {
 			// Small delay to ensure element is registered first
 			const timeoutId = setTimeout(() => {
-				focusManager.focusElement(id);
+				focusElement(id);
 				hasAutoFocused.current = true;
 			}, 0);
 			return () => clearTimeout(timeoutId);
 		}
-	}, [autoFocus, disabled, focusManager, id])
+	}, [autoFocus, disabled, focusElement, id]);
 
 	return {
 		ref: elementRef,
 		isFocused,
-		focus: () => focusManager.focusElement(id),
+		focus: () => focusElement(id),
 	};
 }

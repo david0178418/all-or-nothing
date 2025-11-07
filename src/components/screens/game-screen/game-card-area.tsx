@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDebouncedValue } from '@/hooks';
 import { useFocusable } from '@/focus/useFocusable';
-import { useFocusContext } from '@/focus/focus-context';
+import { useSetActiveGroup } from '@/atoms';
 
 interface Props {
 	shuffleCount: number;
@@ -88,7 +88,7 @@ function GameCardArea(props: Props) {
 	const [shuffleCount, setShuffleCount] = useState(rawShffleCount);
 	const [cards, setCards] = useState<Card[]>([]);
 	const [newCards, setNewCards] = useState<Card[]>([]);
-	const { setActiveGroup } = useFocusContext();
+	const setActiveGroup = useSetActiveGroup();
 
 	useEffect(() => {
 		setCards(rawCards);

@@ -1,7 +1,7 @@
 import PlayingCard from '../playing-card';
 import { Card, Screens } from '../../types';
 import { resetGame, useInterval } from '../../utils';
-import { useSetActiveScreen } from '../../atoms';
+import { useSetActiveScreen, useSetActiveGroup } from '../../atoms';
 import FormattedTime from '../formatted-time';
 import { SavedGameKey } from '@/constants';
 import { useState, useEffect, ReactNode, useCallback, useRef } from 'react';
@@ -18,7 +18,6 @@ import {
 	Typography,
 } from "@mui/material";
 import { useFocusable } from '@/focus/useFocusable';
-import { useFocusContext } from '@/focus/focus-context';
 import FocusIndicator from '@/components/focus-indicator';
 
 // Focusable button wrapper
@@ -87,7 +86,7 @@ export default function Landing() {
 	const [demoCard, setDemoCard] = useState(generateRandomCard);
 	const [savedGameTime] = useState(getSavedGameTime)
 	const setActiveScreen = useSetActiveScreen();
-	const { setActiveGroup } = useFocusContext();
+	const setActiveGroup = useSetActiveGroup();
 
 	// Set menu as active focus group when title screen loads
 	useEffect(() => {

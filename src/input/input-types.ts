@@ -1,4 +1,5 @@
 import { Enum } from "@/types";
+import { pick } from "@/utils";
 
 /**
  * Unified input action types for controller and keyboard
@@ -15,6 +16,15 @@ export const InputAction = {
 	NAVIGATE_RIGHT: 'NAVIGATE_RIGHT',
 } as const;
 export type InputAction = Enum<typeof InputAction>
+
+export const PrimaryInputAction = pick(InputAction,
+	'NAVIGATE_UP',
+	'NAVIGATE_DOWN',
+	'NAVIGATE_LEFT',
+	'NAVIGATE_RIGHT',
+	'SELECT',
+);
+export type PrimaryInputAction = Enum<typeof PrimaryInputAction>;
 
 /**
  * Controller types supported by the application

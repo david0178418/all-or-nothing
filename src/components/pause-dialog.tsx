@@ -4,6 +4,7 @@ import {
 	useIsPaused,
 	useSetActiveScreen,
 	useSetIsPaused,
+	useSetActiveGroup,
 } from '../atoms';
 import {
 	PlayArrow as PlayArrowIcon,
@@ -20,7 +21,6 @@ import {
 import HelpDialogTrigger from './help-dialog-trigger';
 import { useEffect, ReactNode, useCallback, useRef } from 'react';
 import { useFocusable } from '@/focus/useFocusable';
-import { useFocusContext } from '@/focus/focus-context';
 import FocusIndicator from './focus-indicator';
 
 // Focusable button for dialog
@@ -85,7 +85,7 @@ function PauseDialog() {
 	const paused = useIsPaused();
 	const setPaused = useSetIsPaused();
 	const setActiveScreen = useSetActiveScreen();
-	const { setActiveGroup } = useFocusContext();
+	const setActiveGroup = useSetActiveGroup();
 
 	// Set pause dialog as active group when opened
 	useEffect(() => {

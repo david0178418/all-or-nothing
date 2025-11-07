@@ -1,5 +1,20 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { Screens, ToastMesssage } from './types';
+import { NavigationDirection } from './input/input-types';
+
+/**
+ * Represents a focusable element in the application
+ */
+export interface FocusableElement {
+	id: string;
+	element: HTMLElement | null;
+	group: string; // Group identifier (e.g., 'cards', 'menu', 'dialog')
+	gridPosition?: { row: number; col: number }; // For 2D grid navigation
+	order?: number; // For 1D list navigation
+	onFocus?: () => void;
+	onBlur?: () => void;
+	onSelect?: () => void;
+}
 
 const soundAtom = atom(true);
 
@@ -92,4 +107,278 @@ function useUsingNavigationalInput() {
 export
 function useSetUsingNavigationalInput() {
 	return useSetAtom(usingNavigationalInputAtom);
+}
+
+// Focus Management Atoms
+const focusableElementsAtom = atom(new Map<string, FocusableElement>());
+const currentFocusIdAtom = atom<string | null>(null);
+const activeGroupAtom = atom<string | null>(null);
+
+// Helper to get elements in active group
+function getElementsInGroup(elements: Map<string, FocusableElement>, group: string): FocusableElement[] {
+	return Array.from(elements.values()).filter(el => el.group === group);
+}
+
+// Helper to trigger focus callbacks
+function triggerFocusCallbacks(
+	elements: Map<string, FocusableElement>,
+	prevFocusId: string | null,
+	newFocusId: string | null
+): void {
+	// Blur previous element
+	if (prevFocusId && prevFocusId !== newFocusId) {
+		const prevElement = elements.get(prevFocusId);
+		if (prevElement?.onBlur) {
+			prevElement.onBlur();
+		}
+	}
+
+	// Focus new element
+	if (newFocusId) {
+		const newElement = elements.get(newFocusId);
+		if (newElement?.onFocus) {
+			newElement.onFocus();
+		}
+		// Scroll into view
+		if (newElement?.element) {
+			newElement.element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		}
+	}
+}
+
+// Navigate in 2D grid
+function navigate2D(
+	direction: NavigationDirection,
+	current: FocusableElement,
+	elements: FocusableElement[]
+): string | null {
+	if (!current.gridPosition) return null;
+
+	const { row, col } = current.gridPosition;
+
+	const directionHandlers = {
+		[NavigationDirection.UP]: () => ({ row: row - 1, col }),
+		[NavigationDirection.DOWN]: () => ({ row: row + 1, col }),
+		[NavigationDirection.LEFT]: () => ({ row, col: col - 1 }),
+		[NavigationDirection.RIGHT]: () => ({ row, col: col + 1 }),
+	} as const;
+
+	const handler = directionHandlers[direction];
+	if (!handler) return null;
+
+	const { row: targetRow, col: targetCol } = handler();
+
+	// Find element at target position
+	const targetElement = elements.find(
+		el => el.gridPosition?.row === targetRow && el.gridPosition?.col === targetCol
+	);
+
+	return targetElement?.id || null;
+}
+
+// Navigate in 1D list
+function navigate1D(
+	direction: NavigationDirection,
+	current: FocusableElement,
+	elements: FocusableElement[]
+): string | null {
+	// Sort elements by order
+	const sortedElements = elements.sort((a, b) => (a.order || 0) - (b.order || 0));
+	const currentIndex = sortedElements.findIndex(el => el.id === current.id);
+
+	if (currentIndex === -1) return null;
+
+	const directionHandlers = {
+		[NavigationDirection.UP]: () => (currentIndex - 1 + sortedElements.length) % sortedElements.length,
+		[NavigationDirection.DOWN]: () => (currentIndex + 1) % sortedElements.length,
+		[NavigationDirection.LEFT]: () => (currentIndex - 1 + sortedElements.length) % sortedElements.length,
+		[NavigationDirection.RIGHT]: () => (currentIndex + 1) % sortedElements.length,
+	} as const;
+
+	const handler = directionHandlers[direction];
+	if (!handler) return null;
+
+	const targetIndex = handler();
+
+	return sortedElements[targetIndex]?.id || null;
+}
+
+// Register a focusable element
+export const registerElementAtom = atom(
+	null,
+	(get, set, element: FocusableElement) => {
+		const elements = new Map(get(focusableElementsAtom));
+		elements.set(element.id, element);
+		set(focusableElementsAtom, elements);
+	}
+);
+
+// Unregister a focusable element
+export const unregisterElementAtom = atom(
+	null,
+	(get, set, id: string) => {
+		const elements = new Map(get(focusableElementsAtom));
+		const currentFocusId = get(currentFocusIdAtom);
+
+		if (currentFocusId === id) {
+			set(currentFocusIdAtom, null);
+		}
+
+		elements.delete(id);
+		set(focusableElementsAtom, elements);
+	}
+);
+
+// Focus a specific element by ID
+export const focusElementAtom = atom(
+	null,
+	(get, set, id: string) => {
+		const elements = get(focusableElementsAtom);
+		const element = elements.get(id);
+		if (!element) return;
+
+		const prevFocusId = get(currentFocusIdAtom);
+		set(currentFocusIdAtom, id);
+
+		triggerFocusCallbacks(elements, prevFocusId, id);
+	}
+);
+
+// Set active group and auto-focus first element
+export const setActiveGroupAtom = atom(
+	null,
+	(get, set, group: string | null) => {
+		set(activeGroupAtom, group);
+
+		// Auto-focus first element in group
+		if (group) {
+			const elements = get(focusableElementsAtom);
+			const currentFocusId = get(currentFocusIdAtom);
+			const elementsInGroup = getElementsInGroup(elements, group);
+
+			if (elementsInGroup.length > 0 && !currentFocusId) {
+				set(focusElementAtom, elementsInGroup[0]!.id);
+			}
+		}
+	}
+);
+
+// Navigate in a direction
+export const navigateAtom = atom(
+	null,
+	(get, set, direction: NavigationDirection) => {
+		const activeGroup = get(activeGroupAtom);
+		const currentFocusId = get(currentFocusIdAtom);
+		const elements = get(focusableElementsAtom);
+
+		if (!activeGroup || !currentFocusId) {
+			// If nothing is focused, focus the first element in the active group
+			if (activeGroup) {
+				const elementsInGroup = getElementsInGroup(elements, activeGroup);
+				if (elementsInGroup.length > 0) {
+					set(focusElementAtom, elementsInGroup[0]!.id);
+				}
+			}
+			return;
+		}
+
+		const currentElement = elements.get(currentFocusId);
+		if (!currentElement) return;
+
+		const elementsInGroup = getElementsInGroup(elements, activeGroup);
+		if (elementsInGroup.length === 0) return;
+
+		// Determine if this is a 2D grid or 1D list
+		const isGrid = elementsInGroup.some(el => el.gridPosition !== undefined);
+
+		const targetId = isGrid
+			? navigate2D(direction, currentElement, elementsInGroup)
+			: navigate1D(direction, currentElement, elementsInGroup);
+
+		if (targetId) {
+			set(focusElementAtom, targetId);
+		}
+	}
+);
+
+// Select the currently focused element
+export const selectCurrentAtom = atom(
+	null,
+	(get, set) => {
+		const currentFocusId = get(currentFocusIdAtom);
+		if (!currentFocusId) return;
+
+		const elements = get(focusableElementsAtom);
+		const element = elements.get(currentFocusId);
+		if (element?.onSelect) {
+			element.onSelect();
+		}
+	}
+);
+
+// Clear focus
+export const clearFocusAtom = atom(
+	null,
+	(get, set) => {
+		const currentFocusId = get(currentFocusIdAtom);
+		if (currentFocusId) {
+			const elements = get(focusableElementsAtom);
+			const element = elements.get(currentFocusId);
+			if (element?.onBlur) {
+				element.onBlur();
+			}
+			set(currentFocusIdAtom, null);
+		}
+	}
+);
+
+// Clear all focus state
+export const clearAllFocusAtom = atom(
+	null,
+	(get, set) => {
+		set(focusableElementsAtom, new Map());
+		set(currentFocusIdAtom, null);
+		set(activeGroupAtom, null);
+	}
+);
+
+// Hooks for accessing focus state
+export function useCurrentFocusId() {
+	return useAtomValue(currentFocusIdAtom);
+}
+
+export function useActiveGroup() {
+	return useAtomValue(activeGroupAtom);
+}
+
+export function useRegisterElement() {
+	return useSetAtom(registerElementAtom);
+}
+
+export function useUnregisterElement() {
+	return useSetAtom(unregisterElementAtom);
+}
+
+export function useFocusElement() {
+	return useSetAtom(focusElementAtom);
+}
+
+export function useSetActiveGroup() {
+	return useSetAtom(setActiveGroupAtom);
+}
+
+export function useNavigate() {
+	return useSetAtom(navigateAtom);
+}
+
+export function useSelectCurrent() {
+	return useSetAtom(selectCurrentAtom);
+}
+
+export function useClearFocus() {
+	return useSetAtom(clearFocusAtom);
+}
+
+export function useClearAllFocus() {
+	return useSetAtom(clearAllFocusAtom);
 }

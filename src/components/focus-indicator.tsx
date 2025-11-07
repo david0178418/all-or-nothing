@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useFocusContext } from '@/focus/focus-context';
+import { useUsingNavigationalInput } from '@/atoms';
 
 interface FocusIndicatorProps {
 	visible: boolean;
@@ -10,7 +10,7 @@ interface FocusIndicatorProps {
  * Visual indicator for focused elements (keyboard/controller navigation)
  */
 export default function FocusIndicator({ visible }: FocusIndicatorProps) {
-	const { usingNavigationalInput } = useFocusContext();
+	const usingNavigationalInput = useUsingNavigationalInput();
 	const shouldShow = visible && usingNavigationalInput;
 
 	return (

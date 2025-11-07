@@ -1,45 +1,39 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react';
-import { getFocusManager } from './focus-manager';
+import { useEffect, ReactNode, useCallback, useRef } from 'react';
 import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
-import { InputAction, InputEvent, NavigationDirection } from '@/input/input-types';
-import { useSetUsingNavigationalInput } from '@/atoms';
-
-interface FocusContextValue {
-	currentFocusId: string | null;
-	setActiveGroup: (group: string | null) => void;
-	usingNavigationalInput: boolean;
-}
-
-const FocusContext = createContext<FocusContextValue | null>(null);
+import { InputEvent, NavigationDirection, PrimaryInputAction } from '@/input/input-types';
+import {
+	useSetUsingNavigationalInput,
+	useUsingNavigationalInput,
+	useNavigate,
+	useSelectCurrent,
+	useClearAllFocus,
+} from '@/atoms';
+import { isIn } from '@/utils';
 
 /**
- * Provider component for focus management
+ * Manages input routing from keyboard/gamepad to focus actions
  */
-export function FocusProvider({ children }: { children: ReactNode }) {
-	const [currentFocusId, setCurrentFocusId] = useState<string | null>(null);
-	const [usingNavigationalInput, setUsingNavigationalInputLocal] = useState(false);
+export function FocusInputManager({ children }: { children: ReactNode }) {
+	const usingNavigationalInput = useUsingNavigationalInput();
 	const setUsingNavigationalInput = useSetUsingNavigationalInput();
-	const focusManager = getFocusManager();
+	const navigate = useNavigate();
+	const selectCurrent = useSelectCurrent();
+	const clearAllFocus = useClearAllFocus();
 	const gamepadManager = getGamepadManager();
 	const keyboardManager = getKeyboardManager();
+	const actionHandlers = {
+		[PrimaryInputAction.NAVIGATE_UP]: () => navigate(NavigationDirection.UP),
+		[PrimaryInputAction.NAVIGATE_DOWN]: () => navigate(NavigationDirection.DOWN),
+		[PrimaryInputAction.NAVIGATE_LEFT]: () => navigate(NavigationDirection.LEFT),
+		[PrimaryInputAction.NAVIGATE_RIGHT]: () => navigate(NavigationDirection.RIGHT),
+		[PrimaryInputAction.SELECT]: () => selectCurrent(),
+	} as const;
 
-	// Use ref to track navigational input state to avoid recreating callbacks
 	const usingNavigationalInputRef = useRef(false);
 	useEffect(() => {
 		usingNavigationalInputRef.current = usingNavigationalInput;
 	}, [usingNavigationalInput]);
-
-	// Stable function to update focus state
-	const updateFocusState = useCallback(() => {
-		setCurrentFocusId(focusManager.getCurrentFocusId());
-	}, [focusManager]);
-
-	// Stable function to set active group
-	const setActiveGroup = useCallback((group: string | null) => {
-		focusManager.setActiveGroup(group);
-		updateFocusState();
-	}, [focusManager, updateFocusState]);
 
 	// Handle input events
 	const handleInput = useCallback((event: InputEvent) => {
@@ -47,39 +41,19 @@ export function FocusProvider({ children }: { children: ReactNode }) {
 
 		// Detect keyboard/gamepad input (any navigational input means they're using keyboard/controller)
 		if (!usingNavigationalInputRef.current) {
-			setUsingNavigationalInputLocal(true);
 			setUsingNavigationalInput(true);
+			return;
 		}
 
-		// Map input actions to focus manager actions
-		switch (action) {
-			case InputAction.NAVIGATE_UP:
-				focusManager.navigate(NavigationDirection.UP);
-				updateFocusState();
-				break;
-			case InputAction.NAVIGATE_DOWN:
-				focusManager.navigate(NavigationDirection.DOWN);
-				updateFocusState();
-				break;
-			case InputAction.NAVIGATE_LEFT:
-				focusManager.navigate(NavigationDirection.LEFT);
-				updateFocusState();
-				break;
-			case InputAction.NAVIGATE_RIGHT:
-				focusManager.navigate(NavigationDirection.RIGHT);
-				updateFocusState();
-				break;
-			case InputAction.SELECT:
-				focusManager.selectCurrent();
-				break;
-			// Other actions (BACK, PAUSE, HINT, SHUFFLE) are handled by specific components
-		}
-	}, [focusManager, updateFocusState, setUsingNavigationalInput]);
+		if(!isIn(action, PrimaryInputAction)) return;
+
+		actionHandlers[action]();
+
+	}, [setUsingNavigationalInput]);
 
 	// Stable mouse/touch handler using ref
 	const handleMouseOrTouch = useCallback(() => {
 		if (usingNavigationalInputRef.current) {
-			setUsingNavigationalInputLocal(false);
 			setUsingNavigationalInput(false);
 		}
 	}, [setUsingNavigationalInput]);
@@ -102,26 +76,11 @@ export function FocusProvider({ children }: { children: ReactNode }) {
 			keyboardManager.removeListener(handleInput);
 			gamepadManager.destroy();
 			keyboardManager.destroy();
-			focusManager.clear();
+			clearAllFocus();
 			window.removeEventListener('mousedown', handleMouseOrTouch);
 			window.removeEventListener('touchstart', handleMouseOrTouch);
 		};
-	}, [gamepadManager, keyboardManager, focusManager, handleInput, handleMouseOrTouch]);
+	}, [gamepadManager, keyboardManager, handleInput, handleMouseOrTouch, clearAllFocus]);
 
-	return (
-		<FocusContext.Provider value={{ currentFocusId, setActiveGroup, usingNavigationalInput }}>
-			{children}
-		</FocusContext.Provider>
-	);
-}
-
-/**
- * Hook to access the focus context
- */
-export function useFocusContext() {
-	const context = useContext(FocusContext);
-	if (!context) {
-		throw new Error('useFocusContext must be used within a FocusProvider');
-	}
-	return context;
+	return <>{children}</>;
 }
