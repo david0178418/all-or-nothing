@@ -85,10 +85,8 @@ export
 const clearCurrentToastMsgAtom = atom(
 	null,
 	(get, set) => {
-		const tqa = get(toastQueueAtom);
-		tqa.shift();
-
-		set(toastQueueAtom, [ ...tqa ]);
+		const [, ...rest] = get(toastQueueAtom);
+		set(toastQueueAtom, rest);
 	},
 );
 
