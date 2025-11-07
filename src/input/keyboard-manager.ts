@@ -17,9 +17,11 @@ export class KeyboardManager {
 	/**
 	 * Initialize the keyboard manager
 	 */
-	public init(): void {
+	public init() {
 		window.addEventListener('keydown', this.handleKeyDown);
 		window.addEventListener('keyup', this.handleKeyUp);
+
+		return this;
 	}
 
 	/**
@@ -35,15 +37,19 @@ export class KeyboardManager {
 	/**
 	 * Add an input listener
 	 */
-	public addListener(listener: InputListener): void {
+	public addListener(listener: InputListener) {
 		this.listeners.push(listener);
+
+		return this;
 	}
 
 	/**
 	 * Remove an input listener
 	 */
-	public removeListener(listener: InputListener): void {
+	public removeListener(listener: InputListener) {
 		this.listeners = this.listeners.filter(l => l !== listener);
+
+		return this;
 	}
 
 	/**

@@ -40,7 +40,7 @@ export class GamepadManager {
 	/**
 	 * Initialize the gamepad manager
 	 */
-	public init(): void {
+	public init() {
 		window.addEventListener('gamepadconnected', this.handleGamepadConnected);
 		window.addEventListener('gamepaddisconnected', this.handleGamepadDisconnected);
 
@@ -52,6 +52,8 @@ export class GamepadManager {
 				break; // Use first connected gamepad
 			}
 		}
+
+		return this;
 	}
 
 	/**
@@ -67,29 +69,34 @@ export class GamepadManager {
 	/**
 	 * Add an input listener
 	 */
-	public addListener(listener: InputListener): void {
+	public addListener(listener: InputListener) {
 		this.listeners.push(listener);
+		return this;
 	}
 
 	/**
 	 * Remove an input listener
 	 */
-	public removeListener(listener: InputListener): void {
+	public removeListener(listener: InputListener) {
 		this.listeners = this.listeners.filter(l => l !== listener);
+		return this;
 	}
 
 	/**
 	 * Set callback for controller connection
 	 */
-	public setOnControllerConnected(callback: (type: ControllerType) => void): void {
+	public setOnControllerConnected(callback: (type: ControllerType) => void) {
 		this.onControllerConnected = callback;
+		return this;
 	}
 
 	/**
 	 * Set callback for controller disconnection
 	 */
-	public setOnControllerDisconnected(callback: () => void): void {
+	public setOnControllerDisconnected(callback: () => void) {
 		this.onControllerDisconnected = callback;
+
+		return this;
 	}
 
 	/**
@@ -215,6 +222,9 @@ export class GamepadManager {
 
 		// Left stick X-axis (left/right)
 		const xAxis = axes[GamepadAxis.LEFT_STICK_X];
+
+		if(typeof xAxis === 'undefined') return;
+
 		const xPressed = Math.abs(xAxis) > ANALOG_DEADZONE && Math.abs(xAxis) > ANALOG_THRESHOLD;
 
 		if (xPressed && !previousState.x) {
@@ -227,6 +237,9 @@ export class GamepadManager {
 
 		// Left stick Y-axis (up/down)
 		const yAxis = axes[GamepadAxis.LEFT_STICK_Y];
+
+		if(typeof yAxis === 'undefined') return;
+
 		const yPressed = Math.abs(yAxis) > ANALOG_DEADZONE && Math.abs(yAxis) > ANALOG_THRESHOLD;
 
 		if (yPressed && !previousState.y) {
