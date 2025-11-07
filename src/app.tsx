@@ -9,6 +9,8 @@ import { useActiveScreen } from './atoms';
 import { Screens } from './types';
 import { lazy, Suspense } from 'react';
 import Loader from './components/loader';
+import { FocusProvider } from './focus/focus-context';
+
 const Game = lazy(() => import('./components/screens/game-screen'));
 const About = lazy(() => import('./components/screens/about-screen'));
 const Help = lazy(() => import('./components/screens/help-screen'));
@@ -26,8 +28,10 @@ function App() {
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
 
 	return (
-		<Suspense fallback={<Loader/>}>
-			<ActiveScreenComponent />
-		</Suspense>
+		<FocusProvider>
+			<Suspense fallback={<Loader/>}>
+				<ActiveScreenComponent />
+			</Suspense>
+		</FocusProvider>
 	);
 }

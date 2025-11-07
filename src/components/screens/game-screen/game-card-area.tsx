@@ -2,9 +2,11 @@ import PlayingCard from '@/components/playing-card';
 import { Card } from '@/types';
 import { useInterval } from '@/utils';
 import { Grid, Box } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDebouncedValue } from '@/hooks';
+import { useFocusable } from '@/focus/useFocusable';
+import { useFocusContext } from '@/focus/focus-context';
 
 interface Props {
 	shuffleCount: number;
@@ -12,6 +14,65 @@ interface Props {
 	selectedCards: string[];
 	paused?: boolean;
 	onSelected(card: Card): void;
+}
+
+interface CardWithFocus extends Card {
+	focusableId: string;
+}
+
+// Wrapper component for individual card with focus support
+function FocusableCard({
+	card,
+	paused,
+	selected,
+	dealt,
+	onSelected,
+	gridPosition,
+}: {
+	card: Card;
+	paused: boolean;
+	selected: boolean;
+	dealt: boolean;
+	onSelected: (card: Card) => void;
+	gridPosition: { row: number; col: number };
+}) {
+	// Prevent double-activation from mouse and keyboard/controller
+	const isActivatingRef = useRef(false);
+
+	const handleCardSelection = useCallback(() => {
+		// Prevent double execution
+		if (isActivatingRef.current) {
+			return;
+		}
+
+		isActivatingRef.current = true;
+		onSelected(card);
+
+		// Reset after a short delay
+		setTimeout(() => {
+			isActivatingRef.current = false;
+		}, 100);
+	}, [card, onSelected]);
+
+	const { ref, isFocused } = useFocusable({
+		id: `card-${card.id}`,
+		group: 'cards',
+		gridPosition,
+		onSelect: handleCardSelection, // Use wrapped function for keyboard/controller
+		disabled: paused,
+	});
+
+	return (
+		<PlayingCard
+			card={card}
+			dealt={dealt}
+			flipped={paused}
+			selected={selected}
+			focused={isFocused}
+			onClick={handleCardSelection} // Use same wrapped function for mouse
+			elementRef={ref}
+		/>
+	);
 }
 
 export default
@@ -27,6 +88,7 @@ function GameCardArea(props: Props) {
 	const [shuffleCount, setShuffleCount] = useState(rawShffleCount);
 	const [cards, setCards] = useState<Card[]>([]);
 	const [newCards, setNewCards] = useState<Card[]>([]);
+	const { setActiveGroup } = useFocusContext();
 
 	useEffect(() => {
 		setCards(rawCards);
@@ -47,6 +109,21 @@ function GameCardArea(props: Props) {
 		setNewCards(newCards.slice(1));
 	}, newCards.length ? 150 : null);
 
+	// Set active group when cards are ready and not paused
+	useEffect(() => {
+		if (!paused && cards.length > 0) {
+			setActiveGroup('cards');
+		}
+	}, [paused, cards.length, setActiveGroup]);
+
+	// Determine grid columns based on screen size (using MUI breakpoints logic)
+	const getGridPosition = (index: number, columns: number): { row: number; col: number } => {
+		return {
+			row: Math.floor(index / columns),
+			col: index % columns,
+		};
+	};
+
 	return (
 		<Grid
 			container
@@ -57,50 +134,57 @@ function GameCardArea(props: Props) {
 			}}
 		>
 			<AnimatePresence mode="popLayout">
-				{cards.map(card => (
-					<Grid
-						key={`${shuffleCount}-${card.id}`}
-						component={motion.div}
-						display="flex"
-						justifyContent="center"
-						size={1}
-						initial={{
-							x: '100vw',
-							y: '-50vh',
-							zIndex: 1000,
-						}}
-						animate={{
-							x: 1,
-							y: 1,
-							transition: {
-								delay: newCards.findIndex(nc => nc.id === card.id) * .15,
-							},
-							transitionEnd: {
-								zIndex: 1,
-							},
-						}}
-						exit={{
-							x: '-100vw',
-							y: '-50vh',
-							zIndex: 1000,
-							transition: {
-								duration: .5,
-							},
-						}}
-					>
-						<Box maxWidth="80%">
-							{card && (
-								<PlayingCard
-									card={card}
-									dealt={!newCards.find(newCard => newCard.id === card.id)}
-									flipped={paused || !!newCards.find(newCard => newCard.id === card.id)}
-									selected={!!card.id && selectedCards.includes(card.id)}
-									onClick={() => onSelected(card)}
-								/>
-							)}
-						</Box>
-					</Grid>
-				))}
+				{cards.map((card, index) => {
+					// Assuming desktop (6 columns) for focus navigation
+					// Could be improved with media query detection
+					const gridPosition = getGridPosition(index, 6);
+
+					return (
+						<Grid
+							key={`${shuffleCount}-${card.id}`}
+							component={motion.div}
+							display="flex"
+							justifyContent="center"
+							size={1}
+							initial={{
+								x: '100vw',
+								y: '-50vh',
+								zIndex: 1000,
+							}}
+							animate={{
+								x: 1,
+								y: 1,
+								transition: {
+									delay: newCards.findIndex(nc => nc.id === card.id) * .15,
+								},
+								transitionEnd: {
+									zIndex: 1,
+								},
+							}}
+							exit={{
+								x: '-100vw',
+								y: '-50vh',
+								zIndex: 1000,
+								transition: {
+									duration: .5,
+								},
+							}}
+						>
+							<Box maxWidth="80%">
+								{card && (
+									<FocusableCard
+										card={card}
+										dealt={!newCards.find(newCard => newCard.id === card.id)}
+										paused={paused || !!newCards.find(newCard => newCard.id === card.id)}
+										selected={!!card.id && selectedCards.includes(card.id)}
+										onSelected={onSelected}
+										gridPosition={gridPosition}
+									/>
+								)}
+							</Box>
+						</Grid>
+					);
+				})}
 			</AnimatePresence>
 		</Grid>
 	);

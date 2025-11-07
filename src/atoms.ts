@@ -81,3 +81,15 @@ export
 function usePushToastMsg() {
 	return useSetAtom(pushToastMsgAtom);
 }
+
+const usingNavigationalInputAtom = atom(false);
+
+export
+function useUsingNavigationalInput() {
+	return useAtomValue(usingNavigationalInputAtom);
+}
+
+export
+function useSetUsingNavigationalInput() {
+	return useSetAtom(usingNavigationalInputAtom);
+}
