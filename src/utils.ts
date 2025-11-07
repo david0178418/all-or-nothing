@@ -124,7 +124,11 @@ function pick<T extends Record<any, any>, K extends keyof T>(object: T, ...ks: K
 	);
 }
 
-export function isIn<T extends string, S extends object>(value: T, subset: S): value is T & Enum<S> {
+export
+function isIn<T extends string, S extends object>(
+	value: T,
+	subset: S,
+): value is T & Enum<S> {
 	return Object
 		.values(subset)
 		.includes(value);
