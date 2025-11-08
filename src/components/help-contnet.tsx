@@ -31,40 +31,39 @@ function HelpContent() {
 			</Typography>
 			<Grid container columns={3} sx={{ marginX: 0 }} spacing={0}>
 				<Grid
-					item
+					size={3}
 					container
-					xs={3}
 					color="green"
 					textAlign="center"
 					columns={2}
 				>
-					<Grid item xs={3}>
+					<Grid size={3}>
 						<Typography>
 						<Check />  MATCH!
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Color - All Red
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Count - All Three
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 						<Check /> Fill - All Solid
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Shapes - All Different
 						</Typography>
 					</Grid>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-1-1',
@@ -75,7 +74,7 @@ function HelpContent() {
 						}}
 					/>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-1-2',
@@ -86,7 +85,7 @@ function HelpContent() {
 						}}
 					/>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-1-3',
@@ -98,43 +97,42 @@ function HelpContent() {
 					/>
 				</Grid>
 				<Grid
-					item
 					marginTop={3}
 					paddingTop={3}
 					borderTop="1px solid black"
-					xs={3}
+					size={3}
 					color="green"
 					container
 					columns={2}
 					textAlign="center"
 				>
-					<Grid item xs={3}>
+					<Grid size={3}>
 						<Typography>
 						<Check />  MATCH!
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Color - All Different
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Count - All Different
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 						<Check /> Fill - All Different
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Shapes - All Circles
 						</Typography>
 					</Grid>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-2-1',
@@ -145,7 +143,7 @@ function HelpContent() {
 						}}
 					/>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-2-2',
@@ -156,7 +154,7 @@ function HelpContent() {
 						}}
 					/>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-2-3',
@@ -168,43 +166,42 @@ function HelpContent() {
 					/>
 				</Grid>
 				<Grid
-					item
 					marginTop={3}
 					paddingTop={3}
 					borderTop="1px solid black"
-					xs={3}
+					size={3}
 					color="green"
 					container
 					columns={2}
 					textAlign="center"
 				>
-					<Grid item xs={3} color="red">
+					<Grid size={3} color="red">
 						<Typography>
 						<Clear />  NOT A MATCH!
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Color - All Different
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Count - All Different
 						</Typography>
 					</Grid>
-					<Grid item xs={1} color="red">
+					<Grid size={1} color="red">
 						<Typography>
 							<Clear /> Fill - Two Solid, One Outline
 						</Typography>
 					</Grid>
-					<Grid item xs={1}>
+					<Grid size={1}>
 						<Typography>
 							<Check /> Shapes - All Trangles
 						</Typography>
 					</Grid>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-3-1',
@@ -215,7 +212,7 @@ function HelpContent() {
 						}}
 					/>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-3-2',
@@ -226,7 +223,7 @@ function HelpContent() {
 						}}
 					/>
 				</Grid>
-				<Grid item xs={1} display="flex" justifyContent="center">
+				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
 						card={{
 							id: 'example-3-3',

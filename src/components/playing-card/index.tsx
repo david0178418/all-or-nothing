@@ -20,7 +20,7 @@ interface Props {
 	onClick?(): void;
 	width?: number | string;
 	focused?: boolean;
-	elementRef?: React.RefObject<HTMLDivElement>;
+	elementRef?: React.RefObject<HTMLElement | null>;
 }
 
 export default
