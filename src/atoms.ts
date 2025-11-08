@@ -341,16 +341,6 @@ export const clearFocusAtom = atom(
 	}
 );
 
-// Clear all focus state
-export const clearAllFocusAtom = atom(
-	null,
-	(get, set) => {
-		set(focusableElementsAtom, new Map());
-		set(currentFocusIdAtom, null);
-		set(activeGroupAtom, null);
-	}
-);
-
 // Hooks for accessing focus state
 export function useCurrentFocusId() {
 	return useAtomValue(currentFocusIdAtom);
@@ -382,12 +372,4 @@ export function useNavigate() {
 
 export function useSelectCurrent() {
 	return useSetAtom(selectCurrentAtom);
-}
-
-export function useClearFocus() {
-	return useSetAtom(clearFocusAtom);
-}
-
-export function useClearAllFocus() {
-	return useSetAtom(clearAllFocusAtom);
 }
