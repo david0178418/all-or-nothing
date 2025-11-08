@@ -144,6 +144,22 @@ function triggerFocusCallbacks(
 	}
 }
 
+// Direction mappings for 2D grid navigation
+const DIRECTION_TO_2D_DELTA = {
+	[NavigationDirection.UP]: (row: number, col: number) => ({ row: row - 1, col }),
+	[NavigationDirection.DOWN]: (row: number, col: number) => ({ row: row + 1, col }),
+	[NavigationDirection.LEFT]: (row: number, col: number) => ({ row, col: col - 1 }),
+	[NavigationDirection.RIGHT]: (row: number, col: number) => ({ row, col: col + 1 }),
+} as const;
+
+// Direction mappings for 1D list navigation
+const DIRECTION_TO_1D_INDEX = {
+	[NavigationDirection.UP]: (currentIndex: number, length: number) => (currentIndex - 1 + length) % length,
+	[NavigationDirection.DOWN]: (currentIndex: number, length: number) => (currentIndex + 1) % length,
+	[NavigationDirection.LEFT]: (currentIndex: number, length: number) => (currentIndex - 1 + length) % length,
+	[NavigationDirection.RIGHT]: (currentIndex: number, length: number) => (currentIndex + 1) % length,
+} as const;
+
 // Navigate in 2D grid
 function navigate2D(
 	direction: NavigationDirection,
@@ -154,17 +170,10 @@ function navigate2D(
 
 	const { row, col } = current.gridPosition;
 
-	const directionHandlers = {
-		[NavigationDirection.UP]: () => ({ row: row - 1, col }),
-		[NavigationDirection.DOWN]: () => ({ row: row + 1, col }),
-		[NavigationDirection.LEFT]: () => ({ row, col: col - 1 }),
-		[NavigationDirection.RIGHT]: () => ({ row, col: col + 1 }),
-	} as const;
-
-	const handler = directionHandlers[direction];
+	const handler = DIRECTION_TO_2D_DELTA[direction];
 	if (!handler) return null;
 
-	const { row: targetRow, col: targetCol } = handler();
+	const { row: targetRow, col: targetCol } = handler(row, col);
 
 	// Find element at target position
 	const targetElement = elements.find(
@@ -181,22 +190,15 @@ function navigate1D(
 	elements: FocusableElement[]
 ): string | null {
 	// Sort elements by order
-	const sortedElements = elements.sort((a, b) => (a.order || 0) - (b.order || 0));
+	const sortedElements = [...elements].sort((a, b) => (a.order || 0) - (b.order || 0));
 	const currentIndex = sortedElements.findIndex(el => el.id === current.id);
 
 	if (currentIndex === -1) return null;
 
-	const directionHandlers = {
-		[NavigationDirection.UP]: () => (currentIndex - 1 + sortedElements.length) % sortedElements.length,
-		[NavigationDirection.DOWN]: () => (currentIndex + 1) % sortedElements.length,
-		[NavigationDirection.LEFT]: () => (currentIndex - 1 + sortedElements.length) % sortedElements.length,
-		[NavigationDirection.RIGHT]: () => (currentIndex + 1) % sortedElements.length,
-	} as const;
-
-	const handler = directionHandlers[direction];
+	const handler = DIRECTION_TO_1D_INDEX[direction];
 	if (!handler) return null;
 
-	const targetIndex = handler();
+	const targetIndex = handler(currentIndex, sortedElements.length);
 
 	return sortedElements[targetIndex]?.id || null;
 }
@@ -253,9 +255,10 @@ export const setActiveGroupAtom = atom(
 			const elements = get(focusableElementsAtom);
 			const currentFocusId = get(currentFocusIdAtom);
 			const elementsInGroup = getElementsInGroup(elements, group);
+			const firstElement = elementsInGroup[0];
 
-			if (elementsInGroup.length > 0 && !currentFocusId) {
-				set(focusElementAtom, elementsInGroup[0]!.id);
+			if (firstElement && !currentFocusId) {
+				set(focusElementAtom, firstElement.id);
 			}
 		}
 	}
@@ -273,8 +276,9 @@ export const navigateAtom = atom(
 			// If nothing is focused, focus the first element in the active group
 			if (activeGroup) {
 				const elementsInGroup = getElementsInGroup(elements, activeGroup);
-				if (elementsInGroup.length > 0) {
-					set(focusElementAtom, elementsInGroup[0]!.id);
+				const firstElement = elementsInGroup[0];
+				if (firstElement) {
+					set(focusElementAtom, firstElement.id);
 				}
 			}
 			return;

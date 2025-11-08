@@ -1,7 +1,8 @@
-import { useEffect, ReactNode, useCallback, useRef } from 'react';
-import { getGamepadManager } from '@/input/gamepad-manager';
-import { getKeyboardManager } from '@/input/keyboard-manager';
+import { useEffect, ReactNode, useMemo } from 'react';
 import { InputEvent, NavigationDirection, PrimaryInputAction } from '@/input/input-types';
+import { useGamepadManager, useKeyboardManager } from '@/input/input-hooks';
+import { useEventListener } from 'usehooks-ts';
+import { isIn } from '@/utils';
 import {
 	useSetUsingNavigationalInput,
 	useUsingNavigationalInput,
@@ -9,7 +10,6 @@ import {
 	useSelectCurrent,
 	useClearAllFocus,
 } from '@/atoms';
-import { isIn } from '@/utils';
 
 /**
  * Manages input routing from keyboard/gamepad to focus actions
@@ -20,27 +20,34 @@ export function FocusInputManager({ children }: { children: ReactNode }) {
 	const navigate = useNavigate();
 	const selectCurrent = useSelectCurrent();
 	const clearAllFocus = useClearAllFocus();
-	const gamepadManager = getGamepadManager();
-	const keyboardManager = getKeyboardManager();
-	const actionHandlers = {
+
+	useGamepadManager(handleInput);
+	useKeyboardManager(handleInput);
+	useEventListener('mousedown', handleInputSwitch);
+	useEventListener('touchstart', handleInputSwitch);
+
+	const actionHandlers = useMemo(() => ({
 		[PrimaryInputAction.NAVIGATE_UP]: () => navigate(NavigationDirection.UP),
 		[PrimaryInputAction.NAVIGATE_DOWN]: () => navigate(NavigationDirection.DOWN),
 		[PrimaryInputAction.NAVIGATE_LEFT]: () => navigate(NavigationDirection.LEFT),
 		[PrimaryInputAction.NAVIGATE_RIGHT]: () => navigate(NavigationDirection.RIGHT),
 		[PrimaryInputAction.SELECT]: () => selectCurrent(),
-	} as const;
+	} as const), [navigate, selectCurrent]);
 
-	const usingNavigationalInputRef = useRef(false);
 	useEffect(() => {
-		usingNavigationalInputRef.current = usingNavigationalInput;
-	}, [usingNavigationalInput]);
+		return () => clearAllFocus();
+	}, [clearAllFocus]);
 
-	// Handle input events
-	const handleInput = useCallback((event: InputEvent) => {
+	function handleInputSwitch() {
+		if (!usingNavigationalInput) return;
+
+		setUsingNavigationalInput(false);
+	};
+
+	function handleInput(event: InputEvent) {
 		const { action } = event;
 
-		// Detect keyboard/gamepad input (any navigational input means they're using keyboard/controller)
-		if (!usingNavigationalInputRef.current) {
+		if (!usingNavigationalInput) {
 			setUsingNavigationalInput(true);
 			return;
 		}
@@ -49,38 +56,7 @@ export function FocusInputManager({ children }: { children: ReactNode }) {
 
 		actionHandlers[action]();
 
-	}, [setUsingNavigationalInput]);
-
-	// Stable mouse/touch handler using ref
-	const handleMouseOrTouch = useCallback(() => {
-		if (usingNavigationalInputRef.current) {
-			setUsingNavigationalInput(false);
-		}
-	}, [setUsingNavigationalInput]);
-
-	useEffect(() => {
-		// Initialize input managers
-		gamepadManager.init();
-		keyboardManager.init();
-
-		gamepadManager.addListener(handleInput);
-		keyboardManager.addListener(handleInput);
-
-		// Detect mouse/touch usage to hide focus indicators
-		window.addEventListener('mousedown', handleMouseOrTouch);
-		window.addEventListener('touchstart', handleMouseOrTouch);
-
-		// Cleanup
-		return () => {
-			gamepadManager.removeListener(handleInput);
-			keyboardManager.removeListener(handleInput);
-			gamepadManager.destroy();
-			keyboardManager.destroy();
-			clearAllFocus();
-			window.removeEventListener('mousedown', handleMouseOrTouch);
-			window.removeEventListener('touchstart', handleMouseOrTouch);
-		};
-	}, [gamepadManager, keyboardManager, handleInput, handleMouseOrTouch, clearAllFocus]);
+	}
 
 	return <>{children}</>;
 }

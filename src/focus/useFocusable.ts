@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTimeout } from '@/utils';
 import {
 	FocusableElement,
 	useCurrentFocusId,
@@ -42,9 +43,6 @@ export function useFocusable({
 		onSelectRef.current = onSelect;
 	}, [onSelect]);
 
-	// Stabilize gridPosition to prevent unnecessary re-registrations
-	const gridPositionKey = gridPosition ? JSON.stringify(gridPosition) : null;
-
 	// Update focused state when global focus changes
 	useEffect(() => {
 		setIsFocused(currentFocusId === id);
@@ -78,20 +76,16 @@ export function useFocusable({
 		return () => {
 			unregisterElement(id);
 		};
-	}, [id, group, gridPositionKey, order, disabled, registerElement, unregisterElement]);
+	}, [id, group, gridPosition?.row, gridPosition?.col, order, disabled, registerElement, unregisterElement]);
 
-	// Handle auto-focus separately - only run once when autoFocus is first true
 	const hasAutoFocused = useRef(false);
-	useEffect(() => {
-		if (autoFocus && !hasAutoFocused.current && !disabled) {
-			// Small delay to ensure element is registered first
-			const timeoutId = setTimeout(() => {
-				focusElement(id);
-				hasAutoFocused.current = true;
-			}, 0);
-			return () => clearTimeout(timeoutId);
-		}
-	}, [autoFocus, disabled, focusElement, id]);
+
+	const focusTimeout = autoFocus && !hasAutoFocused.current && !disabled;
+
+	useTimeout(() => {
+		focusElement(id);
+		hasAutoFocused.current = true;
+	}, focusTimeout ? 1 : null);
 
 	return {
 		ref: elementRef,
