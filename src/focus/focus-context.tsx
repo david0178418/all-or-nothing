@@ -1,10 +1,8 @@
 import { useEffect, ReactNode, useMemo } from 'react';
 import { InputEvent, NavigationDirection, PrimaryInputAction } from '@/input/input-types';
 import { useGamepadManager, useKeyboardManager } from '@/input/input-hooks';
-import { useEventListener } from 'usehooks-ts';
 import { isIn } from '@/utils';
 import {
-	useSetUsingNavigationalInput,
 	useUsingNavigationalInput,
 	useNavigate,
 	useSelectCurrent,
@@ -16,15 +14,12 @@ import {
  */
 export function FocusInputManager({ children }: { children: ReactNode }) {
 	const usingNavigationalInput = useUsingNavigationalInput();
-	const setUsingNavigationalInput = useSetUsingNavigationalInput();
 	const navigate = useNavigate();
 	const selectCurrent = useSelectCurrent();
 	const clearAllFocus = useClearAllFocus();
 
 	useGamepadManager(handleInput);
 	useKeyboardManager(handleInput);
-	useEventListener('mousedown', handleInputSwitch);
-	useEventListener('touchstart', handleInputSwitch);
 
 	const actionHandlers = useMemo(() => ({
 		[PrimaryInputAction.NAVIGATE_UP]: () => navigate(NavigationDirection.UP),
@@ -38,24 +33,14 @@ export function FocusInputManager({ children }: { children: ReactNode }) {
 		return () => clearAllFocus();
 	}, [clearAllFocus]);
 
-	function handleInputSwitch() {
-		if (!usingNavigationalInput) return;
-
-		setUsingNavigationalInput(false);
-	};
-
 	function handleInput(event: InputEvent) {
 		const { action } = event;
 
-		if (!usingNavigationalInput) {
-			setUsingNavigationalInput(true);
-			return;
-		}
+		if (!usingNavigationalInput) return;
 
 		if(!isIn(action, PrimaryInputAction)) return;
 
 		actionHandlers[action]();
-
 	}
 
 	return <>{children}</>;

@@ -1,6 +1,6 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { Screens, ToastMesssage } from './types';
-import { NavigationDirection } from './input/input-types';
+import { NavigationDirection, ControllerType } from './input/input-types';
 
 /**
  * Represents a focusable element in the application
@@ -38,6 +38,18 @@ function useIsMusicEnabled() {
 export
 function useSetIsMusicEnabled() {
 	return useSetAtom(musicAtom);
+}
+
+const activeControllerAtom = atom<ControllerType | null>(null);
+
+export
+function useActiveController() {
+	return useAtomValue(activeControllerAtom);
+}
+
+export
+function useSetActiveController() {
+	return useSetAtom(activeControllerAtom);
 }
 
 const pausedAtom = atom(false);
@@ -95,16 +107,11 @@ function usePushToastMsg() {
 	return useSetAtom(pushToastMsgAtom);
 }
 
-const usingNavigationalInputAtom = atom(false);
+const usingNavigationalInputAtom = atom(get => get(activeControllerAtom) !== null);
 
 export
 function useUsingNavigationalInput() {
 	return useAtomValue(usingNavigationalInputAtom);
-}
-
-export
-function useSetUsingNavigationalInput() {
-	return useSetAtom(usingNavigationalInputAtom);
 }
 
 // Focus Management Atoms

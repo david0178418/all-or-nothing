@@ -10,6 +10,7 @@ import { Screens } from './types';
 import { lazy, Suspense } from 'react';
 import Loader from './components/loader';
 import { FocusInputManager } from './focus/focus-context';
+import { ActiveControllerTracker } from './input/active-controller-tracker';
 
 const Game = lazy(() => import('./components/screens/game-screen'));
 const About = lazy(() => import('./components/screens/about-screen'));
@@ -28,10 +29,12 @@ function App() {
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
 
 	return (
-		<FocusInputManager>
-			<Suspense fallback={<Loader/>}>
-				<ActiveScreenComponent />
-			</Suspense>
-		</FocusInputManager>
+		<ActiveControllerTracker>
+			<FocusInputManager>
+				<Suspense fallback={<Loader/>}>
+					<ActiveScreenComponent />
+				</Suspense>
+			</FocusInputManager>
+		</ActiveControllerTracker>
 	);
 }
