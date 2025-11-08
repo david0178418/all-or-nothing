@@ -16,10 +16,6 @@ interface Props {
 	onSelected(card: Card): void;
 }
 
-interface CardWithFocus extends Card {
-	focusableId: string;
-}
-
 // Wrapper component for individual card with focus support
 function FocusableCard({
 	card,

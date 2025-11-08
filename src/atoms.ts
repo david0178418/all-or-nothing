@@ -313,7 +313,7 @@ export const navigateAtom = atom(
 // Select the currently focused element
 export const selectCurrentAtom = atom(
 	null,
-	(get, set) => {
+	(get) => {
 		const currentFocusId = get(currentFocusIdAtom);
 		if (!currentFocusId) return;
 
