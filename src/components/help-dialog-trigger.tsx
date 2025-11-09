@@ -1,9 +1,8 @@
 import InfoIcon from "@mui/icons-material/InfoOutlined";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import HelpContent from "./help-contnet";
 import { useFocusable } from "@/focus/useFocusable";
 import FocusIndicator from "./focus-indicator";
-import { useTimeout } from "@/utils";
 import {
 	Button,
 	Dialog,
