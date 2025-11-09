@@ -141,7 +141,10 @@ function PauseDialog() {
 						>
 							New Game
 						</FocusableDialogButton>
-						<HelpDialogTrigger />
+						<HelpDialogTrigger
+							id="pause-help"
+							order={2}
+						/>
 						<FocusableDialogButton
 							id="pause-back"
 							order={3}
