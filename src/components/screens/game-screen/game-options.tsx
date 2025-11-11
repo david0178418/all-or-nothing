@@ -38,7 +38,6 @@ function ButtonWithBadge(props: ButtonWithBadgeProps) {
 	return (
 		<Stack direction="row" spacing={0.5} alignItems="center">
 			<Button
-				variant="outlined"
 				onClick={onClick}
 				startIcon={icon}
 				disabled={disabled}

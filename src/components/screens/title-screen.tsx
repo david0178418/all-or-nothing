@@ -71,7 +71,6 @@ function FocusableButton({
 			<Button
 				disabled={disabled}
 				startIcon={startIcon}
-				variant="outlined"
 				onClick={handleActivation} // Use same wrapped function for mouse
 				fullWidth
 			>

@@ -28,7 +28,6 @@ function AboutScreen() {
 				<Box paddingTop={5}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<GitHubIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -46,7 +45,6 @@ function AboutScreen() {
 					</Typography>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<MusicNoteIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -61,7 +59,6 @@ function AboutScreen() {
 					</Typography>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<MusicNoteIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -76,7 +73,6 @@ function AboutScreen() {
 					</Typography>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<MusicNoteIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -88,7 +84,6 @@ function AboutScreen() {
 				<Box paddingTop={3}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<GraphicEqIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -100,7 +95,6 @@ function AboutScreen() {
 				<Box paddingTop={3}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<GraphicEqIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -112,7 +106,6 @@ function AboutScreen() {
 				<Box paddingTop={5}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<ArrowBackIcon/>}
 						onClick={() => setActiveScreen(Screens.Title)}
 					>

@@ -69,7 +69,6 @@ function FocusableDialogButton({
 		<Box sx={{ position: 'relative' }} ref={ref}>
 			<FocusIndicator visible={isFocused} />
 			<Button
-				variant="outlined"
 				startIcon={startIcon}
 				onClick={handleActivation} // Use same wrapped function for mouse
 				fullWidth

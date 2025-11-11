@@ -20,7 +20,6 @@ function HelpScreen() {
 				>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<ArrowBackIcon/>}
 						onClick={() => setActiveScreen(Screens.Title)}
 					>
@@ -38,7 +37,6 @@ function HelpScreen() {
 				>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<ArrowBackIcon/>}
 						onClick={() => setActiveScreen(Screens.Title)}
 					>

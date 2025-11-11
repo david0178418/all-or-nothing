@@ -40,7 +40,6 @@ function HelpDialogTrigger({
 			<Box sx={{ position: 'relative' }} ref={ref}>
 				<FocusIndicator visible={isFocused} />
 				<Button
-					variant="outlined"
 					startIcon={<InfoIcon />}
 					onClick={() => setOpen(true)}
 					fullWidth
@@ -60,13 +59,10 @@ function HelpDialogTrigger({
 					<HelpContent />
 				</DialogContent>
 				<DialogActions>
-					<Button
-						variant="contained"
-						onClick={() => setOpen(false)}
-					>
+					<Button onClick={() => setOpen(false)}>
 						Close
 					</Button>
-				</DialogActions>
+				</DialogActions>Close
 			</Dialog>
 		</>
 	);
