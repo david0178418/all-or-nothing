@@ -5,11 +5,19 @@ import {
 	useSetActiveScreen,
 	useSetIsPaused,
 	useSetActiveGroup,
+	useIsSoundEnabled,
+	useSetIsSoundEnabled,
+	useIsMusicEnabled,
+	useSetIsMusicEnabled,
 } from '../atoms';
 import {
 	PlayArrow as PlayArrowIcon,
 	RestartAlt as RestartIcon,
 	ArrowBack as BackIcon,
+	VolumeUp as VolumeUpIcon,
+	VolumeOff as VolumeOffIcon,
+	MusicNote as MusicNoteIcon,
+	MusicOff as MusicOffIcon,
 } from '@mui/icons-material';
 import {
 	Button,
@@ -85,6 +93,10 @@ function PauseDialog() {
 	const setPaused = useSetIsPaused();
 	const setActiveScreen = useSetActiveScreen();
 	const setActiveGroup = useSetActiveGroup();
+	const isSoundEnabled = useIsSoundEnabled();
+	const setIsSoundEnabled = useSetIsSoundEnabled();
+	const isMusicEnabled = useIsMusicEnabled();
+	const setIsMusicEnabled = useSetIsMusicEnabled();
 
 	// Set pause dialog as active group when opened
 	useEffect(() => {
@@ -111,6 +123,14 @@ function PauseDialog() {
 	const handleClose = useCallback(() => {
 		setPaused(false);
 	}, [setPaused]);
+
+	const handleToggleSound = useCallback(() => {
+		setIsSoundEnabled(!isSoundEnabled);
+	}, [isSoundEnabled, setIsSoundEnabled]);
+
+	const handleToggleMusic = useCallback(() => {
+		setIsMusicEnabled(!isMusicEnabled);
+	}, [isMusicEnabled, setIsMusicEnabled]);
 
 	return (
 		<Dialog  open={paused} onClose={handleClose}>
@@ -145,8 +165,24 @@ function PauseDialog() {
 							order={2}
 						/>
 						<FocusableDialogButton
-							id="pause-back"
+							id="pause-sound"
 							order={3}
+							startIcon={isSoundEnabled ? <VolumeUpIcon /> : <VolumeOffIcon />}
+							onClick={handleToggleSound}
+						>
+							Sound: {isSoundEnabled ? 'On' : 'Off'}
+						</FocusableDialogButton>
+						<FocusableDialogButton
+							id="pause-music"
+							order={4}
+							startIcon={isMusicEnabled ? <MusicNoteIcon /> : <MusicOffIcon />}
+							onClick={handleToggleMusic}
+						>
+							Music: {isMusicEnabled ? 'On' : 'Off'}
+						</FocusableDialogButton>
+						<FocusableDialogButton
+							id="pause-back"
+							order={5}
 							startIcon={<BackIcon />}
 							onClick={handleBackToTitle}
 						>
