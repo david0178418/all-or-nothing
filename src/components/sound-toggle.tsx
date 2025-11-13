@@ -1,5 +1,5 @@
 import { Fab } from "@mui/material";
-import { useIsSoundEnabled, useSetIsSoundEnabled } from "@/atoms";
+import { useIsSoundEnabled, useSetIsSoundEnabled, useActiveController } from "@/atoms";
 import {
 	VolumeUp as VolumeUpIcon,
 	VolumeOff as VolumeOffIcon,
@@ -9,6 +9,9 @@ export default
 function SoundToggle() {
 	const isSoundEnabled = useIsSoundEnabled();
 	const setIsSoundEnabled = useSetIsSoundEnabled();
+	const activeController = useActiveController();
+
+	if (activeController !== null) return null;
 
 	return (
 		<Fab

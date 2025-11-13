@@ -1,9 +1,9 @@
 import { Fab } from "@mui/material";
-import { useIsMusicEnabled, useSetIsMusicEnabled } from "@/atoms";
+import { useIsMusicEnabled, useSetIsMusicEnabled, useActiveController } from "@/atoms";
 import useSound from "use-sound";
 import { useEffect, useState } from "react";
 import song1 from './Little Prelude and Fugue - Sir Cubworth.mp3';
-import song2 from './No.9_Esther’s Waltz - Esther Abrami.mp3';
+import song2 from './No.9_Esther\'s Waltz - Esther Abrami.mp3';
 import song3 from './Sonatina No 2 in F Major Allegro - Joel Cummins.mp3';
 import song4 from './Theme for a One-Handed Piano Concerto - Sir Cubworth.mp3';
 import {
@@ -16,7 +16,10 @@ export default
 function MusicToggle() {
 	const isEnabled = useIsMusicEnabled();
 	const setIsEnabled = useSetIsMusicEnabled();
+	const activeController = useActiveController();
 	useMusic();
+
+	if (activeController !== null) return null;
 
 	return (
 		<Fab
