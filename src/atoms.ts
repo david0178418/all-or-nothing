@@ -1,6 +1,7 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { Screens, ToastMesssage } from './types';
 import { NavigationDirection, ControllerType } from './input/input-types';
+import { getSoundEnabled, getMusicEnabled, updateSoundEnabled, updateMusicEnabled } from './core';
 
 /**
  * Represents a focusable element in the application
@@ -23,9 +24,17 @@ function useIsSoundEnabled() {
 	return useAtomValue(soundAtom);
 }
 
+const setSoundAtom = atom(
+	null,
+	async (_get, set, enabled: boolean) => {
+		set(soundAtom, enabled);
+		await updateSoundEnabled(enabled);
+	}
+);
+
 export
 function useSetIsSoundEnabled() {
-	return useSetAtom(soundAtom);
+	return useSetAtom(setSoundAtom);
 }
 
 const musicAtom = atom(true);
@@ -35,9 +44,34 @@ function useIsMusicEnabled() {
 	return useAtomValue(musicAtom);
 }
 
+const setMusicAtom = atom(
+	null,
+	async (_get, set, enabled: boolean) => {
+		set(musicAtom, enabled);
+		await updateMusicEnabled(enabled);
+	}
+);
+
 export
 function useSetIsMusicEnabled() {
-	return useSetAtom(musicAtom);
+	return useSetAtom(setMusicAtom);
+}
+
+const loadAudioSettingsAtom = atom(
+	null,
+	async (_get, set) => {
+		const [soundEnabled, musicEnabled] = await Promise.all([
+			getSoundEnabled(),
+			getMusicEnabled(),
+		]);
+		set(soundAtom, soundEnabled);
+		set(musicAtom, musicEnabled);
+	}
+);
+
+export
+function useLoadAudioSettings() {
+	return useSetAtom(loadAudioSettingsAtom);
 }
 
 const activeControllerAtom = atom<ControllerType | null>(null);

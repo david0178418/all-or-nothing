@@ -6,7 +6,7 @@ import '@fontsource/roboto/700.css';
 
 import TitleScreen from './components/screens/title-screen';
 import { Screens } from './types';
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense, useMemo, useEffect } from 'react';
 import Loader from './components/loader';
 import { useGamepadManager, useKeyboardManager } from './input/input-hooks';
 import { useEventListener } from 'usehooks-ts';
@@ -18,6 +18,7 @@ import {
 	useUsingNavigationalInput,
 	useNavigate,
 	useSelectCurrent,
+	useLoadAudioSettings,
 } from './atoms';
 
 const Game = lazy(() => import('./components/screens/game-screen'));
@@ -38,8 +39,13 @@ function App() {
 	const usingNavigationalInput = useUsingNavigationalInput();
 	const navigate = useNavigate();
 	const selectCurrent = useSelectCurrent();
+	const loadAudioSettings = useLoadAudioSettings();
 
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
+
+	useEffect(() => {
+		loadAudioSettings();
+	}, [loadAudioSettings]);
 
 	const actionHandlers = useMemo(() => ({
 		[PrimaryInputAction.NAVIGATE_UP]: () => navigate(NavigationDirection.UP),
