@@ -55,7 +55,7 @@ function AboutScreen() {
 				</Box>
 				<Box paddingTop={3}>
 					<Typography component="em">
-						No.9_Esther’s Waltz
+						No.9_Esther's Waltz
 					</Typography>
 					<Button
 						fullWidth
