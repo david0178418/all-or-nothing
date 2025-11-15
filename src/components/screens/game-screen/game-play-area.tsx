@@ -96,7 +96,7 @@ function GamePlayArea() {
 	return (
 		<>
 			<Container
-				maxWidth="md"
+				maxWidth="xl"
 				sx={{
 					padding: 0,
 					marginTop: {

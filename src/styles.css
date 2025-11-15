@@ -1,13 +1,13 @@
 body {
-	margin: 0;
-	padding: 0;
 	background: lightgrey;
 }
 
+html,
 body,
 #app {
-	max-width: 100vh;
-	max-height: 100vh;
+	width: 100vw;
+	height: 100vh;
 	overflow: hidden;
 	margin: 0 auto;
+	padding: 0;
 }

@@ -65,6 +65,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-1-1',
 							color: Colors.Red,
@@ -76,6 +77,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-1-2',
 							color: Colors.Red,
@@ -87,6 +89,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-1-3',
 							color: Colors.Red,
@@ -134,6 +137,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-2-1',
 							color: Colors.Red,
@@ -145,6 +149,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-2-2',
 							color: Colors.Green,
@@ -156,6 +161,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-2-3',
 							color: Colors.Blue,
@@ -203,6 +209,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-3-1',
 							color: Colors.Green,
@@ -214,6 +221,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-3-2',
 							color: Colors.Blue,
@@ -225,6 +233,7 @@ function HelpContent() {
 				</Grid>
 				<Grid size={1} display="flex" justifyContent="center">
 					<PlayingCard
+						width={150}
 						card={{
 							id: 'example-3-3',
 							color: Colors.Red,

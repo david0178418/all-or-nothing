@@ -30,7 +30,7 @@ function PlayingCard(props: Props) {
 		onClick,
 		selected,
 		dealt = false,
-		width = 150,
+		width = 350,
 		flipped: flippedOverride,
 		// TODO: Rename prop when batch of work is done.
 		card: face,
