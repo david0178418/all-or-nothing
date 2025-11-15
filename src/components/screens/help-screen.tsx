@@ -1,4 +1,4 @@
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Container, Fab, Typography } from '@mui/material';
 import HelpContent from '../help-content';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useSetActiveScreen } from '@/atoms';
@@ -9,47 +9,40 @@ import { useRef } from 'react';
 export default
 function HelpScreen() {
 	const setActiveScreen = useSetActiveScreen();
-	const containerRef = useRef<HTMLDivElement>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
 
-	useScrollable({ ref: containerRef });
+	useScrollable({ ref: contentRef });
 
 	return (
-		<Container ref={containerRef} sx={{ maxHeight: '100vh', overflow: 'auto' }}>
-			<Typography variant="h1" fontSize={40}>
+		<Container sx={{
+			height: '100vh',
+			display: 'flex',
+			flexDirection: 'column',
+			position: 'relative',
+		}}>
+			<Typography variant="h1" fontSize={40} paddingTop={2}>
 				How to Play
 			</Typography>
-			<Box textAlign="center">
-				<Box
-					paddingY={3}
-					width={300}
-					display="inline-block"
-				>
-					<Button
-						fullWidth
-						startIcon={<ArrowBackIcon/>}
-						onClick={() => setActiveScreen(Screens.Title)}
-					>
-						Back
-					</Button>
-				</Box>
+			<Box
+				ref={contentRef}
+				flex={1}
+				overflow='auto'
+				paddingBottom={2}
+			>
+				<HelpContent/>
 			</Box>
-			<HelpContent/>
-			<Box textAlign="center">
-				<Box
-					paddingTop={5}
-					paddingBottom={10}
-					width={300}
-					display="inline-block"
-				>
-					<Button
-						fullWidth
-						startIcon={<ArrowBackIcon/>}
-						onClick={() => setActiveScreen(Screens.Title)}
-					>
-						Back
-					</Button>
-				</Box>
-			</Box>
+			<Fab
+				color="primary"
+				aria-label="back"
+				onClick={() => setActiveScreen(Screens.Title)}
+				sx={{
+					position: 'fixed',
+					bottom: 16,
+					right: 16,
+				}}
+			>
+				<ArrowBackIcon />
+			</Fab>
 		</Container>
 	);
 }
