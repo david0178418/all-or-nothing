@@ -62,7 +62,7 @@ function HelpDialogTrigger({
 					<Button onClick={() => setOpen(false)}>
 						Close
 					</Button>
-				</DialogActions>Close
+				</DialogActions>
 			</Dialog>
 		</>
 	);
