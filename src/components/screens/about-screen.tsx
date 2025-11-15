@@ -1,7 +1,10 @@
 import { Box, Button, Container, Typography } from "@mui/material";
 import {version} from '@/../package.json';
-import { useSetActiveScreen } from "@/atoms";
+import { useSetActiveScreen, useActiveController } from "@/atoms";
 import { Screens } from "@/types";
+import { useBackAction } from '@/input/useBackAction';
+import { InputAction } from '@/input/input-types';
+import { ControllerButtonLabels } from '@/input/controller-mappings';
 import {
 	MusicNote as MusicNoteIcon,
 	ArrowBack as ArrowBackIcon,
@@ -13,6 +16,14 @@ import {
 export default
 function AboutScreen() {
 	const setActiveScreen = useSetActiveScreen();
+	const activeController = useActiveController();
+
+	useBackAction(() => setActiveScreen(Screens.Title));
+
+	const buttonLabel = activeController
+		? ControllerButtonLabels[activeController]?.[InputAction.BACK]
+		: null;
+
 	return (
 		<Container sx={{textAlign: 'center', paddingTop: 10}}>
 			<Typography fontWeight={100} variant="h1" fontSize={40}>
@@ -109,7 +120,7 @@ function AboutScreen() {
 						startIcon={<ArrowBackIcon/>}
 						onClick={() => setActiveScreen(Screens.Title)}
 					>
-						Back
+						Back{buttonLabel ? ` [${buttonLabel}]` : ''}
 					</Button>
 				</Box>
 			</Box>
