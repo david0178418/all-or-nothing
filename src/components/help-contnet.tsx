@@ -63,41 +63,55 @@ function HelpContent() {
 						</Typography>
 					</Grid>
 				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-1-1',
-							color: Colors.Red,
-							count: Counts.Three,
-							fill: Fills.Solid,
-							shape: Shapes.Circle,
-						}}
-					/>
-				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-1-2',
-							color: Colors.Red,
-							count: Counts.Three,
-							fill: Fills.Solid,
-							shape: Shapes.Square,
-						}}
-					/>
-				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-1-3',
-							color: Colors.Red,
-							count: Counts.Three,
-							fill: Fills.Solid,
-							shape: Shapes.Triangle,
-						}}
-					/>
+				<Grid
+					container
+					size={3}
+					rowSpacing={0}
+					spacing={10}
+					paddingTop={2}
+					justifyContent="center"
+					rowGap={3}
+					columns={{
+						xs: 2,
+						md: 3,
+					}}
+				>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-1-1',
+								color: Colors.Red,
+								count: Counts.Three,
+								fill: Fills.Solid,
+								shape: Shapes.Circle,
+							}}
+						/>
+					</Grid>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-1-2',
+								color: Colors.Red,
+								count: Counts.Three,
+								fill: Fills.Solid,
+								shape: Shapes.Square,
+							}}
+						/>
+					</Grid>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-1-3',
+								color: Colors.Red,
+								count: Counts.Three,
+								fill: Fills.Solid,
+								shape: Shapes.Triangle,
+							}}
+						/>
+					</Grid>
 				</Grid>
 				<Grid
 					marginTop={3}
@@ -135,41 +149,55 @@ function HelpContent() {
 						</Typography>
 					</Grid>
 				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-2-1',
-							color: Colors.Red,
-							count: Counts.One,
-							fill: Fills.Outline,
-							shape: Shapes.Circle,
-						}}
-					/>
-				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-2-2',
-							color: Colors.Green,
-							count: Counts.Two,
-							fill: Fills.Filled,
-							shape: Shapes.Circle,
-						}}
-					/>
-				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-2-3',
-							color: Colors.Blue,
-							count: Counts.Three,
-							fill: Fills.Solid,
-							shape: Shapes.Circle,
-						}}
-					/>
+				<Grid
+					container
+					size={3}
+					rowSpacing={0}
+					spacing={10}
+					paddingTop={2}
+					justifyContent="center"
+					rowGap={3}
+					columns={{
+						xs: 2,
+						md: 3,
+					}}
+				>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-2-1',
+								color: Colors.Red,
+								count: Counts.One,
+								fill: Fills.Outline,
+								shape: Shapes.Circle,
+							}}
+						/>
+					</Grid>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-2-2',
+								color: Colors.Green,
+								count: Counts.Two,
+								fill: Fills.Filled,
+								shape: Shapes.Circle,
+							}}
+						/>
+					</Grid>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-2-3',
+								color: Colors.Blue,
+								count: Counts.Three,
+								fill: Fills.Solid,
+								shape: Shapes.Circle,
+							}}
+						/>
+					</Grid>
 				</Grid>
 				<Grid
 					marginTop={3}
@@ -207,41 +235,55 @@ function HelpContent() {
 						</Typography>
 					</Grid>
 				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-3-1',
-							color: Colors.Green,
-							count: Counts.One,
-							fill: Fills.Outline,
-							shape: Shapes.Triangle,
-						}}
-					/>
-				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-3-2',
-							color: Colors.Blue,
-							count: Counts.Two,
-							fill: Fills.Solid,
-							shape: Shapes.Triangle,
-						}}
-					/>
-				</Grid>
-				<Grid size={1} display="flex" justifyContent="center">
-					<PlayingCard
-						width={150}
-						card={{
-							id: 'example-3-3',
-							color: Colors.Red,
-							count: Counts.Three,
-							fill: Fills.Solid,
-							shape: Shapes.Triangle,
-						}}
-					/>
+				<Grid
+					container
+					size={3}
+					rowSpacing={0}
+					spacing={10}
+					paddingTop={2}
+					justifyContent="center"
+					rowGap={3}
+					columns={{
+						xs: 2,
+						md: 3,
+					}}
+				>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-3-1',
+								color: Colors.Green,
+								count: Counts.One,
+								fill: Fills.Outline,
+								shape: Shapes.Triangle,
+							}}
+						/>
+					</Grid>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-3-2',
+								color: Colors.Blue,
+								count: Counts.Two,
+								fill: Fills.Solid,
+								shape: Shapes.Triangle,
+							}}
+						/>
+					</Grid>
+					<Grid>
+						<PlayingCard
+							width={150}
+							card={{
+								id: 'example-3-3',
+								color: Colors.Red,
+								count: Counts.Three,
+								fill: Fills.Solid,
+								shape: Shapes.Triangle,
+							}}
+						/>
+					</Grid>
 				</Grid>
 			</Grid>
 		</>
