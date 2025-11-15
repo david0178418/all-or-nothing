@@ -3,12 +3,18 @@ import HelpContent from '../help-contnet';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useSetActiveScreen } from '@/atoms';
 import { Screens } from '@/types';
+import { useScrollable } from '@/focus/useScrollable';
+import { useRef } from 'react';
 
 export default
 function HelpScreen() {
 	const setActiveScreen = useSetActiveScreen();
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	useScrollable({ ref: containerRef });
+
 	return (
-		<Container sx={{ maxHeight: '100vh', overflow: 'auto' }}>
+		<Container ref={containerRef} sx={{ maxHeight: '100vh', overflow: 'auto' }}>
 			<Typography variant="h1" fontSize={40}>
 				How to Play
 			</Typography>
