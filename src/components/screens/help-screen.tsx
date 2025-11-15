@@ -1,5 +1,5 @@
 import { Box, Button, Container, Typography } from '@mui/material';
-import HelpContent from '../help-contnet';
+import HelpContent from '../help-content';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useSetActiveScreen } from '@/atoms';
 import { Screens } from '@/types';
