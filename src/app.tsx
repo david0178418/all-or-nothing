@@ -5,10 +5,22 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import TitleScreen from './components/screens/title-screen';
-import { useActiveScreen } from './atoms';
 import { Screens } from './types';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useMemo, useEffect } from 'react';
 import Loader from './components/loader';
+import { useGamepadManager, useKeyboardManager } from './input/input-hooks';
+import { useEventListener } from 'usehooks-ts';
+import { InputEvent, NavigationDirection, PrimaryInputAction } from './input/input-types';
+import { isIn } from './utils';
+import {
+	useActiveScreen,
+	useSetActiveController,
+	useUsingNavigationalInput,
+	useNavigate,
+	useSelectCurrent,
+	useLoadAudioSettings,
+} from './atoms';
+
 const Game = lazy(() => import('./components/screens/game-screen'));
 const About = lazy(() => import('./components/screens/about-screen'));
 const Help = lazy(() => import('./components/screens/help-screen'));
@@ -23,7 +35,45 @@ const ScreenComponents = {
 export default
 function App() {
 	const activeScreen = useActiveScreen();
+	const setActiveController = useSetActiveController();
+	const usingNavigationalInput = useUsingNavigationalInput();
+	const navigate = useNavigate();
+	const selectCurrent = useSelectCurrent();
+	const loadAudioSettings = useLoadAudioSettings();
+
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
+
+	useEffect(() => {
+		loadAudioSettings();
+	}, [loadAudioSettings]);
+
+	const actionHandlers = useMemo(() => ({
+		[PrimaryInputAction.NAVIGATE_UP]: () => navigate(NavigationDirection.UP),
+		[PrimaryInputAction.NAVIGATE_DOWN]: () => navigate(NavigationDirection.DOWN),
+		[PrimaryInputAction.NAVIGATE_LEFT]: () => navigate(NavigationDirection.LEFT),
+		[PrimaryInputAction.NAVIGATE_RIGHT]: () => navigate(NavigationDirection.RIGHT),
+		[PrimaryInputAction.SELECT]: () => selectCurrent(),
+	} as const), [navigate, selectCurrent]);
+
+	useGamepadManager(handleInput);
+	useKeyboardManager(handleInput);
+	useEventListener('mousedown', handleMouseOrTouch);
+	useEventListener('touchstart', handleMouseOrTouch);
+
+	function handleInput(event: InputEvent) {
+		setActiveController(event.source);
+
+		if (!usingNavigationalInput) return;
+
+		const { action } = event;
+		if (!isIn(action, PrimaryInputAction)) return;
+
+		actionHandlers[action]();
+	}
+
+	function handleMouseOrTouch() {
+		setActiveController(null);
+	}
 
 	return (
 		<Suspense fallback={<Loader/>}>

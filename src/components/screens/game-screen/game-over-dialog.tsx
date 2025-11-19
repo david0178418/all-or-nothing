@@ -36,7 +36,7 @@ function GameOverDialog(props: Props) {
 				<FormattedTime label="Completed in " value={time} />
 			</DialogContent>
 			<DialogActions>
-				<Button variant="contained" onClick={resetGame}>
+				<Button onClick={resetGame}>
 					New Game
 				</Button>
 			</DialogActions>

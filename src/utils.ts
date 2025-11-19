@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
+import { Enum } from './types';
 
 export
 function moveAndOverwriteItem<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
@@ -105,4 +106,30 @@ export
 async function resetGame() {
 	const { resetGameCore } = await import('@/core');
 	await resetGameCore();
+}
+
+export
+function pick<T extends Record<any, any>, K extends keyof T>(object: T, ...ks: K[]): Pick<T, K> {
+	return Object.assign(
+		{},
+		...ks
+			.map(key => {
+				if (object && Object.prototype.hasOwnProperty.call(object, key)) {
+					return { [key]: object[key] };
+				}
+
+				return null;
+			})
+			.filter(val => !!val)
+	);
+}
+
+export
+function isIn<T extends string, S extends object>(
+	value: T,
+	subset: S,
+): value is T & Enum<S> {
+	return Object
+		.values(subset)
+		.includes(value);
 }

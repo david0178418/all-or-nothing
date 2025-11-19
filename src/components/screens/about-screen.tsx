@@ -1,7 +1,10 @@
 import { Box, Button, Container, Typography } from "@mui/material";
 import {version} from '@/../package.json';
-import { useSetActiveScreen } from "@/atoms";
+import { useSetActiveScreen, useActiveController } from "@/atoms";
 import { Screens } from "@/types";
+import { useBackAction } from '@/input/useBackAction';
+import { InputAction } from '@/input/input-types';
+import { ControllerButtonLabels } from '@/input/controller-mappings';
 import {
 	MusicNote as MusicNoteIcon,
 	ArrowBack as ArrowBackIcon,
@@ -13,6 +16,14 @@ import {
 export default
 function AboutScreen() {
 	const setActiveScreen = useSetActiveScreen();
+	const activeController = useActiveController();
+
+	useBackAction(() => setActiveScreen(Screens.Title));
+
+	const buttonLabel = activeController
+		? ControllerButtonLabels[activeController]?.[InputAction.BACK]
+		: null;
+
 	return (
 		<Container sx={{textAlign: 'center', paddingTop: 10}}>
 			<Typography fontWeight={100} variant="h1" fontSize={40}>
@@ -28,7 +39,6 @@ function AboutScreen() {
 				<Box paddingTop={5}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<GitHubIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -46,7 +56,6 @@ function AboutScreen() {
 					</Typography>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<MusicNoteIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -57,11 +66,10 @@ function AboutScreen() {
 				</Box>
 				<Box paddingTop={3}>
 					<Typography component="em">
-						No.9_Esther’s Waltz
+						No.9_Esther's Waltz
 					</Typography>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<MusicNoteIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -76,7 +84,6 @@ function AboutScreen() {
 					</Typography>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<MusicNoteIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -88,7 +95,6 @@ function AboutScreen() {
 				<Box paddingTop={3}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<GraphicEqIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -100,7 +106,6 @@ function AboutScreen() {
 				<Box paddingTop={3}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<GraphicEqIcon/>}
 						endIcon={<LaunchIcon />}
 						target="_blank"
@@ -112,11 +117,10 @@ function AboutScreen() {
 				<Box paddingTop={5}>
 					<Button
 						fullWidth
-						variant="outlined"
 						startIcon={<ArrowBackIcon/>}
 						onClick={() => setActiveScreen(Screens.Title)}
 					>
-						Back
+						Back{buttonLabel ? ` [${buttonLabel}]` : ''}
 					</Button>
 				</Box>
 			</Box>

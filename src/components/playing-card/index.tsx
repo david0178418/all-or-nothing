@@ -10,6 +10,7 @@ import {
 	ShapeValues,
 } from '@/types';
 import Shape from './shape';
+import FocusIndicator from '@/components/focus-indicator';
 
 interface Props {
 	flipped?: boolean;
@@ -18,6 +19,8 @@ interface Props {
 	selected?: boolean;
 	onClick?(): void;
 	width?: number | string;
+	focused?: boolean;
+	elementRef?: React.RefObject<HTMLElement | null>;
 }
 
 export default
@@ -27,10 +30,12 @@ function PlayingCard(props: Props) {
 		onClick,
 		selected,
 		dealt = false,
-		width = 150,
+		width = 350,
 		flipped: flippedOverride,
 		// TODO: Rename prop when batch of work is done.
 		card: face,
+		focused = false,
+		elementRef,
 	} = props;
 	const flipped = flippedOverride || !face;
 
@@ -58,6 +63,8 @@ function PlayingCard(props: Props) {
 					card={face}
 					onClick={onClick}
 					selected={selected}
+					focused={focused}
+					elementRef={elementRef}
 				/>
 			</Flipper>
 		</Box>
@@ -72,11 +79,14 @@ function CardSurface(props: Props) {
 		flipped: flippedOverride,
 		// TODO: Rename prop when batch of work is done.
 		card: face,
+		focused = false,
+		elementRef,
 	} = props;
 	const flipped = flippedOverride || !face;
 
 	return (
 		<Box
+			ref={elementRef}
 			border="2px solid black"
 			display="flex"
 			padding="5px"
@@ -89,8 +99,10 @@ function CardSurface(props: Props) {
 			height="100%"
 			sx={{
 				cursor: onClick && 'pointer',
+				position: 'relative',
 			}}
 		>
+			<FocusIndicator visible={focused} />
 			<Box
 				flex="1"
 				bgcolor="white"

@@ -4,5 +4,7 @@ export const DbCollectionItemNameSetOrdersDeck = 'deck';
 export const DbCollectionItemNameSetOrdersDiscard = 'discard';
 export const DbCollectionItemNameGameDataShuffleCount = 'shuffle-count';
 export const DbCollectionItemNameGameDataTime = 'time';
+export const DbCollectionItemNameGameDataSoundEnabled = 'sound-enabled';
+export const DbCollectionItemNameGameDataMusicEnabled = 'music-enabled';
 export const DbCollectionNameSetOrders = 'setorders';
 export const SavedGameKey = 'saved-game-time-v0.1';

@@ -6,7 +6,8 @@
 	"scripts": {
 		"build": "vite build",
 		"preview": "vite preview",
-		"dev": "vite"
+		"dev": "vite",
+		"typecheck": "tsc --noEmit"
 	},
 	"author": "",
 	"license": "ISC",
@@ -23,6 +24,7 @@
 		"@types/react": "^19.2.2",
 		"@types/react-dom": "^19.2.2",
 		"@vitejs/plugin-react": "^5.1.0",
+		"@vitejs/plugin-react-swc": "^4.2.1",
 		"dexie": "^4.2.1",
 		"dexie-react-hooks": "^4.2.0",
 		"framer-motion": "^12.23.24",
@@ -31,7 +33,9 @@
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
 		"react-ga4": "^2.1.0",
+		"typescript": "^5.9.3",
 		"use-sound": "^5.0.0",
+		"usehooks-ts": "^3.1.1",
 		"vite": "^7.2.0",
 		"vite-plugin-pwa": "^1.1.0"
 	}

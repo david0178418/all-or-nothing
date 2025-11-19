@@ -5,6 +5,7 @@ firebase*
 dynamic/
 dist/
 .env*
+tsconfig.tsbuildinfo
 
 *.local
 *.local.*

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useIsPaused, usePushToastMsg } from '@/atoms';
+import { useState, useEffect } from 'react';
+import { useIsPaused, usePushToastMsg, useSetIsPaused } from '@/atoms';
 import { Card } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
@@ -21,6 +21,9 @@ import {
 	DbCollectionItemNameSetOrdersDiscard,
 } from '@/constants';
 import { useSoundEffects } from '@/hooks';
+import { getGamepadManager } from '@/input/gamepad-manager';
+import { getKeyboardManager } from '@/input/keyboard-manager';
+import { InputAction, InputEvent } from '@/input/input-types';
 
 const {
 	VITE_AD_CONTENT_URL = '',
@@ -36,6 +39,7 @@ function GamePlayArea() {
 	const soundEffects = useSoundEffects();
 	const shuffleCount = useShuffleCount();
 	const paused = useIsPaused();
+	const setIsPaused = useSetIsPaused();
 	const setOrders = useLiveQuery(() => db.setorders.toArray());
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
@@ -55,10 +59,44 @@ function GamePlayArea() {
 		!setExists(dealtCards)
 	);
 
+	// Handle controller/keyboard input for game actions
+	useEffect(() => {
+		const gamepadManager = getGamepadManager();
+		const keyboardManager = getKeyboardManager();
+
+		const handleGameInput = (event: InputEvent) => {
+			const { action } = event;
+
+			switch (action) {
+				case InputAction.PAUSE:
+					setIsPaused(!paused);
+					break;
+				case InputAction.HINT:
+					if (!paused) {
+						handleHintMessage(dealtCards);
+					}
+					break;
+				case InputAction.SHUFFLE:
+					if (!paused && canShuffle) {
+						handleReshuffle();
+					}
+					break;
+			}
+		};
+
+		gamepadManager.addListener(handleGameInput);
+		keyboardManager.addListener(handleGameInput);
+
+		return () => {
+			gamepadManager.removeListener(handleGameInput);
+			keyboardManager.removeListener(handleGameInput);
+		};
+	}, [paused, canShuffle, dealtCards]);
+
 	return (
 		<>
 			<Container
-				maxWidth="md"
+				maxWidth="xl"
 				sx={{
 					padding: 0,
 					marginTop: {

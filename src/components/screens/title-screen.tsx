@@ -1,10 +1,10 @@
 import PlayingCard from '../playing-card';
 import { Card, Screens } from '../../types';
 import { resetGame, useInterval } from '../../utils';
-import { useSetActiveScreen } from '../../atoms';
+import { useSetActiveScreen, useSetActiveGroup } from '../../atoms';
 import FormattedTime from '../formatted-time';
 import { SavedGameKey } from '@/constants';
-import { useState } from 'react';
+import { useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import {
 	RotateLeft as RotateLeftIcon,
 	PlayArrow as PlayArrowIcon,
@@ -17,12 +17,80 @@ import {
 	Box,
 	Typography,
 } from "@mui/material";
+import { useFocusable } from '@/focus/useFocusable';
+import FocusIndicator from '@/components/focus-indicator';
+
+// Focusable button wrapper
+function FocusableButton({
+	id,
+	order,
+	onClick,
+	disabled,
+	startIcon,
+	children,
+	autoFocus,
+}: {
+	id: string;
+	order: number;
+	onClick: () => void;
+	disabled?: boolean;
+	startIcon?: ReactNode;
+	children: ReactNode;
+	autoFocus?: boolean;
+}) {
+	// Prevent double-activation from mouse and keyboard/controller
+	const isActivatingRef = useRef(false);
+
+	const handleActivation = useCallback(() => {
+		// Prevent double execution
+		if (isActivatingRef.current) {
+			return;
+		}
+
+		isActivatingRef.current = true;
+		onClick();
+
+		// Reset after a short delay
+		setTimeout(() => {
+			isActivatingRef.current = false;
+		}, 100);
+	}, [onClick]);
+
+	const { ref, isFocused } = useFocusable({
+		id,
+		group: 'menu',
+		order,
+		onSelect: handleActivation, // Use wrapped function for keyboard/controller
+		disabled,
+		autoFocus,
+	});
+
+	return (
+		<Box sx={{ position: 'relative' }} ref={ref}>
+			<FocusIndicator visible={isFocused} />
+			<Button
+				disabled={disabled}
+				startIcon={startIcon}
+				onClick={handleActivation} // Use same wrapped function for mouse
+				fullWidth
+			>
+				{children}
+			</Button>
+		</Box>
+	);
+}
 
 export default function Landing() {
 	const [flipped, setFlipped] = useState(false);
 	const [demoCard, setDemoCard] = useState(generateRandomCard);
 	const [savedGameTime] = useState(getSavedGameTime)
 	const setActiveScreen = useSetActiveScreen();
+	const setActiveGroup = useSetActiveGroup();
+
+	// Set menu as active focus group when title screen loads
+	useEffect(() => {
+		setActiveGroup('menu');
+	}, [setActiveGroup]);
 
 	useInterval(() => {
 		if(flipped) {
@@ -32,6 +100,24 @@ export default function Landing() {
 			setFlipped(true);
 		}
 	}, flipped ? 1_000 : 3_000);
+
+	// Stable callback refs for button handlers
+	const handleContinue = useCallback(() => {
+		setActiveScreen(Screens.Game);
+	}, [setActiveScreen]);
+
+	const handleNewGame = useCallback(async () => {
+		await resetGame();
+		setActiveScreen(Screens.Game);
+	}, [setActiveScreen]);
+
+	const handleHowToPlay = useCallback(() => {
+		setActiveScreen(Screens.Help);
+	}, [setActiveScreen]);
+
+	const handleAbout = useCallback(() => {
+		setActiveScreen(Screens.About);
+	}, [setActiveScreen]);
 
 	return (
 		<Container sx={{textAlign: 'center'}}>
@@ -56,38 +142,40 @@ export default function Landing() {
 				width={300}
 			>
 				<Box display="flex" flexDirection="column" gap={2}>
-					<Button
+					<FocusableButton
+						id="menu-continue"
+						order={0}
 						disabled={!savedGameTime}
 						startIcon={<RotateLeftIcon/>}
-						variant="outlined"
-						onClick={() => setActiveScreen(Screens.Game)}
+						onClick={handleContinue}
 					>
 						Continue {!!savedGameTime && <FormattedTime label=" - " value={savedGameTime} />}
-					</Button>
-					<Button
+					</FocusableButton>
+					<FocusableButton
+						id="menu-new-game"
+						order={1}
 						startIcon={<PlayArrowIcon />}
-						variant="outlined"
-						onClick={async () => {
-							await resetGame();
-							setActiveScreen(Screens.Game);
-						}}
+						onClick={handleNewGame}
+						autoFocus={!savedGameTime}
 					>
 						New Game
-					</Button>
-					<Button
+					</FocusableButton>
+					<FocusableButton
+						id="menu-how-to-play"
+						order={2}
 						startIcon={<QuestionMarkIcon />}
-						variant="outlined"
-						onClick={async () => setActiveScreen(Screens.Help)}
+						onClick={handleHowToPlay}
 					>
 						How to Play
-					</Button>
-					<Button
+					</FocusableButton>
+					<FocusableButton
+						id="menu-about"
+						order={3}
 						startIcon={<InfoIcon />}
-						variant="outlined"
-						onClick={async () => setActiveScreen(Screens.About)}
+						onClick={handleAbout}
 					>
 						About
-					</Button>
+					</FocusableButton>
 				</Box>
 			</Box>
 		</Container>

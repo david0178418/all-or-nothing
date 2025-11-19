@@ -1,13 +1,32 @@
 body {
-	margin: 0;
-	padding: 0;
 	background: lightgrey;
 }
 
+html,
 body,
 #app {
-	max-width: 100vh;
-	max-height: 100vh;
+	width: 100vw;
+	height: 100vh;
 	overflow: hidden;
 	margin: 0 auto;
+	padding: 0;
+}
+
+html {
+	/*
+		Hand-wavy way of handing displays larger than 1080p.
+	*/
+	@media (min-width: 1920px) and (min-height: 1080px) {
+		scale: min(
+			calc(100cqw / 1920px),
+			calc(100cqh / 1080px)
+		);
+
+		/*
+			Still need to work out the kinks in items that display at the bottom
+			edge, such as notifications and the popup. Maybe just move them or
+			make them relative to the top edge...?
+		*/
+		transform-origin: top;
+	}
 }

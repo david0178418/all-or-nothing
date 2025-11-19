@@ -1,0 +1,95 @@
+import { useEffect, useRef, useState } from 'react';
+import { useTimeout } from '@/utils';
+import {
+	FocusableElement,
+	useCurrentFocusId,
+	useRegisterElement,
+	useUnregisterElement,
+	useFocusElement,
+} from '@/atoms';
+
+interface UseFocusableOptions {
+	id: string;
+	group: string;
+	gridPosition?: { row: number; col: number };
+	order?: number;
+	onSelect?: () => void;
+	disabled?: boolean;
+	autoFocus?: boolean; // Auto-focus this element when it mounts
+}
+
+/**
+ * Hook to make a component focusable via keyboard/controller
+ */
+export function useFocusable({
+	id,
+	group,
+	gridPosition,
+	order,
+	onSelect,
+	disabled = false,
+	autoFocus = false,
+}: UseFocusableOptions) {
+	const elementRef = useRef<HTMLElement>(null);
+	const [isFocused, setIsFocused] = useState(false);
+	const currentFocusId = useCurrentFocusId();
+	const registerElement = useRegisterElement();
+	const unregisterElement = useUnregisterElement();
+	const focusElement = useFocusElement();
+
+	// Store the latest onSelect callback in a ref to avoid re-registration
+	const onSelectRef = useRef(onSelect);
+	useEffect(() => {
+		onSelectRef.current = onSelect;
+	}, [onSelect]);
+
+	// Update focused state when global focus changes
+	useEffect(() => {
+		setIsFocused(currentFocusId === id);
+	}, [currentFocusId, id]);
+
+	// Register/unregister the element
+	useEffect(() => {
+		if (disabled) {
+			unregisterElement(id);
+			return;
+		}
+
+		const focusableElement: FocusableElement = {
+			id,
+			element: elementRef.current,
+			group,
+			gridPosition,
+			order,
+			onFocus: () => setIsFocused(true),
+			onBlur: () => setIsFocused(false),
+			onSelect: () => {
+				// Use the ref to get the latest callback without re-registering
+				if (onSelectRef.current) {
+					onSelectRef.current();
+				}
+			},
+		};
+
+		registerElement(focusableElement);
+
+		return () => {
+			unregisterElement(id);
+		};
+	}, [id, group, gridPosition?.row, gridPosition?.col, order, disabled, registerElement, unregisterElement]);
+
+	const hasAutoFocused = useRef(false);
+
+	const focusTimeout = autoFocus && !hasAutoFocused.current && !disabled;
+
+	useTimeout(() => {
+		focusElement(id);
+		hasAutoFocused.current = true;
+	}, focusTimeout ? 1 : null);
+
+	return {
+		ref: elementRef,
+		isFocused,
+		focus: () => focusElement(id),
+	};
+}

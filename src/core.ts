@@ -3,6 +3,8 @@ import Dexie, { EntityTable } from 'dexie';
 import {
 	DbCollectionItemNameGameDataShuffleCount,
 	DbCollectionItemNameGameDataTime,
+	DbCollectionItemNameGameDataSoundEnabled,
+	DbCollectionItemNameGameDataMusicEnabled,
 	DbCollectionItemNameSetOrdersDeck,
 	DbCollectionItemNameSetOrdersDiscard,
 	DbName,
@@ -95,6 +97,14 @@ async function initDb() {;
 		id: DbCollectionItemNameGameDataShuffleCount,
 		value: 0,
 	});
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataSoundEnabled,
+		value: 1,
+	});
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataMusicEnabled,
+		value: 1,
+	});
 	db.setorders.add({
 		name: DbCollectionItemNameSetOrdersDeck,
 		order: generateDeck(),
@@ -125,6 +135,32 @@ async function updateTime(newTime: number) {
 	});
 
 	localStorage.setItem(SavedGameKey, newTime.toString());
+}
+
+export
+async function getSoundEnabled() {
+	const result = await db.gamedata.get(DbCollectionItemNameGameDataSoundEnabled);
+	return result?.value === 1;
+}
+
+export
+async function updateSoundEnabled(enabled: boolean) {
+	await db.gamedata.update(DbCollectionItemNameGameDataSoundEnabled, {
+		value: enabled ? 1 : 0,
+	});
+}
+
+export
+async function getMusicEnabled() {
+	const result = await db.gamedata.get(DbCollectionItemNameGameDataMusicEnabled);
+	return result?.value === 1;
+}
+
+export
+async function updateMusicEnabled(enabled: boolean) {
+	await db.gamedata.update(DbCollectionItemNameGameDataMusicEnabled, {
+		value: enabled ? 1 : 0,
+	});
 }
 
 export
