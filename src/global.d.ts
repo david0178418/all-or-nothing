@@ -1,24 +1,12 @@
-/// <reference types="vite/client" />
-
-interface ImportMetaEnv {
-	readonly BASE_URL: string;
-	readonly DEV: boolean;
-	readonly MODE: string;
-	readonly PROD: boolean;
-	readonly PUBLIC_DIR?: string;
-	readonly SSR: boolean;
-	readonly VITE_AD_CONTENT_URL: string;
-	readonly VITE_GOOGLE_ANALYTICS_ID: string;
+declare namespace NodeJS {
+	interface ProcessEnv {
+		NODE_ENV: 'development' | 'production';
+		AD_CONTENT_URL?: string;
+		GOOGLE_ANALYTICS_ID?: string;
+	}
 }
 
-interface ImportMeta {
-	readonly env: ImportMetaEnv;
-}
-
-declare module 'virtual:pwa-register' {
-	import type { RegisterSWOptions } from 'vite-plugin-pwa/types'
-
-	export type { RegisterSWOptions }
-
-	export function registerSW(options?: RegisterSWOptions): (reloadPage?: boolean) => Promise<void>
+declare module '*.mp3' {
+	const src: string;
+	export default src;
 }

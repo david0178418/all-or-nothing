@@ -21,9 +21,13 @@ import {
 	useLoadAudioSettings,
 } from './atoms';
 
-const Game = lazy(() => import('./components/screens/game-screen'));
-const About = lazy(() => import('./components/screens/about-screen'));
-const Help = lazy(() => import('./components/screens/help-screen'));
+import Game from './components/screens/game-screen';
+import About from './components/screens/about-screen';
+import Help from './components/screens/help-screen';
+
+// const Game = lazy(() => import('./components/screens/game-screen'));
+// const About = lazy(() => import('./components/screens/about-screen'));
+// const Help = lazy(() => import('./components/screens/help-screen'));
 
 const ScreenComponents = {
 	[Screens.Title]: TitleScreen,

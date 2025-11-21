@@ -24,7 +24,7 @@
 		"noImplicitReturns": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"jsx": "preserve",
+		"jsx": "react-jsx",
 		"incremental": true,
 		"plugins": [],
 		"paths": {
@@ -32,9 +32,7 @@
 				"src/*"
 			]
 		},
-		"types": [
-			"vite-plugin-pwa/react"
-		]
+		"types": ["node"]
 	},
 	"include": [
 		"**/*.ts",

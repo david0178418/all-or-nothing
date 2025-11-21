@@ -1,10 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import App from './app';
-import { registerSW } from 'virtual:pwa-register';
+import { registerSW } from './register-sw';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './theme';
 
-registerSW({ immediate: true })
+if(import.meta.env.NODE_ENV === 'production') {
+	registerSW();
+}
 
 const appEl = document.getElementById('app');
 

@@ -25,9 +25,7 @@ import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
 import { InputAction, InputEvent } from '@/input/input-types';
 
-const {
-	VITE_AD_CONTENT_URL = '',
-} = import.meta.env;
+const AD_CONTENT_URL = import.meta.env?.AD_CONTENT_URL || '';
 
 const BoardCardCount = 12
 const db = getDb();
@@ -142,10 +140,10 @@ function GamePlayArea() {
 				isGameOver={gameComplete}
 				time={time}
 			/>
-			{VITE_AD_CONTENT_URL && (
+			{AD_CONTENT_URL && (
 				<AdLinkSection
 					open={gameComplete || paused}
-					contentUrl={VITE_AD_CONTENT_URL}
+					contentUrl={AD_CONTENT_URL}
 				/>
 			)}
 		</>
