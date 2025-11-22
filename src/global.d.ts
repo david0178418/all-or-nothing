@@ -22,3 +22,12 @@ declare module 'virtual:pwa-register' {
 
 	export function registerSW(options?: RegisterSWOptions): (reloadPage?: boolean) => Promise<void>
 }
+
+interface ElectronAPI {
+	isElectron: boolean;
+	platform: string;
+}
+
+interface Window {
+	electronAPI?: ElectronAPI;
+}

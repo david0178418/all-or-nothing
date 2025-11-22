@@ -2,14 +2,20 @@
 	"name": "all-or-nothing-game",
 	"version": "1.7.1",
 	"type": "module",
+	"main": "dist-electron/main.js",
 	"browserslist": "last 5 versions",
 	"scripts": {
 		"build": "vite build",
 		"preview": "vite preview",
 		"dev": "vite",
+		"dev:electron": "vite --config vite.config.electron.ts",
+		"build:electron:prepare": "node scripts/prepare-electron.js",
+		"build:electron": "npm run build:electron:linux && npm run build:electron:windows",
+		"build:electron:linux": "npm run build:electron:prepare && electron-builder --linux",
+		"build:electron:windows": "npm run build:electron:prepare && electron-builder --windows",
 		"typecheck": "tsc --noEmit"
 	},
-	"author": "",
+	"author": "David Granado <david@davidgranado.com>",
 	"license": "ISC",
 	"description": "",
 	"dependencies": {
@@ -38,5 +44,10 @@
 		"usehooks-ts": "^3.1.1",
 		"vite": "^7.2.0",
 		"vite-plugin-pwa": "^1.1.0"
+	},
+	"devDependencies": {
+		"electron": "^39.2.3",
+		"electron-builder": "^26.0.12",
+		"vite-plugin-electron": "^0.29.0"
 	}
 }

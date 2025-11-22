@@ -1,0 +1,37 @@
+{
+	"appId": "com.allornothing.game",
+	"productName": "All or Nothing",
+	"directories": {
+		"output": "release/${version}",
+		"app": "dist-electron-app"
+	},
+	"npmRebuild": false,
+	"asar": true,
+	"linux": {
+		"target": [
+			"AppImage",
+			"deb"
+		],
+		"category": "Game",
+		"icon": "public/android-chrome-512x512.png"
+	},
+	"win": {
+		"target": [
+			{
+				"target": "nsis",
+				"arch": ["x64"]
+			},
+			{
+				"target": "portable",
+				"arch": ["x64"]
+			}
+		],
+		"icon": "public/android-chrome-512x512.png"
+	},
+	"nsis": {
+		"oneClick": false,
+		"allowToChangeInstallationDirectory": true,
+		"createDesktopShortcut": true,
+		"createStartMenuShortcut": true
+	}
+}
