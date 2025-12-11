@@ -10,7 +10,8 @@
 		"typecheck": "tsc --noEmit",
 		"build:desktop": "npm run build:desktop:prepare && npm run build:desktop:package",
 		"build:desktop:prepare": "node scripts/prepare-desktop.ts",
-		"build:desktop:package": "node scripts/package-desktop.ts"
+		"build:desktop:package": "node scripts/package-desktop.ts",
+		"build:appimage": "node scripts/create-appimage.ts"
 	},
 	"author": "",
 	"license": "ISC",
