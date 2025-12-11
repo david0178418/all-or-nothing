@@ -7,6 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
 	build: {
 		target: 'esnext',
+		outDir: 'dist/web',
 	},
 	plugins: [
 		react(),
