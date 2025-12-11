@@ -3,6 +3,7 @@ node_modules
 .firebase*
 firebase*
 dynamic/
+cache/
 dist/
 .env*
 tsconfig.tsbuildinfo
