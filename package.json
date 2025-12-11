@@ -20,7 +20,7 @@
 		"@mui/material": "^7.3.5",
 		"@types/howler": "^2.2.11",
 		"@types/lodash.debounce": "^4.0.9",
-		"@types/node": "^24.10.0",
+		"@types/node": "^25.0.0",
 		"@types/react": "^19.2.2",
 		"@types/react-dom": "^19.2.2",
 		"@vitejs/plugin-react": "^5.1.0",
