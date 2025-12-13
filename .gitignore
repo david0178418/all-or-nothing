@@ -8,5 +8,6 @@ dist/
 .env*
 tsconfig.tsbuildinfo
 
+local
 *.local
 *.local.*
