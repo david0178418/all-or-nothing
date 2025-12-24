@@ -28,3 +28,7 @@ declare module '*.svg?react' {
 	const content: FunctionComponent<SVGProps<SVGSVGElement>>;
 	export default content;
 }
+
+interface Window {
+	forcePlatform?: (platform?: string) => void;
+}

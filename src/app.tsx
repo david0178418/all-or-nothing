@@ -19,6 +19,7 @@ import {
 	useNavigate,
 	useSelectCurrent,
 	useLoadAudioSettings,
+	useSetupDebugUtilities,
 } from './atoms';
 
 const Game = lazy(() => import('./components/screens/game-screen'));
@@ -40,6 +41,8 @@ function App() {
 	const navigate = useNavigate();
 	const selectCurrent = useSelectCurrent();
 	const loadAudioSettings = useLoadAudioSettings();
+
+	useSetupDebugUtilities();
 
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
 

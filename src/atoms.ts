@@ -1,4 +1,5 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
 import { Screens, ToastMesssage } from './types';
 import { NavigationDirection, ControllerType } from './input/input-types';
 import { getSoundEnabled, getMusicEnabled, updateSoundEnabled, updateMusicEnabled } from './core';
@@ -406,4 +407,33 @@ export function useNavigate() {
 
 export function useSelectCurrent() {
 	return useSetAtom(selectCurrentAtom);
+}
+
+// Debug Utilities
+export
+function useSetupDebugUtilities() {
+	const setActiveController = useSetActiveController();
+
+	useEffect(() => {
+		const validPlatforms = Object.values(ControllerType);
+
+		window.forcePlatform = (platform?: string) => {
+			if (platform === undefined || platform === 'mouse') {
+				setActiveController(null);
+				return;
+			}
+
+			if (!validPlatforms.includes(platform as ControllerType)) {
+				throw new Error(
+					`Invalid platform '${platform}'. Valid options: ${validPlatforms.join(', ')}, mouse`
+				);
+			}
+
+			setActiveController(platform as ControllerType);
+		};
+
+		return () => {
+			delete window.forcePlatform;
+		};
+	}, [setActiveController]);
 }
