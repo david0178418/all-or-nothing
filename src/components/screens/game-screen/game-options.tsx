@@ -1,6 +1,6 @@
 import { useSetIsPaused, useActiveController } from '@/atoms';
 import { InputAction } from '@/input/input-types';
-import { ControllerButtonLabels } from '@/input/controller-mappings';
+import { ButtonGlyphMap } from '@/components/button-prompts/button-glyph-map';
 import { ReactNode } from 'react';
 import {
 	Pause as PauseIcon,
@@ -19,7 +19,7 @@ interface Props {
 	onHintMessage(): void;
 }
 
-interface ButtonWithBadgeProps {
+interface ButtonWithGlyphProps {
 	label: string;
 	action: InputAction;
 	icon: ReactNode;
@@ -27,12 +27,12 @@ interface ButtonWithBadgeProps {
 	disabled?: boolean;
 }
 
-function ButtonWithBadge(props: ButtonWithBadgeProps) {
+function ButtonWithGlyph(props: ButtonWithGlyphProps) {
 	const activeController = useActiveController();
 	const { label, action, icon, onClick, disabled = false } = props;
 
-	const buttonLabel = activeController
-		? ControllerButtonLabels[activeController]?.[action]
+	const glyphUrl = activeController
+		? ButtonGlyphMap[activeController]?.[action]
 		: null;
 
 	return (
@@ -42,8 +42,19 @@ function ButtonWithBadge(props: ButtonWithBadgeProps) {
 				startIcon={icon}
 				disabled={disabled}
 			>
-				{label}{buttonLabel ? ` [${buttonLabel}]` : '' }
+				{label}
 			</Button>
+			{glyphUrl && (
+				<Box
+					component="img"
+					src={glyphUrl}
+					alt=""
+					sx={{
+						width: 20,
+						height: 20,
+					}}
+				/>
+			)}
 		</Stack>
 	);
 }
@@ -64,19 +75,19 @@ function GameOptions(props: Props) {
 			}}
 		>
 			<Stack direction="row" spacing={1} justifyContent="center">
-				<ButtonWithBadge
+				<ButtonWithGlyph
 					label="Pause"
 					action={InputAction.PAUSE}
 					icon={<PauseIcon />}
 					onClick={() => setIsPaused(true)}
 				/>
-				<ButtonWithBadge
+				<ButtonWithGlyph
 					label="Hint"
 					action={InputAction.HINT}
 					icon={<QuestionMarkIcon />}
 					onClick={onHintMessage}
 				/>
-				<ButtonWithBadge
+				<ButtonWithGlyph
 					label="Shuffle"
 					action={InputAction.SHUFFLE}
 					icon={<ShuffleIcon />}

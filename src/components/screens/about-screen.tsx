@@ -1,10 +1,10 @@
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import {version} from '@/../package.json';
 import { useSetActiveScreen, useActiveController } from "@/atoms";
 import { Screens } from "@/types";
 import { useBackAction } from '@/input/useBackAction';
 import { InputAction } from '@/input/input-types';
-import { ControllerButtonLabels } from '@/input/controller-mappings';
+import { ButtonGlyphMap } from '@/components/button-prompts/button-glyph-map';
 import {
 	MusicNote as MusicNoteIcon,
 	ArrowBack as ArrowBackIcon,
@@ -20,8 +20,8 @@ function AboutScreen() {
 
 	useBackAction(() => setActiveScreen(Screens.Title));
 
-	const buttonLabel = activeController
-		? ControllerButtonLabels[activeController]?.[InputAction.BACK]
+	const glyphUrl = activeController
+		? ButtonGlyphMap[activeController]?.[InputAction.BACK]
 		: null;
 
 	return (
@@ -115,13 +115,26 @@ function AboutScreen() {
 					</Button>
 				</Box>
 				<Box paddingTop={5}>
-					<Button
-						fullWidth
-						startIcon={<ArrowBackIcon/>}
-						onClick={() => setActiveScreen(Screens.Title)}
-					>
-						Back{buttonLabel ? ` [${buttonLabel}]` : ''}
-					</Button>
+					<Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
+						<Button
+							fullWidth
+							startIcon={<ArrowBackIcon/>}
+							onClick={() => setActiveScreen(Screens.Title)}
+						>
+							Back
+						</Button>
+						{glyphUrl && (
+							<Box
+								component="img"
+								src={glyphUrl}
+								alt=""
+								sx={{
+									width: 20,
+									height: 20,
+								}}
+							/>
+						)}
+					</Stack>
 				</Box>
 			</Box>
 		</Container>
