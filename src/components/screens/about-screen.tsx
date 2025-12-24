@@ -1,4 +1,4 @@
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import {version} from '@/../package.json';
 import { useSetActiveScreen, useActiveController } from "@/atoms";
 import { Screens } from "@/types";
@@ -23,6 +23,18 @@ function AboutScreen() {
 	const GlyphComponent = activeController
 		? ButtonGlyphMap[activeController]?.[InputAction.BACK]
 		: null;
+
+	const backButtonStartIcon = GlyphComponent
+		? (
+			<GlyphComponent
+				width={20}
+				height={20}
+				viewBox="0 0 64 64"
+				aria-hidden="true"
+				style={{ display: 'block' }}
+			/>
+		)
+		: <ArrowBackIcon />;
 
 	return (
 		<Container sx={{textAlign: 'center', paddingTop: 10}}>
@@ -115,24 +127,13 @@ function AboutScreen() {
 					</Button>
 				</Box>
 				<Box paddingTop={5}>
-					<Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
-						<Button
-							fullWidth
-							startIcon={<ArrowBackIcon/>}
-							onClick={() => setActiveScreen(Screens.Title)}
-						>
-							Back
-						</Button>
-						{GlyphComponent && (
-							<GlyphComponent
-								width={20}
-								height={20}
-								viewBox="0 0 64 64"
-								aria-hidden="true"
-								style={{ display: 'block' }}
-							/>
-						)}
-					</Stack>
+					<Button
+						fullWidth
+						startIcon={backButtonStartIcon}
+						onClick={() => setActiveScreen(Screens.Title)}
+					>
+						Back
+					</Button>
 				</Box>
 			</Box>
 		</Container>

@@ -35,25 +35,26 @@ function ButtonWithGlyph(props: ButtonWithGlyphProps) {
 		? ButtonGlyphMap[activeController]?.[action]
 		: null;
 
+	const startIcon = GlyphComponent
+		? (
+			<GlyphComponent
+				width={40}
+				height={40}
+				viewBox="0 0 64 64"
+				display="block"
+			/>
+		)
+		: icon;
+
 	return (
-		<Stack direction="row" spacing={0.5} alignItems="center">
-			<Button
-				onClick={onClick}
-				startIcon={icon}
-				disabled={disabled}
-			>
-				{label}
-			</Button>
-			{GlyphComponent && (
-				<GlyphComponent
-					width={20}
-					height={20}
-					viewBox="0 0 64 64"
-					aria-hidden="true"
-					style={{ display: 'block' }}
-				/>
-			)}
-		</Stack>
+		<Button
+			size="large"
+			onClick={onClick}
+			startIcon={startIcon}
+			disabled={disabled}
+		>
+			{label}
+		</Button>
 	);
 }
 
