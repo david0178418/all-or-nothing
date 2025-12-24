@@ -13,22 +13,19 @@ interface ButtonPromptProps {
  * Display a single button prompt (e.g., "A - Select")
  */
 export function ButtonPrompt({ action, controllerType, label }: ButtonPromptProps) {
-	const glyphUrl = ButtonGlyphMap[controllerType]?.[action];
+	const GlyphComponent = ButtonGlyphMap[controllerType]?.[action];
 	const buttonLabel = ControllerButtonLabels[controllerType][action];
 
-	if (!glyphUrl) return null;
+	if (!GlyphComponent) return null;
 
 	return (
 		<Stack direction="row" spacing={0.5} alignItems="center">
-			<Box
-				component="img"
-				src={glyphUrl}
-				alt={buttonLabel}
-				sx={{
-					width: 28,
-					height: 28,
-					display: 'block',
-				}}
+			<GlyphComponent
+				width={28}
+				height={28}
+				viewBox="0 0 64 64"
+				aria-label={buttonLabel}
+				style={{ display: 'block' }}
 			/>
 			<Typography variant="body2" sx={{ color: 'rgba(0, 0, 0, 0.7)' }}>
 				{label}

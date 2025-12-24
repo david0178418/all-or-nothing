@@ -20,7 +20,7 @@ function AboutScreen() {
 
 	useBackAction(() => setActiveScreen(Screens.Title));
 
-	const glyphUrl = activeController
+	const GlyphComponent = activeController
 		? ButtonGlyphMap[activeController]?.[InputAction.BACK]
 		: null;
 
@@ -123,15 +123,13 @@ function AboutScreen() {
 						>
 							Back
 						</Button>
-						{glyphUrl && (
-							<Box
-								component="img"
-								src={glyphUrl}
-								alt=""
-								sx={{
-									width: 20,
-									height: 20,
-								}}
+						{GlyphComponent && (
+							<GlyphComponent
+								width={20}
+								height={20}
+								viewBox="0 0 64 64"
+								aria-hidden="true"
+								style={{ display: 'block' }}
 							/>
 						)}
 					</Stack>

@@ -31,7 +31,7 @@ function ButtonWithGlyph(props: ButtonWithGlyphProps) {
 	const activeController = useActiveController();
 	const { label, action, icon, onClick, disabled = false } = props;
 
-	const glyphUrl = activeController
+	const GlyphComponent = activeController
 		? ButtonGlyphMap[activeController]?.[action]
 		: null;
 
@@ -44,15 +44,13 @@ function ButtonWithGlyph(props: ButtonWithGlyphProps) {
 			>
 				{label}
 			</Button>
-			{glyphUrl && (
-				<Box
-					component="img"
-					src={glyphUrl}
-					alt=""
-					sx={{
-						width: 20,
-						height: 20,
-					}}
+			{GlyphComponent && (
+				<GlyphComponent
+					width={20}
+					height={20}
+					viewBox="0 0 64 64"
+					aria-hidden="true"
+					style={{ display: 'block' }}
 				/>
 			)}
 		</Stack>

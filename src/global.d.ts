@@ -22,3 +22,9 @@ declare module 'virtual:pwa-register' {
 
 	export function registerSW(options?: RegisterSWOptions): (reloadPage?: boolean) => Promise<void>
 }
+
+declare module '*.svg?react' {
+	import type { FunctionComponent, SVGProps } from 'react';
+	const content: FunctionComponent<SVGProps<SVGSVGElement>>;
+	export default content;
+}
