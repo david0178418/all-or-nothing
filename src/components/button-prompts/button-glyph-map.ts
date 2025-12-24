@@ -47,6 +47,17 @@ import keyboardArrowDown from './assets/keyboard/arrow_down.svg?react';
 import keyboardArrowLeft from './assets/keyboard/arrow_left.svg?react';
 import keyboardArrowRight from './assets/keyboard/arrow_right.svg?react';
 
+// Steam Deck imports
+import steamdeckButtonA from './assets/steamdeck/button_a.svg?react';
+import steamdeckButtonB from './assets/steamdeck/button_b.svg?react';
+import steamdeckButtonX from './assets/steamdeck/button_x.svg?react';
+import steamdeckButtonY from './assets/steamdeck/button_y.svg?react';
+import steamdeckButtonView from './assets/steamdeck/button_view.svg?react';
+import steamdeckDpadUp from './assets/steamdeck/dpad_up.svg?react';
+import steamdeckDpadDown from './assets/steamdeck/dpad_down.svg?react';
+import steamdeckDpadLeft from './assets/steamdeck/dpad_left.svg?react';
+import steamdeckDpadRight from './assets/steamdeck/dpad_right.svg?react';
+
 /**
  * Maps ControllerType + InputAction to SVG component
  */
@@ -94,6 +105,17 @@ export const ButtonGlyphMap: Record<ControllerType, Partial<Record<InputAction, 
 		[InputAction.NAVIGATE_DOWN]: keyboardArrowDown,
 		[InputAction.NAVIGATE_LEFT]: keyboardArrowLeft,
 		[InputAction.NAVIGATE_RIGHT]: keyboardArrowRight,
+	},
+	[ControllerType.STEAMDECK]: {
+		[InputAction.SELECT]: steamdeckButtonA,
+		[InputAction.BACK]: steamdeckButtonB,
+		[InputAction.HINT]: steamdeckButtonX,
+		[InputAction.SHUFFLE]: steamdeckButtonY,
+		[InputAction.PAUSE]: steamdeckButtonView,
+		[InputAction.NAVIGATE_UP]: steamdeckDpadUp,
+		[InputAction.NAVIGATE_DOWN]: steamdeckDpadDown,
+		[InputAction.NAVIGATE_LEFT]: steamdeckDpadLeft,
+		[InputAction.NAVIGATE_RIGHT]: steamdeckDpadRight,
 	},
 	// Generic uses Xbox glyphs
 	[ControllerType.GENERIC]: {

@@ -37,6 +37,17 @@ export const ControllerMappings: Record<ControllerType, Partial<Record<GamepadBu
 		[GamepadButton.D_LEFT]: InputAction.NAVIGATE_LEFT,
 		[GamepadButton.D_RIGHT]: InputAction.NAVIGATE_RIGHT,
 	},
+	[ControllerType.STEAMDECK]: {
+		[GamepadButton.A]: InputAction.SELECT, // Bottom button (A)
+		[GamepadButton.B]: InputAction.BACK, // Right button (B)
+		[GamepadButton.X]: InputAction.HINT, // Left button (X)
+		[GamepadButton.Y]: InputAction.SHUFFLE, // Top button (Y)
+		[GamepadButton.SELECT]: InputAction.PAUSE, // View button
+		[GamepadButton.D_UP]: InputAction.NAVIGATE_UP,
+		[GamepadButton.D_DOWN]: InputAction.NAVIGATE_DOWN,
+		[GamepadButton.D_LEFT]: InputAction.NAVIGATE_LEFT,
+		[GamepadButton.D_RIGHT]: InputAction.NAVIGATE_RIGHT,
+	},
 	[ControllerType.GENERIC]: {
 		[GamepadButton.A]: InputAction.SELECT,
 		[GamepadButton.B]: InputAction.BACK,
@@ -122,6 +133,17 @@ export const ControllerButtonLabels: Record<ControllerType, Record<InputAction, 
 		[InputAction.NAVIGATE_LEFT]: 'D-Pad ←',
 		[InputAction.NAVIGATE_RIGHT]: 'D-Pad →',
 	},
+	[ControllerType.STEAMDECK]: {
+		[InputAction.SELECT]: 'A',
+		[InputAction.BACK]: 'B',
+		[InputAction.HINT]: 'X',
+		[InputAction.SHUFFLE]: 'Y',
+		[InputAction.PAUSE]: 'View',
+		[InputAction.NAVIGATE_UP]: 'D-Pad ↑',
+		[InputAction.NAVIGATE_DOWN]: 'D-Pad ↓',
+		[InputAction.NAVIGATE_LEFT]: 'D-Pad ←',
+		[InputAction.NAVIGATE_RIGHT]: 'D-Pad →',
+	},
 	[ControllerType.KEYBOARD]: {
 		[InputAction.SELECT]: 'Enter',
 		[InputAction.BACK]: 'Esc',
@@ -167,6 +189,12 @@ export function detectControllerType(gamepadId: string): ControllerType {
 	if (id.includes('nintendo') || id.includes('switch') || id.includes('joy-con') ||
 	    id.includes('joycon') || id.includes('057e')) {
 		return ControllerType.NINTENDO_SWITCH;
+	}
+
+	// Steam Deck controller detection
+	if (id.includes('steamdeck') || id.includes('steam deck') || id.includes('valve') ||
+	    id.includes('28de')) {
+		return ControllerType.STEAMDECK;
 	}
 
 	return ControllerType.GENERIC;
