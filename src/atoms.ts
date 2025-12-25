@@ -76,15 +76,24 @@ function useLoadAudioSettings() {
 }
 
 const activeControllerAtom = atom<ControllerType | null>(null);
+const forcedPlatformAtom = atom<ControllerType | null>(null);
 
 export
 function useActiveController() {
-	return useAtomValue(activeControllerAtom);
+	const forcedPlatform = useAtomValue(forcedPlatformAtom);
+	const activeController = useAtomValue(activeControllerAtom);
+
+	return forcedPlatform ?? activeController;
 }
 
 export
 function useSetActiveController() {
 	return useSetAtom(activeControllerAtom);
+}
+
+export
+function useSetForcedPlatform() {
+	return useSetAtom(forcedPlatformAtom);
 }
 
 const pausedAtom = atom(false);
@@ -410,16 +419,17 @@ export function useSelectCurrent() {
 }
 
 // Debug Utilities
+// TODO: Does this need to be a hook or can it be just a global fn?
 export
 function useSetupDebugUtilities() {
-	const setActiveController = useSetActiveController();
+	const setForcedPlatform = useSetForcedPlatform();
 
 	useEffect(() => {
 		const validPlatforms = Object.values(ControllerType);
 
 		window.forcePlatform = (platform?: string) => {
 			if (platform === undefined || platform === 'mouse') {
-				setActiveController(null);
+				setForcedPlatform(null);
 				return;
 			}
 
@@ -429,11 +439,11 @@ function useSetupDebugUtilities() {
 				);
 			}
 
-			setActiveController(platform as ControllerType);
+			setForcedPlatform(platform as ControllerType);
 		};
 
 		return () => {
 			delete window.forcePlatform;
 		};
-	}, [setActiveController]);
+	}, [setForcedPlatform]);
 }
