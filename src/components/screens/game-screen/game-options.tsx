@@ -49,6 +49,7 @@ function ButtonWithGlyph(props: ButtonWithGlyphProps) {
 	return (
 		<Button
 			size="large"
+			variant={GlyphComponent ? 'text' : 'outlined'}
 			onClick={onClick}
 			startIcon={startIcon}
 			disabled={disabled}
