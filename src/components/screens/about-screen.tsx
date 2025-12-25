@@ -4,7 +4,7 @@ import { useSetActiveScreen, useActiveController } from "@/atoms";
 import { Screens } from "@/types";
 import { useBackAction } from '@/input/useBackAction';
 import { InputAction } from '@/input/input-types';
-import { ControllerButtonLabels } from '@/input/controller-mappings';
+import { ButtonGlyphMap } from '@/components/button-prompts/button-glyph-map';
 import {
 	MusicNote as MusicNoteIcon,
 	ArrowBack as ArrowBackIcon,
@@ -20,9 +20,21 @@ function AboutScreen() {
 
 	useBackAction(() => setActiveScreen(Screens.Title));
 
-	const buttonLabel = activeController
-		? ControllerButtonLabels[activeController]?.[InputAction.BACK]
+	const GlyphComponent = activeController
+		? ButtonGlyphMap[activeController]?.[InputAction.BACK]
 		: null;
+
+	const backButtonStartIcon = GlyphComponent
+		? (
+			<GlyphComponent
+				width={20}
+				height={20}
+				viewBox="0 0 64 64"
+				aria-hidden="true"
+				style={{ display: 'block' }}
+			/>
+		)
+		: <ArrowBackIcon />;
 
 	return (
 		<Container sx={{textAlign: 'center', paddingTop: 10}}>
@@ -117,10 +129,10 @@ function AboutScreen() {
 				<Box paddingTop={5}>
 					<Button
 						fullWidth
-						startIcon={<ArrowBackIcon/>}
+						startIcon={backButtonStartIcon}
 						onClick={() => setActiveScreen(Screens.Title)}
 					>
-						Back{buttonLabel ? ` [${buttonLabel}]` : ''}
+						Back
 					</Button>
 				</Box>
 			</Box>

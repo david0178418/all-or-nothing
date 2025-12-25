@@ -1,0 +1,7 @@
+<svg width="64" height="64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <g>
+    <circle cx="32" cy="32" r="21" fill="#FFFFFF" stroke="none"/>
+    <path stroke="none" fill="#000000" d="M38 42 L36.4 38 27.6 38 26 42 22 42 30 22 34 22 42 42 38 42 M32 27 L29.2 34 34.8 34 32 27"/>
+  </g>
+</svg>

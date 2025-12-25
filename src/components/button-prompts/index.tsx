@@ -1,6 +1,7 @@
 import { Box, Typography, Stack } from '@mui/material';
 import { ControllerType, InputAction } from '@/input/input-types';
 import { ControllerButtonLabels } from '@/input/controller-mappings';
+import { ButtonGlyphMap } from './button-glyph-map';
 
 interface ButtonPromptProps {
 	action: InputAction;
@@ -12,28 +13,20 @@ interface ButtonPromptProps {
  * Display a single button prompt (e.g., "A - Select")
  */
 export function ButtonPrompt({ action, controllerType, label }: ButtonPromptProps) {
+	const GlyphComponent = ButtonGlyphMap[controllerType]?.[action];
 	const buttonLabel = ControllerButtonLabels[controllerType][action];
 
-	if (!buttonLabel) return null;
+	if (!GlyphComponent) return null;
 
 	return (
 		<Stack direction="row" spacing={0.5} alignItems="center">
-			<Box
-				sx={{
-					bgcolor: 'rgba(0, 0, 0, 0.7)',
-					color: 'white',
-					px: 1,
-					py: 0.5,
-					borderRadius: 1,
-					fontSize: '0.75rem',
-					fontWeight: 'bold',
-					minWidth: '28px',
-					textAlign: 'center',
-					border: '1px solid rgba(255, 255, 255, 0.3)',
-				}}
-			>
-				{buttonLabel}
-			</Box>
+			<GlyphComponent
+				width={28}
+				height={28}
+				viewBox="0 0 64 64"
+				aria-label={buttonLabel}
+				style={{ display: 'block' }}
+			/>
 			<Typography variant="body2" sx={{ color: 'rgba(0, 0, 0, 0.7)' }}>
 				{label}
 			</Typography>

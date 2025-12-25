@@ -1,4 +1,5 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
 import { Screens, ToastMesssage } from './types';
 import { NavigationDirection, ControllerType } from './input/input-types';
 import { getSoundEnabled, getMusicEnabled, updateSoundEnabled, updateMusicEnabled } from './core';
@@ -75,15 +76,24 @@ function useLoadAudioSettings() {
 }
 
 const activeControllerAtom = atom<ControllerType | null>(null);
+const forcedPlatformAtom = atom<ControllerType | null>(null);
 
 export
 function useActiveController() {
-	return useAtomValue(activeControllerAtom);
+	const forcedPlatform = useAtomValue(forcedPlatformAtom);
+	const activeController = useAtomValue(activeControllerAtom);
+
+	return forcedPlatform ?? activeController;
 }
 
 export
 function useSetActiveController() {
 	return useSetAtom(activeControllerAtom);
+}
+
+export
+function useSetForcedPlatform() {
+	return useSetAtom(forcedPlatformAtom);
 }
 
 const pausedAtom = atom(false);
@@ -406,4 +416,34 @@ export function useNavigate() {
 
 export function useSelectCurrent() {
 	return useSetAtom(selectCurrentAtom);
+}
+
+// Debug Utilities
+// TODO: Does this need to be a hook or can it be just a global fn?
+export
+function useSetupDebugUtilities() {
+	const setForcedPlatform = useSetForcedPlatform();
+
+	useEffect(() => {
+		const validPlatforms = Object.values(ControllerType);
+
+		window.forcePlatform = (platform?: string) => {
+			if (platform === undefined || platform === 'mouse') {
+				setForcedPlatform(null);
+				return;
+			}
+
+			if (!validPlatforms.includes(platform as ControllerType)) {
+				throw new Error(
+					`Invalid platform '${platform}'. Valid options: ${validPlatforms.join(', ')}, mouse`
+				);
+			}
+
+			setForcedPlatform(platform as ControllerType);
+		};
+
+		return () => {
+			delete window.forcePlatform;
+		};
+	}, [setForcedPlatform]);
 }

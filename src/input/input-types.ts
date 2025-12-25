@@ -33,6 +33,7 @@ export const ControllerType = {
 	XBOX: 'xbox',
 	PLAYSTATION: 'playstation',
 	NINTENDO_SWITCH: 'switch',
+	STEAMDECK: 'steamdeck',
 	KEYBOARD: 'keyboard',
 	GENERIC: 'generic',
 } as const;
