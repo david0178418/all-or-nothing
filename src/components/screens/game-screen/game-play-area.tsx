@@ -98,6 +98,7 @@ function GamePlayArea() {
 			<Container
 				maxWidth="xl"
 				sx={{
+					position: 'relative',
 					padding: 0,
 					marginTop: {
 						xs: 3,
