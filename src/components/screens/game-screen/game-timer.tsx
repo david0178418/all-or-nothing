@@ -32,6 +32,6 @@ function GameTimer(props: Props) {
 	}
 
 	return (
-		<FormattedTime label="Time:" value={time} />
+		<FormattedTime label="Time:" value={time} variant="h5" />
 	);
 }
