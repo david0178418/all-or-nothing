@@ -19,6 +19,15 @@ interface Props {
 	onHintMessage(): void;
 }
 
+interface ButtonConfig {
+	id: string;
+	label: string;
+	mouseIcon: ReactNode;
+	platformAction: InputAction;
+	onClick: () => void;
+	disabled?: boolean;
+}
+
 interface MouseButtonProps {
 	label: string;
 	icon: ReactNode;
@@ -85,48 +94,9 @@ function PlatformButton(props: PlatformButtonProps) {
 	);
 }
 
-export default
-function GameOptions(props: Props) {
-	const setIsPaused = useSetIsPaused();
-	const activeController = useActiveController();
-	const { canShuffle, onReshuffle, onHintMessage } = props;
-
-	const pauseAction = () => setIsPaused(true);
-
-	// Mouse controls: centered below play area
-	const mouseControls = !activeController ? (
-		<Box
-			paddingTop={3}
-			paddingBottom={20}
-			textAlign="center"
-			display={{
-				xs: 'none',
-				sm: 'block',
-			}}
-		>
-			<Stack direction="row" spacing={1} justifyContent="center">
-				<MouseButton
-					label="Pause"
-					icon={<PauseIcon />}
-					onClick={pauseAction}
-				/>
-				<MouseButton
-					label="Hint"
-					icon={<QuestionMarkIcon />}
-					onClick={onHintMessage}
-				/>
-				<MouseButton
-					label="Shuffle"
-					icon={<ShuffleIcon />}
-					onClick={onReshuffle}
-					disabled={!canShuffle}
-				/>
-			</Stack>
-		</Box>
-	) : null;
-
-	// Platform controls: bottom of screen, aligned with container
-	const platformControls = activeController ? (
+// Fixed bottom-left container for platform controls
+function FixedBottomLeftContainer({ children }: { children: ReactNode }) {
+	return (
 		<Box
 			sx={{
 				position: 'fixed',
@@ -156,33 +126,86 @@ function GameOptions(props: Props) {
 						pointerEvents: 'auto',
 					}}
 				>
-					<Stack direction="row" spacing={1}>
-						<PlatformButton
-							label="Pause"
-							action={InputAction.PAUSE}
-							onClick={pauseAction}
-						/>
-						<PlatformButton
-							label="Hint"
-							action={InputAction.HINT}
-							onClick={onHintMessage}
-						/>
-						<PlatformButton
-							label="Shuffle"
-							action={InputAction.SHUFFLE}
-							onClick={onReshuffle}
-							disabled={!canShuffle}
-						/>
-					</Stack>
+					{children}
 				</Box>
 			</Box>
 		</Box>
-	) : null;
+	);
+}
+
+export default
+function GameOptions(props: Props) {
+	const setIsPaused = useSetIsPaused();
+	const activeController = useActiveController();
+	const { canShuffle, onReshuffle, onHintMessage } = props;
+
+	const buttonConfigs: ButtonConfig[] = [
+		{
+			id: 'pause',
+			label: 'Pause',
+			mouseIcon: <PauseIcon />,
+			platformAction: InputAction.PAUSE,
+			onClick: () => setIsPaused(true),
+			disabled: false,
+		},
+		{
+			id: 'hint',
+			label: 'Hint',
+			mouseIcon: <QuestionMarkIcon />,
+			platformAction: InputAction.HINT,
+			onClick: onHintMessage,
+			disabled: false,
+		},
+		{
+			id: 'shuffle',
+			label: 'Shuffle',
+			mouseIcon: <ShuffleIcon />,
+			platformAction: InputAction.SHUFFLE,
+			onClick: onReshuffle,
+			disabled: !canShuffle,
+		},
+	];
 
 	return (
 		<>
-			{mouseControls}
-			{platformControls}
+			{activeController && (
+				<FixedBottomLeftContainer>
+					<Stack direction="row" spacing={1}>
+						{buttonConfigs.map(config => (
+							<PlatformButton
+								key={config.id}
+								label={config.label}
+								action={config.platformAction}
+								onClick={config.onClick}
+								disabled={config.disabled}
+							/>
+						))}
+					</Stack>
+				</FixedBottomLeftContainer>
+			)}
+			{!activeController && (
+				<Box
+					paddingTop={3}
+					paddingBottom={20}
+					textAlign="center"
+					display={{
+						xs: 'none',
+						sm: 'block',
+					}}
+				>
+					<Stack direction="row" spacing={1} justifyContent="center">
+						{buttonConfigs.map(config => (
+							<MouseButton
+								key={config.id}
+								label={config.label}
+								icon={config.mouseIcon}
+								onClick={config.onClick}
+								disabled={config.disabled}
+							/>
+						))}
+					</Stack>
+				</Box>
+			)}
 		</>
 	);
 }
