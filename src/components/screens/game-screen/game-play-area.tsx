@@ -121,10 +121,12 @@ function GamePlayArea() {
 				</Box>
 				<Box
 					paddingTop={3}
-					textAlign={{ xs: 'center', sm: 'left' }}
+					display="flex"
+					justifyContent="space-between"
+					alignItems="center"
 				>
 					<GameTimer gameComplete={gameComplete} />
-					<Typography variant="subtitle1" sx={{marginTop: 1}}>
+					<Typography variant="h5">
 						{deck.length} cards left in the deck
 					</Typography>
 				</Box>

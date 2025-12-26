@@ -13,7 +13,7 @@ function FormattedTime(props: Props) {
 	} = props;
 
 	return (
-		<Typography variant="subtitle1">
+		<Typography variant="h5">
 			{label} <strong>{value / 60 | 0}:{(value % 60).toString().padStart(2, '0')}</strong>
 		</Typography>
 	);
