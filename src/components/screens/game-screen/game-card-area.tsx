@@ -12,6 +12,7 @@ interface Props {
 	shuffleCount: number;
 	cards: Card[];
 	selectedCards: string[];
+	raised?: boolean;
 	paused?: boolean;
 	onSelected(card: Card): void;
 }
@@ -20,6 +21,7 @@ interface Props {
 function FocusableCard({
 	card,
 	paused,
+	raised,
 	selected,
 	dealt,
 	onSelected,
@@ -28,6 +30,7 @@ function FocusableCard({
 	card: Card;
 	paused: boolean;
 	selected: boolean;
+	raised?: boolean;
 	dealt: boolean;
 	onSelected: (card: Card) => void;
 	gridPosition: { row: number; col: number };
@@ -62,6 +65,7 @@ function FocusableCard({
 		<PlayingCard
 			card={card}
 			dealt={dealt}
+			raised={raised}
 			flipped={paused}
 			selected={selected}
 			focused={isFocused}
@@ -170,6 +174,7 @@ function GameCardArea(props: Props) {
 								{card && (
 									<FocusableCard
 										card={card}
+										raised={!rawCards.find(rawCard => rawCard.id === card.id)}
 										dealt={!newCards.find(newCard => newCard.id === card.id)}
 										paused={paused || !!newCards.find(newCard => newCard.id === card.id)}
 										selected={!!card.id && selectedCards.includes(card.id)}

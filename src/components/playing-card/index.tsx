@@ -16,6 +16,7 @@ interface Props {
 	flipped?: boolean;
 	dealt?:boolean;
 	card?: Card;
+	raised?: boolean;
 	selected?: boolean;
 	onClick?(): void;
 	width?: number | string;
@@ -31,6 +32,7 @@ function PlayingCard(props: Props) {
 		selected,
 		dealt = false,
 		width = 350,
+		raised,
 		flipped: flippedOverride,
 		// TODO: Rename prop when batch of work is done.
 		card: face,
@@ -47,11 +49,20 @@ function PlayingCard(props: Props) {
 		play(`deal${getRandom(1, 4)}`);
 	}, [dealt]);
 
+	const isRaised = raised || focused || selected;
+
 	return (
 		<Box
 			width={width}
 			maxWidth="100%"
-			sx={{aspectRatio: '.65'}}
+			sx={{
+				aspectRatio: '.65',
+				translate: isRaised ? '-10px -16px' : '0 0',
+				filter: isRaised ? 'drop-shadow(6px 8px 12px rgba(0, 0, 0, 0.4))' : 'drop-shadow(3px 3px 4px #000)',
+				transition: 'translate 0.25s ease-out, filter 0.25s ease-out',
+				position: 'relative',
+				zIndex: isRaised ? 2 : 1,
+			}}
 		>
 			<Flipper
 				flipped={flipped}
