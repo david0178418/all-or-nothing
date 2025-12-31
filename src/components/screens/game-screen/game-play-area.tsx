@@ -40,11 +40,10 @@ function GamePlayArea() {
 	const shuffleCount = useShuffleCount();
 	const paused = useIsPaused();
 	const setIsPaused = useSetIsPaused();
-	const setOrders = useLiveQuery(() => db.setorders.toArray());
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
-	const deckOrder = setOrders?.find(order => order.name === DbCollectionItemNameSetOrdersDeck);
-	const discardPile = setOrders?.find(order => order.name === DbCollectionItemNameSetOrdersDiscard);
+	const deckOrder = useDeckOrder();
+	const discardPile = useDiscardPile();
 	const dealtCards = deck?.slice(0, BoardCardCount);
 	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount;
 
@@ -103,10 +102,6 @@ function GamePlayArea() {
 					marginTop: {
 						xs: 3,
 						sm: 10,
-					},
-					overflow: {
-						xs: 'hidden',
-						sm: 'visible',
 					},
 				}}
 			>
@@ -212,3 +207,15 @@ function useTime() {
 function useShuffleCount() {
 	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataShuffleCount))?.value || 0;
 }
+
+function useDeckOrder() {
+	return useLiveQuery(() => db.setorders.get(DbCollectionItemNameSetOrdersDeck));
+}
+
+export
+function useDiscardPile() {
+	return useLiveQuery(() => db.setorders.get(DbCollectionItemNameSetOrdersDiscard));
+}
+
+// Debug
+(window as any).db = db

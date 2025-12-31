@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { ReactNode, useEffect, useRef } from 'react';
-import { useSoundEffects } from '@/hooks';
+import { useDebouncedValue, useSoundEffects } from '@/hooks';
 import { getRandom } from '@/utils';
 import {
 	Card,
@@ -15,7 +15,7 @@ import FocusIndicator from '@/components/focus-indicator';
 interface Props {
 	flipped?: boolean;
 	dealt?:boolean;
-	card?: Card;
+	card?: Card; // Doesn't seem to be used. Check for removal.
 	raised?: boolean;
 	selected?: boolean;
 	onClick?(): void;
@@ -49,7 +49,8 @@ function PlayingCard(props: Props) {
 		play(`deal${getRandom(1, 4)}`);
 	}, [dealt]);
 
-	const isRaised = raised || focused || selected;
+	const rawIsRaised = raised || focused || selected;
+	const isRaised = useDebouncedValue(rawIsRaised, 50);
 
 	return (
 		<Box
