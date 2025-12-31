@@ -111,7 +111,7 @@ async function initDb() {;
 	});
 	db.setorders.add({
 		name: DbCollectionItemNameSetOrdersDiscard,
-		order: generateDeck(),
+		order: [],
 	});
 
 	return db;
@@ -124,7 +124,7 @@ async function resetGameCore() {
 		db.gamedata.update(DbCollectionItemNameGameDataTime, { value: 0 }),
 		db.gamedata.update(DbCollectionItemNameGameDataShuffleCount, { value: 0 }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDeck, { order: generateDeck() }),
-		db.setorders.update(DbCollectionItemNameSetOrdersDiscard, { order: generateDeck() }),
+		db.setorders.update(DbCollectionItemNameSetOrdersDiscard, { order: [] }),
 	])
 }
 
