@@ -1,4 +1,4 @@
-export const DbName = 'all-or-nothing-v0.1';
+export const DbName = 'all-or-nothing-v0.2';
 export const DbCollectionNameGameData = 'gamedata';
 export const DbCollectionItemNameSetOrdersDeck = 'deck';
 export const DbCollectionItemNameSetOrdersDiscard = 'discard';
