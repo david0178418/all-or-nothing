@@ -4,6 +4,9 @@ import {
 	FillValues,
 	ShapeValues,
 } from '@/types';
+import TriangleSvg from './assets/shapes/default/triangle.svg?react';
+import CircleSvg from './assets/shapes/default/circle.svg?react';
+import SquareSvg from './assets/shapes/default/square.svg?react';
 
 interface Props {
 	color: string;
@@ -57,46 +60,38 @@ interface SvgShapeProps {
 function Triangle(props: SvgShapeProps) {
 	const { fill, stroke } = props;
 	return (
-		<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-			<polygon
-				points="50,15 90,85 10,85"
-				fill={fill}
-				stroke={stroke}
-				strokeWidth={10}
-			/>
-		</svg>
+		<TriangleSvg
+			viewBox="0 0 100 100"
+			preserveAspectRatio="xMidYMid meet"
+			fill={fill}
+			stroke={stroke}
+			strokeWidth={10}
+		/>
 	);
 }
 
 function Circle(props: SvgShapeProps) {
 	const { fill, stroke } = props;
 	return (
-		<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-			<circle
-				cx="50"
-				cy="50"
-				r="40"
-				fill={fill}
-				stroke={stroke}
-				strokeWidth={10}
-			/>
-		</svg>
+		<CircleSvg
+			viewBox="0 0 100 100"
+			preserveAspectRatio="xMidYMid meet"
+			fill={fill}
+			stroke={stroke}
+			strokeWidth={10}
+		/>
 	);
 }
 
 function Square(props: SvgShapeProps) {
 	const { fill, stroke } = props;
 	return (
-		<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-			<rect
-				x="10"
-				y="10"
-				width="80"
-				height="80"
-				fill={fill}
-				stroke={stroke}
-				strokeWidth={10}
-			/>
-		</svg>
+		<SquareSvg
+			viewBox="0 0 100 100"
+			preserveAspectRatio="xMidYMid meet"
+			fill={fill}
+			stroke={stroke}
+			strokeWidth={10}
+		/>
 	);
 }
