@@ -1,4 +1,5 @@
-export const DbName = 'all-or-nothing-v0.2';
+const StorageVersion = 'v0.2';
+export const DbName = `all-or-nothing-${StorageVersion}`;
 export const DbCollectionNameGameData = 'gamedata';
 export const DbCollectionItemNameSetOrdersDeck = 'deck';
 export const DbCollectionItemNameSetOrdersDiscard = 'discard';
@@ -7,4 +8,4 @@ export const DbCollectionItemNameGameDataTime = 'time';
 export const DbCollectionItemNameGameDataSoundEnabled = 'sound-enabled';
 export const DbCollectionItemNameGameDataMusicEnabled = 'music-enabled';
 export const DbCollectionNameSetOrders = 'setorders';
-export const SavedGameKey = 'saved-game-time-v0.1';
+export const SavedGameKey = `saved-game-time-${StorageVersion}`;
