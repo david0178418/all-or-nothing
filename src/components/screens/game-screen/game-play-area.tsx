@@ -3,8 +3,18 @@ import { useIsPaused, usePushToastMsg, useSetIsPaused } from '@/atoms';
 import { Card } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
-import { discardCards, getDb, isSet, setExists, shuffleDeck} from '@/core';
+import {
+	discardCards,
+	getDb,
+	isSet,
+	setExists,
+	shuffleDeck,
+	awardMatchScore,
+	penalizeInvalidSet,
+	penalizeUnnecessaryShuffle,
+} from '@/core';
 import GameTimer from './game-timer';
+import GameScore from './game-score';
 import GameOptions from './game-options';
 import GameOptionsMobile from './game-options-mobile';
 import GameCardArea from './game-card-area';
@@ -17,6 +27,9 @@ import {
 import {
 	DbCollectionItemNameGameDataShuffleCount,
 	DbCollectionItemNameGameDataTime,
+	DbCollectionItemNameGameDataScore,
+	DbCollectionItemNameGameDataScoreValue,
+	DbCollectionItemNameGameDataComboCount,
 	DbCollectionItemNameSetOrdersDeck,
 	DbCollectionItemNameSetOrdersDiscard,
 } from '@/constants';
@@ -36,6 +49,7 @@ export default
 function GamePlayArea() {
 	const deck = useDeck();
 	const time = useTime();
+	const score = useScore();
 	const soundEffects = useSoundEffects();
 	const shuffleCount = useShuffleCount();
 	const paused = useIsPaused();
@@ -120,7 +134,10 @@ function GamePlayArea() {
 					justifyContent="space-between"
 					alignItems="center"
 				>
-					<GameTimer gameComplete={gameComplete} />
+					<Box display="flex" gap={4} alignItems="center">
+						<GameTimer gameComplete={gameComplete} />
+						<GameScore gameComplete={gameComplete} />
+					</Box>
 					<Typography variant="h5">
 						{deck.length} cards left in the deck
 					</Typography>
@@ -139,6 +156,7 @@ function GamePlayArea() {
 				remainingCards={dealtCards.length}
 				isGameOver={gameComplete}
 				time={time}
+				score={score}
 			/>
 			{VITE_AD_CONTENT_URL && (
 				<AdLinkSection
@@ -149,11 +167,23 @@ function GamePlayArea() {
 		</>
 	);
 
-	function handleReshuffle() {
+	async function handleReshuffle() {
+		if (!(dealtCards && deckOrder)) {
+			return;
+		}
+
+		const hasSet = setExists(dealtCards);
+
+		if (hasSet) {
+			await penalizeUnnecessaryShuffle();
+		} else {
+			await awardMatchScore(time);
+		}
+
 		setSelectedCards([]);
-		shuffleDeck();
+		await shuffleDeck();
 	}
-	function toggleSelected(cardId: string) {
+	async function toggleSelected(cardId: string) {
 		if(!(deckOrder && dealtCards)) {
 			return;
 		}
@@ -178,11 +208,13 @@ function GamePlayArea() {
 		) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
+			await awardMatchScore(time);
 			discardCards(newSelectedCardIds, BoardCardCount);
 			pushToastMsg('Set found!');
 			soundEffects('success');
 			setSelectedCards([]);
 		} else {
+			await penalizeInvalidSet();
 			setSelectedCards(newSelectedCardIds);
 			pushToastMsg('Not a set.');
 		}
@@ -215,6 +247,21 @@ function useDeckOrder() {
 export
 function useDiscardPile() {
 	return useLiveQuery(() => db.setorders.get(DbCollectionItemNameSetOrdersDiscard));
+}
+
+export
+function useScore() {
+	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataScore))?.value || 0;
+}
+
+export
+function useScoreValue() {
+	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataScoreValue))?.value || 1000;
+}
+
+export
+function useComboCount() {
+	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataComboCount))?.value || 0;
 }
 
 // Debug

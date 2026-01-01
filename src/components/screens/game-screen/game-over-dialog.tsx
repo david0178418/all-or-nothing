@@ -7,6 +7,7 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogActions,
+	Typography,
 } from '@mui/material';
 
 
@@ -14,6 +15,7 @@ interface Props {
 	isGameOver: boolean;
 	time: number;
 	remainingCards: number;
+	score: number;
 }
 
 export default
@@ -22,6 +24,7 @@ function GameOverDialog(props: Props) {
 		isGameOver,
 		time,
 		remainingCards,
+		score,
 	} = props;
 
 	return (
@@ -34,6 +37,9 @@ function GameOverDialog(props: Props) {
 					</DialogContentText>
 				)}
 				<FormattedTime label="Completed in " value={time} />
+				<Typography variant="h6" sx={{ mt: 2 }}>
+					Final Score: {score.toLocaleString()}
+				</Typography>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={resetGame}>

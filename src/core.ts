@@ -5,6 +5,10 @@ import {
 	DbCollectionItemNameGameDataTime,
 	DbCollectionItemNameGameDataSoundEnabled,
 	DbCollectionItemNameGameDataMusicEnabled,
+	DbCollectionItemNameGameDataScore,
+	DbCollectionItemNameGameDataScoreValue,
+	DbCollectionItemNameGameDataLastMatchTime,
+	DbCollectionItemNameGameDataComboCount,
 	DbCollectionItemNameSetOrdersDeck,
 	DbCollectionItemNameSetOrdersDiscard,
 	DbName,
@@ -60,6 +64,54 @@ function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 	);
 }
 
+// Scoring system configuration
+const SCORE_CONFIG = {
+	BASE_VALUE: 1000,
+	DECAY_PER_SECOND: 10,
+	COMBO_THRESHOLD_SECONDS: 3,
+	COMBO_BONUS_BASE: 100,
+	INVALID_SET_PENALTY: 100,
+	SHUFFLE_WITH_SET_PENALTY: 200,
+	MINIMUM_VALUE: 100,
+	ROUNDING_FACTOR: 10,
+} as const;
+
+// Pure scoring calculation functions
+function roundToNearest(value: number, multiple: number) {
+	return Math.round(value / multiple) * multiple;
+}
+
+export
+function calculateDecayedScoreValue(currentValue: number, secondsElapsed: number) {
+	const decayed = currentValue - (SCORE_CONFIG.DECAY_PER_SECOND * secondsElapsed);
+	return roundToNearest(Math.max(decayed, SCORE_CONFIG.MINIMUM_VALUE), SCORE_CONFIG.ROUNDING_FACTOR);
+}
+
+export
+function calculateComboBonus(comboCount: number) {
+	if (comboCount === 0) return 0;
+
+	const multiplier = comboCount === 1 ? 1 : (comboCount - 1) * 0.5 + 1;
+	return roundToNearest(SCORE_CONFIG.COMBO_BONUS_BASE * multiplier, SCORE_CONFIG.ROUNDING_FACTOR);
+}
+
+export
+function calculateScoreValueWithCombo(currentValue: number, comboCount: number) {
+	const bonus = calculateComboBonus(comboCount);
+	return roundToNearest(currentValue + bonus, SCORE_CONFIG.ROUNDING_FACTOR);
+}
+
+export
+function applyPenalty(currentValue: number, penalty: number) {
+	const penalized = currentValue - penalty;
+	return roundToNearest(Math.max(penalized, SCORE_CONFIG.MINIMUM_VALUE), SCORE_CONFIG.ROUNDING_FACTOR);
+}
+
+export
+function isComboEligible(currentTime: number, lastMatchTime: number) {
+	return (currentTime - lastMatchTime) <= SCORE_CONFIG.COMBO_THRESHOLD_SECONDS;
+}
+
 
 const db = new Dexie(DbName) as Dexie & {
 	setorders: EntityTable<
@@ -105,6 +157,22 @@ async function initDb() {;
 		id: DbCollectionItemNameGameDataMusicEnabled,
 		value: 1,
 	});
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataScore,
+		value: 0,
+	});
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataScoreValue,
+		value: 1000,
+	});
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataLastMatchTime,
+		value: 0,
+	});
+	db.gamedata.add({
+		id: DbCollectionItemNameGameDataComboCount,
+		value: 0,
+	});
 	db.setorders.add({
 		name: DbCollectionItemNameSetOrdersDeck,
 		order: generateDeck(),
@@ -123,6 +191,10 @@ async function resetGameCore() {
 	await Promise.all([
 		db.gamedata.update(DbCollectionItemNameGameDataTime, { value: 0 }),
 		db.gamedata.update(DbCollectionItemNameGameDataShuffleCount, { value: 0 }),
+		db.gamedata.update(DbCollectionItemNameGameDataScore, { value: 0 }),
+		db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: 1000 }),
+		db.gamedata.update(DbCollectionItemNameGameDataLastMatchTime, { value: 0 }),
+		db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: 0 }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDeck, { order: generateDeck() }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDiscard, { order: [] }),
 	])
@@ -161,6 +233,102 @@ async function updateMusicEnabled(enabled: boolean) {
 	await db.gamedata.update(DbCollectionItemNameGameDataMusicEnabled, {
 		value: enabled ? 1 : 0,
 	});
+}
+
+// Scoring database update functions
+export
+async function awardMatchScore(currentTime: number) {
+	const [scoreData, scoreValueData, lastMatchData, comboData] = await Promise.all([
+		db.gamedata.get(DbCollectionItemNameGameDataScore),
+		db.gamedata.get(DbCollectionItemNameGameDataScoreValue),
+		db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime),
+		db.gamedata.get(DbCollectionItemNameGameDataComboCount),
+	]);
+
+	if (!(scoreData && scoreValueData && lastMatchData && comboData)) {
+		return;
+	}
+
+	const isCombo = isComboEligible(currentTime, lastMatchData.value);
+	const newComboCount = isCombo ? comboData.value + 1 : 0;
+	const currentScoreValue = scoreValueData.value;
+	const newScore = scoreData.value + currentScoreValue;
+	const newScoreValue = calculateScoreValueWithCombo(
+		currentScoreValue,
+		newComboCount
+	);
+
+	await Promise.all([
+		db.gamedata.update(DbCollectionItemNameGameDataScore, { value: newScore }),
+		db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: newScoreValue }),
+		db.gamedata.update(DbCollectionItemNameGameDataLastMatchTime, { value: currentTime }),
+		db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: newComboCount }),
+	]);
+}
+
+export
+async function decayScoreValue(secondsElapsed: number) {
+	const scoreValueData = await db.gamedata.get(DbCollectionItemNameGameDataScoreValue);
+
+	if (!scoreValueData || secondsElapsed <= 0) {
+		return;
+	}
+
+	const newValue = calculateDecayedScoreValue(scoreValueData.value, secondsElapsed);
+
+	await db.gamedata.update(DbCollectionItemNameGameDataScoreValue, {
+		value: newValue,
+	});
+}
+
+export
+async function penalizeInvalidSet() {
+	const scoreValueData = await db.gamedata.get(DbCollectionItemNameGameDataScoreValue);
+
+	if (!scoreValueData) {
+		return;
+	}
+
+	const newValue = applyPenalty(scoreValueData.value, SCORE_CONFIG.INVALID_SET_PENALTY);
+
+	await db.gamedata.update(DbCollectionItemNameGameDataScoreValue, {
+		value: newValue,
+	});
+}
+
+export
+async function penalizeUnnecessaryShuffle() {
+	const scoreValueData = await db.gamedata.get(DbCollectionItemNameGameDataScoreValue);
+
+	if (!scoreValueData) {
+		return;
+	}
+
+	const newValue = applyPenalty(scoreValueData.value, SCORE_CONFIG.SHUFFLE_WITH_SET_PENALTY);
+
+	await db.gamedata.update(DbCollectionItemNameGameDataScoreValue, {
+		value: newValue,
+	});
+}
+
+export
+async function resetComboIfExpired(currentTime: number) {
+	const [lastMatchData, comboData, scoreValueData] = await Promise.all([
+		db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime),
+		db.gamedata.get(DbCollectionItemNameGameDataComboCount),
+		db.gamedata.get(DbCollectionItemNameGameDataScoreValue),
+	]);
+
+	if (!(lastMatchData && comboData && scoreValueData)) {
+		return;
+	}
+
+	if (comboData.value > 0 && !isComboEligible(currentTime, lastMatchData.value)) {
+		await Promise.all([
+			db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: 0 }),
+			db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: SCORE_CONFIG.BASE_VALUE }),
+		]);
+	}
 }
 
 export
