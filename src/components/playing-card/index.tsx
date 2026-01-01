@@ -12,20 +12,29 @@ import {
 import Shape from './shape';
 import FocusIndicator from '@/components/focus-indicator';
 
-interface Props {
-	flipped?: boolean;
-	dealt?:boolean;
-	card?: Card; // Doesn't seem to be used. Check for removal.
-	raised?: boolean;
-	selected?: boolean;
-	onClick?(): void;
+interface PlayingCardProps {
 	width?: number | string;
+	card?: Card;
+	onClick?(): void;
+	raised?: boolean;
+	flipped?: boolean;
+	dealt?: boolean;
+	focused?: boolean;
+	elementRef?: React.RefObject<HTMLElement | null>;
+	selected?: boolean;
+}
+
+interface CardSurfaceProps {
+	card?: Card;
+	onClick?(): void;
+	selected?: boolean;
+	flipped: boolean;
 	focused?: boolean;
 	elementRef?: React.RefObject<HTMLElement | null>;
 }
 
 export default
-function PlayingCard(props: Props) {
+function PlayingCard(props: PlayingCardProps) {
 	const play = useSoundEffects();
 	const {
 		onClick,
@@ -34,12 +43,11 @@ function PlayingCard(props: Props) {
 		width = 350,
 		raised,
 		flipped: flippedOverride,
-		// TODO: Rename prop when batch of work is done.
-		card: face,
+		card: cardData,
 		focused = false,
 		elementRef,
 	} = props;
-	const flipped = flippedOverride || !face;
+	const flipped = flippedOverride || !cardData;
 
 	useEffect(() => {
 		if(!dealt) {
@@ -68,11 +76,12 @@ function PlayingCard(props: Props) {
 			<Flipper
 				flipped={flipped}
 				backside={
-					<CardSurface/>
+					<CardSurface flipped/>
 				}
 			>
 				<CardSurface
-					card={face}
+					card={cardData}
+					flipped={flipped}
 					onClick={onClick}
 					selected={selected}
 					focused={focused}
@@ -83,18 +92,15 @@ function PlayingCard(props: Props) {
 	);
 }
 
-function CardSurface(props: Props) {
+function CardSurface(props: CardSurfaceProps) {
 	const {
 		onClick,
 		selected,
-		// TODO: Integrate "flipping" animation into this component.
-		flipped: flippedOverride,
-		// TODO: Rename prop when batch of work is done.
-		card: face,
+		flipped,
+		card,
 		focused = false,
 		elementRef,
 	} = props;
-	const flipped = flippedOverride || !face;
 
 	return (
 		<Box
@@ -128,12 +134,12 @@ function CardSurface(props: Props) {
 						''
 				}}
 			>
-				{!flipped && Array(CountValues[face.count]).fill(0).map((_, i) => (
+				{!flipped && card && Array(CountValues[card.count]).fill(0).map((_, i) => (
 					<Shape
 						key={i}
-						color={ColorValues[face.color]}
-						fill={FillValues[face.fill]}
-						type={ShapeValues[face.shape]}
+						color={ColorValues[card.color]}
+						fill={FillValues[card.fill]}
+						type={ShapeValues[card.shape]}
 					/>
 				))}
 			</Box>
