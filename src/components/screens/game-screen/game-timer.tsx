@@ -33,11 +33,9 @@ function GameTimer(props: Props) {
 		]);
 	}, runTimer ? 1000 : null);
 
-	if(!time) {
-		return null;
-	}
-
-	const formattedTime = `${time / 60 | 0}:${(time % 60).toString().padStart(2, '0')}`;
+	const formattedTime = time ?
+		`${time / 60 | 0}:${(time % 60).toString().padStart(2, '0')}`
+		: '0:00';
 
 	return (
 		<Box display="flex" gap={1} alignItems="center">

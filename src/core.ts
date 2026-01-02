@@ -163,7 +163,7 @@ async function initDb() {;
 	});
 	db.gamedata.add({
 		id: DbCollectionItemNameGameDataScoreValue,
-		value: 1000,
+		value: SCORE_CONFIG.BASE_VALUE,
 	});
 	db.gamedata.add({
 		id: DbCollectionItemNameGameDataLastMatchTime,
@@ -192,7 +192,7 @@ async function resetGameCore() {
 		db.gamedata.update(DbCollectionItemNameGameDataTime, { value: 0 }),
 		db.gamedata.update(DbCollectionItemNameGameDataShuffleCount, { value: 0 }),
 		db.gamedata.update(DbCollectionItemNameGameDataScore, { value: 0 }),
-		db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: 1000 }),
+		db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: SCORE_CONFIG.BASE_VALUE }),
 		db.gamedata.update(DbCollectionItemNameGameDataLastMatchTime, { value: 0 }),
 		db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: 0 }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDeck, { order: generateDeck() }),
