@@ -66,7 +66,7 @@ function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 
 // Scoring system configuration
 const SCORE_CONFIG = {
-	BASE_VALUE: 1000,
+	BASE_VALUE: 10_000,
 	DECAY_PER_SECOND: 10,
 	COMBO_THRESHOLD_SECONDS: 3,
 	COMBO_BONUS_BASE: 100,
