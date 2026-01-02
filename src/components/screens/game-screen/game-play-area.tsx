@@ -165,6 +165,10 @@ function GamePlayArea() {
 					/>
 				</Box>
 				<Box
+					paddingX={1}
+					display="flex"
+					justifyContent="space-between"
+					alignItems="center"
 					sx={{
 						paddingTop: {
 							xs: 2,
@@ -178,9 +182,6 @@ function GamePlayArea() {
 							xs: '72px',
 							sm: 0,
 						},
-						display: 'flex',
-						justifyContent: 'space-between',
-						alignItems: 'center',
 						flexShrink: {
 							xs: 0,
 							sm: 'unset',
@@ -191,19 +192,9 @@ function GamePlayArea() {
 						},
 					}}
 				>
-					<Box display="flex" gap={4} alignItems="center">
-						<GameTimer gameComplete={gameComplete} />
-						<GameScore gameComplete={gameComplete} />
-					</Box>
-					<Typography
-						variant="h5"
-						sx={{
-							display: {
-								xs: 'none',
-								sm: 'block',
-							},
-						}}
-					>
+					<GameTimer gameComplete={gameComplete} />
+					<GameScore gameComplete={gameComplete} />
+					<Typography variant="h5">
 						{deck.length} cards left
 					</Typography>
 				</Box>

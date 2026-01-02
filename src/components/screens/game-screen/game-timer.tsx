@@ -1,10 +1,11 @@
 import { useIsPaused } from '@/atoms';
 import { useInterval } from '@/hooks';
-import FormattedTime from '@/components/formatted-time';
 import { updateTime, decayScoreValue, resetComboIfExpired } from '@/core';
 import { useTimeout } from '@/utils';
 import { useState } from 'react';
 import { useTime } from './game-play-area';
+import { Box, Typography } from '@mui/material';
+import { AccessTime } from '@mui/icons-material';
 
 interface Props {
 	gameComplete?: boolean;
@@ -36,7 +37,14 @@ function GameTimer(props: Props) {
 		return null;
 	}
 
+	const formattedTime = `${time / 60 | 0}:${(time % 60).toString().padStart(2, '0')}`;
+
 	return (
-		<FormattedTime label="Time:" value={time} variant="h5" />
+		<Box display="flex" gap={1} alignItems="center">
+			<AccessTime />
+			<Typography variant="h5">
+				<strong>{formattedTime}</strong>
+			</Typography>
+		</Box>
 	);
 }

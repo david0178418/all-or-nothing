@@ -18,7 +18,7 @@ function GameScore(props: Props) {
 				Score: {score.toLocaleString()}
 			</Typography>
 			{!gameComplete && (
-				<Typography variant="caption" color="text.secondary">
+				<Typography variant="h6" color="text.secondary">
 					Next: {scoreValue.toLocaleString()}
 					{comboCount > 0 && ` (x${comboCount + 1} combo!)`}
 				</Typography>
