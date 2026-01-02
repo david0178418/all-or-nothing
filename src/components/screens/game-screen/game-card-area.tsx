@@ -134,6 +134,7 @@ function GameCardArea(props: Props) {
 		<Grid
 			container
 			rowSpacing={1}
+			paddingBottom={1}
 			columns={{
 				xs: 3,
 				sm: 6,
