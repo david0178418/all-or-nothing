@@ -204,7 +204,7 @@ function GamePlayArea() {
 							},
 						}}
 					>
-						{deck.length} cards left in the deck
+						{deck.length} cards left
 					</Typography>
 				</Box>
 				<GameOptions
