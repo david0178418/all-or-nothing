@@ -1,7 +1,7 @@
 import PlayingCard from '@/components/playing-card';
 import { Card } from '@/types';
 import { useInterval } from '@/utils';
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, useTheme, useMediaQuery } from '@mui/material';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDebouncedValue } from '@/hooks';
@@ -91,6 +91,8 @@ function GameCardArea(props: Props) {
 	const [cards, setCards] = useState<Card[]>([]);
 	const [newCards, setNewCards] = useState<Card[]>([]);
 	const setActiveGroup = useSetActiveGroup();
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	useEffect(() => {
 		setCards(rawCards);
@@ -126,6 +128,8 @@ function GameCardArea(props: Props) {
 		};
 	};
 
+	const columns = isMobile ? 3 : 6;
+
 	return (
 		<Grid
 			container
@@ -153,9 +157,7 @@ function GameCardArea(props: Props) {
 		>
 			<AnimatePresence mode="popLayout">
 				{cards.map((card, index) => {
-					// Assuming desktop (6 columns) for focus navigation
-					// Could be improved with media query detection
-					const gridPosition = getGridPosition(index, 6);
+					const gridPosition = getGridPosition(index, columns);
 
 					return (
 						<Grid

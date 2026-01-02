@@ -341,8 +341,8 @@ export const navigateAtom = atom(
 		const elementsInGroup = getElementsInGroup(elements, activeGroup);
 		if (elementsInGroup.length === 0) return;
 
-		// Determine if this is a 2D grid or 1D list
-		const isGrid = elementsInGroup.some(el => el.gridPosition !== undefined);
+		// Determine if this is a 2D grid or 1D list based on current element
+		const isGrid = currentElement.gridPosition !== undefined;
 
 		const targetId = isGrid
 			? navigate2D(direction, currentElement, elementsInGroup)
