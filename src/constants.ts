@@ -1,4 +1,4 @@
-const StorageVersion = 'v0.2';
+const StorageVersion = 'v0.3';
 export const DbName = `all-or-nothing-${StorageVersion}`;
 export const SavedGameKey = `saved-game-time-${StorageVersion}`;
 export const DbCollectionNameGameData = 'gamedata';
