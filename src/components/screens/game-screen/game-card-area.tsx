@@ -134,6 +134,22 @@ function GameCardArea(props: Props) {
 				xs: 3,
 				sm: 6,
 			}}
+			sx={{
+				height: {
+					xs: '100%',
+					sm: 'auto',
+				},
+				maxHeight: {
+					xs: '100%',
+					sm: 'none',
+				},
+				'& > *': {
+					height: {
+						xs: 'calc(25% - 4px)',
+						sm: 'auto',
+					},
+				},
+			}}
 		>
 			<AnimatePresence mode="popLayout">
 				{cards.map((card, index) => {
@@ -172,7 +188,26 @@ function GameCardArea(props: Props) {
 								},
 							}}
 						>
-							<Box maxWidth="80%">
+							<Box
+								sx={{
+									maxWidth: '80%',
+									width: '100%',
+									height: {
+										xs: '100%',
+										sm: 'auto',
+									},
+									'& > div': {
+										height: {
+											xs: '100%',
+											sm: 'auto',
+										},
+										width: {
+											xs: 'auto',
+											sm: 350,
+										},
+									},
+								}}
+							>
 								{card && (
 									<FocusableCard
 										card={card}

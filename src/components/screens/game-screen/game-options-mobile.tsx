@@ -39,6 +39,7 @@ function GameOptionsMobile(props: Props) {
 					position: 'fixed',
 					bottom: 16,
 					left: 16,
+					zIndex: (theme) => theme.zIndex.speedDial,
 					display: {
 						sm: 'none',
 					}

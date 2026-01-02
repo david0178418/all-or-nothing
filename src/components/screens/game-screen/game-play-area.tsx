@@ -114,12 +114,51 @@ function GamePlayArea() {
 					position: 'relative',
 					padding: 0,
 					marginTop: {
-						xs: 3,
+						xs: 0,
 						sm: 10,
+					},
+					height: {
+						xs: '100vh',
+						sm: 'auto',
+					},
+					display: {
+						xs: 'flex',
+						sm: 'block',
+					},
+					flexDirection: {
+						xs: 'column',
+						sm: 'row',
 					},
 				}}
 			>
-				<Box>
+				<Box
+					sx={{
+						flexGrow: {
+							xs: 1,
+							sm: 'unset',
+						},
+						flexShrink: {
+							xs: 1,
+							sm: 'unset',
+						},
+						minHeight: {
+							xs: 0,
+							sm: 'auto',
+						},
+						overflowY: {
+							xs: 'auto',
+							sm: 'visible',
+						},
+						paddingTop: {
+							xs: 2,
+							sm: 0,
+						},
+						paddingBottom: {
+							xs: 2,
+							sm: 0,
+						},
+					}}
+				>
 					<GameCardArea
 						shuffleCount={shuffleCount}
 						cards={dealtCards}
@@ -129,16 +168,45 @@ function GamePlayArea() {
 					/>
 				</Box>
 				<Box
-					paddingTop={3}
-					display="flex"
-					justifyContent="space-between"
-					alignItems="center"
+					sx={{
+						paddingTop: {
+							xs: 2,
+							sm: 3,
+						},
+						paddingBottom: {
+							xs: 2,
+							sm: 0,
+						},
+						marginBottom: {
+							xs: '72px',
+							sm: 0,
+						},
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						flexShrink: {
+							xs: 0,
+							sm: 'unset',
+						},
+						backgroundColor: {
+							xs: 'background.default',
+							sm: 'transparent',
+						},
+					}}
 				>
 					<Box display="flex" gap={4} alignItems="center">
 						<GameTimer gameComplete={gameComplete} />
 						<GameScore gameComplete={gameComplete} />
 					</Box>
-					<Typography variant="h5">
+					<Typography
+						variant="h5"
+						sx={{
+							display: {
+								xs: 'none',
+								sm: 'block',
+							},
+						}}
+					>
 						{deck.length} cards left in the deck
 					</Typography>
 				</Box>
