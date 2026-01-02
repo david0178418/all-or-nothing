@@ -145,10 +145,7 @@ function GamePlayArea() {
 							xs: 0,
 							sm: 'auto',
 						},
-						overflowY: {
-							xs: 'auto',
-							sm: 'visible',
-						},
+						overflowY: 'visible',
 						paddingTop: {
 							xs: 2,
 							sm: 0,
