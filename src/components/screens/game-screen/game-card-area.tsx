@@ -7,15 +7,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDebouncedValue } from '@/hooks';
 import { useFocusable } from '@/focus/useFocusable';
 import { useSetActiveGroup } from '@/atoms';
-import { useDiscardPile } from './game-play-area';
 
 interface Props {
 	shuffleCount: number;
 	cards: Card[];
 	selectedCards: string[];
+	discardingCardIds: string[];
 	raised?: boolean;
 	paused?: boolean;
 	onSelected(card: Card): void;
+	onDiscardAnimationComplete(cardIds: string[]): void;
 }
 
 // Wrapper component for individual card with focus support
@@ -83,10 +84,11 @@ function GameCardArea(props: Props) {
 		cards: unDebouncedRawCards,
 		paused,
 		selectedCards,
+		discardingCardIds,
 		onSelected,
+		onDiscardAnimationComplete,
 	} = props;
 	const rawCards = useDebouncedValue(unDebouncedRawCards, 100);
-	const discardPile = useDiscardPile();
 	const [shuffleCount, setShuffleCount] = useState(rawShffleCount);
 	const [cards, setCards] = useState<Card[]>([]);
 	const [newCards, setNewCards] = useState<Card[]>([]);
@@ -190,6 +192,11 @@ function GameCardArea(props: Props) {
 									duration: .5,
 								},
 							}}
+							onAnimationComplete={(definition: any) => {
+								if (definition === 'exit' && card.id) {
+									onDiscardAnimationComplete([card.id]);
+								}
+							}}
 						>
 							<Box
 								sx={{
@@ -214,20 +221,7 @@ function GameCardArea(props: Props) {
 								{card && (
 									<FocusableCard
 										card={card}
-										// TODO Something of hack.  The card is raised off the board if it
-										// is selected.  If it is found to be in a set, it is deselected and discarded.
-										// The animation transitions the card out after it is removed. Once a card is
-										// found to be in a set, it is removed from the available cards and put into
-										// the discarded list. To prevent it from falling back to the board before
-										// being removed, a "raised" flag is being used to artificially keep it
-										// elevated until it transitions out.  However, this isn't a blocking operation.
-										// The writes to indexeddb are async, which means for a time, it's in neither.
-										// Therefore, this value is currently being debounced internally in the Card
-										// component to skip over that time period.
-										//
-										// All that said, there's a strong smell here, indicated that there's likely a
-										// better way to handle this that I need to figure out later.
-										raised={!!discardPile?.order.find(cardId => cardId === card.id)}
+										raised={!!card.id && discardingCardIds.includes(card.id)}
 										dealt={!newCards.find(newCard => newCard.id === card.id)}
 										paused={paused || !!newCards.find(newCard => newCard.id === card.id)}
 										selected={!!card.id && selectedCards.includes(card.id)}

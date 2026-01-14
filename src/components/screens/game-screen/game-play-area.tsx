@@ -56,6 +56,7 @@ function GamePlayArea() {
 	const setIsPaused = useSetIsPaused();
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
+	const [discardingCards, setDiscardingCards] = useState<string[]>([]);
 	const deckOrder = useDeckOrder();
 	const discardPile = useDiscardPile();
 	const dealtCards = deck?.slice(0, BoardCardCount);
@@ -160,8 +161,12 @@ function GamePlayArea() {
 						shuffleCount={shuffleCount}
 						cards={dealtCards}
 						selectedCards={selectedCards}
+						discardingCardIds={discardingCards}
 						paused={paused}
 						onSelected={card => card.id && toggleSelected(card.id)}
+						onDiscardAnimationComplete={cardIds => {
+							setDiscardingCards(prev => prev.filter(id => !cardIds.includes(id)));
+						}}
 					/>
 				</Box>
 				<Box
@@ -265,6 +270,7 @@ function GamePlayArea() {
 
 		if(isSet(...newSelectedCards)) {
 			await awardMatchScore(time);
+			setDiscardingCards(prev => [...prev, ...newSelectedCardIds]);
 			discardCards(newSelectedCardIds, BoardCardCount);
 			pushToastMsg('Set found!');
 			soundEffects('success');

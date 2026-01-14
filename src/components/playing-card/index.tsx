@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { ReactNode, useEffect, useRef } from 'react';
-import { useDebouncedValue, useSoundEffects } from '@/hooks';
+import { useSoundEffects } from '@/hooks';
 import { getRandom } from '@/utils';
 import {
 	Card,
@@ -57,8 +57,7 @@ function PlayingCard(props: PlayingCardProps) {
 		play(`deal${getRandom(1, 4)}`);
 	}, [dealt]);
 
-	const rawIsRaised = raised || focused || selected;
-	const isRaised = useDebouncedValue(rawIsRaised, 50);
+	const isRaised = raised || focused || selected;
 
 	return (
 		<Box
