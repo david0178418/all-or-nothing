@@ -10,7 +10,6 @@ function GameScore(props: Props) {
 	const { gameComplete } = props;
 	const score = useScore();
 	const scoreValue = useScoreValue();
-	const comboCount = useComboCount();
 
 	return (
 		<Box display="flex" flexDirection="column" alignItems="flex-start">
@@ -20,7 +19,6 @@ function GameScore(props: Props) {
 			{!gameComplete && (
 				<Typography variant="h6" color="text.secondary">
 					Next: {scoreValue.toLocaleString()}
-					{comboCount > 0 && ` (x${comboCount + 1} combo!)`}
 				</Typography>
 			)}
 		</Box>

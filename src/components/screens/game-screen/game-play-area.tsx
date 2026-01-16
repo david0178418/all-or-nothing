@@ -18,6 +18,7 @@ import GameScore from './game-score';
 import GameOptions from './game-options';
 import GameOptionsMobile from './game-options-mobile';
 import GameCardArea from './game-card-area';
+import GameComboIndicator from './game-combo-indicator';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
 	Box,
@@ -30,6 +31,7 @@ import {
 	DbCollectionItemNameGameDataScore,
 	DbCollectionItemNameGameDataScoreValue,
 	DbCollectionItemNameGameDataComboCount,
+	DbCollectionItemNameGameDataLastMatchTime,
 	DbCollectionItemNameSetOrdersDeck,
 	DbCollectionItemNameSetOrdersDiscard,
 } from '@/constants';
@@ -116,7 +118,7 @@ function GamePlayArea() {
 					padding: 0,
 					marginTop: {
 						xs: 0,
-						sm: 10,
+						sm: 5,
 					},
 					height: {
 						xs: '100vh',
@@ -169,6 +171,7 @@ function GamePlayArea() {
 						}}
 					/>
 				</Box>
+				<GameComboIndicator />
 				<Box
 					paddingX={1}
 					display="flex"
@@ -177,7 +180,7 @@ function GamePlayArea() {
 					sx={{
 						paddingTop: {
 							xs: 2,
-							sm: 3,
+							sm: 1,
 						},
 						paddingBottom: {
 							xs: 2,
@@ -324,6 +327,11 @@ function useScoreValue() {
 export
 function useComboCount() {
 	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataComboCount))?.value || 0;
+}
+
+export
+function useLastMatchTime() {
+	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime))?.value || 0;
 }
 
 // Debug
