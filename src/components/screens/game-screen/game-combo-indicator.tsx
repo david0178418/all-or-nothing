@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Box, LinearProgress, Typography, keyframes } from '@mui/material';
 import { useComboCount, useLastMatchTime, useTime } from './game-play-area';
 
@@ -20,12 +21,39 @@ function GameComboIndicator() {
 	const comboCount = useComboCount();
 	const lastMatchTime = useLastMatchTime();
 	const currentTime = useTime();
+	const [smoothTime, setSmoothTime] = useState(currentTime);
 
-	const timeElapsed = currentTime - lastMatchTime;
+	// Sync smooth time with database time
+	useEffect(() => {
+		setSmoothTime(currentTime);
+	}, [currentTime]);
+
+	// Continuous animation loop
+	useEffect(() => {
+		const startTimestamp = performance.now();
+		const startSmoothTime = smoothTime;
+		let animationFrameId: number;
+
+		const animate = (timestamp: number) => {
+			const elapsedMs = timestamp - startTimestamp;
+			const elapsedSeconds = elapsedMs / 1000;
+			setSmoothTime(startSmoothTime + elapsedSeconds);
+			animationFrameId = requestAnimationFrame(animate);
+		};
+
+		animationFrameId = requestAnimationFrame(animate);
+
+		return () => {
+			cancelAnimationFrame(animationFrameId);
+		};
+	}, [currentTime]);
+
+	const timeElapsed = smoothTime - lastMatchTime;
 	const timeRemaining = Math.max(0, COMBO_THRESHOLD_SECONDS - timeElapsed);
 	const progress = (timeRemaining / COMBO_THRESHOLD_SECONDS) * 100;
 
-	const isActive = comboCount > 0 || timeRemaining > 0;
+	// Only show if at least one match has been made (lastMatchTime > 0)
+	const isActive = lastMatchTime > 0 && (comboCount > 0 || timeRemaining > 0);
 
 	const getBarColor = () => {
 		if (timeRemaining > 4) return '#4caf50'; // Green

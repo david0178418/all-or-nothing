@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { useScore, useScoreValue, useComboCount } from './game-play-area';
+import { useScore, useScoreValue } from './game-play-area';
 
 interface Props {
 	gameComplete?: boolean;

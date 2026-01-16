@@ -111,7 +111,7 @@ function applyPenalty(currentValue: number, penalty: number) {
 
 export
 function isComboEligible(currentTime: number, lastMatchTime: number) {
-	return (currentTime - lastMatchTime) <= SCORE_CONFIG.COMBO_THRESHOLD_SECONDS;
+	return lastMatchTime > 0 && (currentTime - lastMatchTime) <= SCORE_CONFIG.COMBO_THRESHOLD_SECONDS;
 }
 
 
