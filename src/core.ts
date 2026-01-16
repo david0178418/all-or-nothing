@@ -46,6 +46,8 @@ function setExists(cards: Card[]) {
 
 export
 function isSet(a: Card, b: Card, c: Card) {
+	if((import.meta.env as any).VITE_CHEAT) return true;
+
 	return (
 		allSameOrDifferent(a.color, b.color, c.color) &&
 		allSameOrDifferent(a.fill, b.fill, c.fill) &&
