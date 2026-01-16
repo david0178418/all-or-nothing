@@ -82,8 +82,16 @@ export
 function useActiveController() {
 	const forcedPlatform = useAtomValue(forcedPlatformAtom);
 	const activeController = useAtomValue(activeControllerAtom);
+	const clearFocus = useSetAtom(clearFocusAtom);
+	const currentControls = forcedPlatform || activeController;
 
-	return forcedPlatform ?? activeController;
+	useEffect(() => {
+		if(currentControls) return;
+
+		clearFocus();
+	}, [currentControls])
+
+	return currentControls;
 }
 
 export
@@ -370,7 +378,7 @@ export const selectCurrentAtom = atom(
 );
 
 // Clear focus
-export const clearFocusAtom = atom(
+const clearFocusAtom = atom(
 	null,
 	(get, set) => {
 		const currentFocusId = get(currentFocusIdAtom);
