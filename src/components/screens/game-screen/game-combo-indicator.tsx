@@ -21,28 +21,32 @@ function GameComboIndicator() {
 	const comboCount = useComboCount();
 	const lastMatchTime = useLastMatchTime();
 	const currentTime = useTime();
-	const [animationOffset, setAnimationOffset] = useState(0);
+	const [animation, setAnimation] = useState({ baseTime: currentTime, offset: 0 });
 
 	// Continuous animation loop - tracks time elapsed since last database sync
+	// Also resets when lastMatchTime changes so the bar starts at 100% on new matches
 	useEffect(() => {
 		const startTimestamp = performance.now();
 		let animationFrameId: number;
 
 		const animate = (timestamp: number) => {
 			const elapsedMs = timestamp - startTimestamp;
-			setAnimationOffset(elapsedMs / 1000);
+			setAnimation({ baseTime: currentTime, offset: elapsedMs / 1000 });
 			animationFrameId = requestAnimationFrame(animate);
 		};
 
-		setAnimationOffset(0);
+		setAnimation({ baseTime: currentTime, offset: 0 });
 		animationFrameId = requestAnimationFrame(animate);
 
 		return () => {
 			cancelAnimationFrame(animationFrameId);
 		};
-	}, [currentTime]);
+	}, [currentTime, lastMatchTime]);
 
-	const smoothTime = currentTime + animationOffset;
+	// Only apply offset if it corresponds to the current baseTime (avoids stale offset causing jerkiness)
+	const smoothTime = animation.baseTime === currentTime
+		? currentTime + animation.offset
+		: currentTime;
 
 	// Guard against invalid state (data loading race condition)
 	const isValidState = lastMatchTime > 0 && lastMatchTime <= smoothTime;
