@@ -203,6 +203,14 @@ async function resetGameCore() {
 }
 
 export
+async function resetComboState() {
+	await Promise.all([
+		db.gamedata.update(DbCollectionItemNameGameDataLastMatchTime, { value: 0 }),
+		db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: 0 }),
+	]);
+}
+
+export
 async function updateTime(newTime: number) {
 	await db.gamedata.update(DbCollectionItemNameGameDataTime, {
 		value: newTime,

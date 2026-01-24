@@ -1,4 +1,5 @@
 import { resetGame } from '@/utils';
+import { resetComboState } from '@/core';
 import { Screens } from '../types';
 import {
 	useIsPaused,
@@ -106,7 +107,8 @@ function PauseDialog() {
 	}, [paused, setActiveGroup]);
 
 	// Stable callback refs for button handlers
-	const handleUnpause = useCallback(() => {
+	const handleUnpause = useCallback(async () => {
+		await resetComboState();
 		setPaused(false);
 	}, [setPaused]);
 

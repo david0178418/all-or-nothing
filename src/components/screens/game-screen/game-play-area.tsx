@@ -12,6 +12,7 @@ import {
 	awardMatchScore,
 	penalizeInvalidSet,
 	penalizeUnnecessaryShuffle,
+	resetComboState,
 } from '@/core';
 import GameTimer from './game-timer';
 import GameScore from './game-score';
@@ -74,6 +75,11 @@ function GamePlayArea() {
 		deck.length <= 12 &&
 		!setExists(dealtCards)
 	);
+
+	// Reset combo state when the game screen mounts (continuing a game should not preserve combo)
+	useEffect(() => {
+		resetComboState();
+	}, []);
 
 	// Handle controller/keyboard input for game actions
 	useEffect(() => {

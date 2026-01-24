@@ -21,26 +21,20 @@ function GameComboIndicator() {
 	const comboCount = useComboCount();
 	const lastMatchTime = useLastMatchTime();
 	const currentTime = useTime();
-	const [smoothTime, setSmoothTime] = useState(currentTime);
+	const [animationOffset, setAnimationOffset] = useState(0);
 
-	// Sync smooth time with database time
-	useEffect(() => {
-		setSmoothTime(currentTime);
-	}, [currentTime]);
-
-	// Continuous animation loop
+	// Continuous animation loop - tracks time elapsed since last database sync
 	useEffect(() => {
 		const startTimestamp = performance.now();
-		const startSmoothTime = smoothTime;
 		let animationFrameId: number;
 
 		const animate = (timestamp: number) => {
 			const elapsedMs = timestamp - startTimestamp;
-			const elapsedSeconds = elapsedMs / 1000;
-			setSmoothTime(startSmoothTime + elapsedSeconds);
+			setAnimationOffset(elapsedMs / 1000);
 			animationFrameId = requestAnimationFrame(animate);
 		};
 
+		setAnimationOffset(0);
 		animationFrameId = requestAnimationFrame(animate);
 
 		return () => {
@@ -48,12 +42,17 @@ function GameComboIndicator() {
 		};
 	}, [currentTime]);
 
-	const timeElapsed = smoothTime - lastMatchTime;
-	const timeRemaining = Math.max(0, COMBO_THRESHOLD_SECONDS - timeElapsed);
-	const progress = (timeRemaining / COMBO_THRESHOLD_SECONDS) * 100;
+	const smoothTime = currentTime + animationOffset;
 
-	// Only show if at least one match has been made (lastMatchTime > 0)
-	const isActive = lastMatchTime > 0 && (comboCount > 0 || timeRemaining > 0);
+	// Guard against invalid state (data loading race condition)
+	const isValidState = lastMatchTime > 0 && lastMatchTime <= smoothTime;
+
+	const timeElapsed = smoothTime - lastMatchTime;
+	const timeRemaining = Math.max(0, Math.min(COMBO_THRESHOLD_SECONDS, COMBO_THRESHOLD_SECONDS - timeElapsed));
+	const progress = Math.min(100, (timeRemaining / COMBO_THRESHOLD_SECONDS) * 100);
+
+	// Only show if valid state and combo is active
+	const isActive = isValidState && (comboCount > 0 || timeRemaining > 0);
 
 	const getBarColor = () => {
 		if (timeRemaining > 4) return '#4caf50'; // Green
