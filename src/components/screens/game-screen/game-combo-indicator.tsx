@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, LinearProgress, Typography, keyframes } from '@mui/material';
 import { useComboCount, useLastMatchTime, useTime } from './game-play-area';
+import { useIsPaused } from '@/atoms';
+import { resetComboState } from '@/core';
 
 const COMBO_THRESHOLD_SECONDS = 7;
 
@@ -21,11 +23,26 @@ function GameComboIndicator() {
 	const comboCount = useComboCount();
 	const lastMatchTime = useLastMatchTime();
 	const currentTime = useTime();
+	const paused = useIsPaused();
 	const [animation, setAnimation] = useState({ baseTime: currentTime, offset: 0 });
+	const prevPausedRef = useRef(paused);
+
+	// Reset combo state when game becomes paused
+	useEffect(() => {
+		if (paused && !prevPausedRef.current) {
+			resetComboState();
+		}
+		prevPausedRef.current = paused;
+	}, [paused]);
 
 	// Continuous animation loop - tracks time elapsed since last database sync
 	// Also resets when lastMatchTime changes so the bar starts at 100% on new matches
+	// Stops when paused
 	useEffect(() => {
+		if (paused) {
+			return;
+		}
+
 		const startTimestamp = performance.now();
 		let animationFrameId: number;
 
@@ -41,7 +58,7 @@ function GameComboIndicator() {
 		return () => {
 			cancelAnimationFrame(animationFrameId);
 		};
-	}, [currentTime, lastMatchTime]);
+	}, [currentTime, lastMatchTime, paused]);
 
 	// Only apply offset if it corresponds to the current baseTime (avoids stale offset causing jerkiness)
 	const smoothTime = animation.baseTime === currentTime
