@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useIsPaused, usePushToastMsg, useSetIsPaused } from '@/atoms';
 import { Card } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
@@ -60,6 +60,8 @@ function GamePlayArea() {
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
 	const [discardingCards, setDiscardingCards] = useState<string[]>([]);
+	const [gameGeneration, setGameGeneration] = useState(0);
+	const prevDiscardLengthRef = useRef<number | null>(null);
 	const deckOrder = useDeckOrder();
 	const discardPile = useDiscardPile();
 	const dealtCards = deck?.slice(0, BoardCardCount);
@@ -80,6 +82,21 @@ function GamePlayArea() {
 	useEffect(() => {
 		resetComboState();
 	}, []);
+
+	// Detect new game start (discard pile reset) and clear local state
+	useEffect(() => {
+		const currentLength = discardPile?.order.length ?? null;
+		const prevLength = prevDiscardLengthRef.current;
+
+		// Discard pile going from non-empty to empty only happens on game reset
+		if (prevLength !== null && prevLength > 0 && currentLength === 0) {
+			setSelectedCards([]);
+			setDiscardingCards([]);
+			setGameGeneration(g => g + 1);
+		}
+
+		prevDiscardLengthRef.current = currentLength;
+	}, [discardPile?.order.length]);
 
 	// Handle controller/keyboard input for game actions
 	useEffect(() => {
@@ -166,6 +183,7 @@ function GamePlayArea() {
 					}}
 				>
 					<GameCardArea
+						key={gameGeneration}
 						shuffleCount={shuffleCount}
 						cards={dealtCards}
 						selectedCards={selectedCards}

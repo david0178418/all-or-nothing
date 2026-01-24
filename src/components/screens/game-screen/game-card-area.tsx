@@ -9,6 +9,7 @@ import { useFocusable } from '@/focus/useFocusable';
 import { useSetActiveGroup } from '@/atoms';
 
 interface Props {
+	gameGeneration: number;
 	shuffleCount: number;
 	cards: Card[];
 	selectedCards: string[];
