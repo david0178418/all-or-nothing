@@ -31,8 +31,15 @@ function randomizeArray<T>(array: T[]): T[] {
 	// Fisher-Yates Shuffle
 	for (let i = newArray.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
-		// @ts-ignore
-		[newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+		const itemI = newArray[i];
+		const itemJ = newArray[j];
+
+		if (itemI === undefined || itemJ === undefined) {
+			throw new Error(`Array index out of bounds: ${i}, ${j}`);
+		}
+
+		newArray[i] = itemJ;
+		newArray[j] = itemI;
 	}
 
 	return newArray;

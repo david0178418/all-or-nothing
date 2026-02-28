@@ -33,8 +33,15 @@ function setExists(cards: Card[]) {
 	for(let a = 0; a < cards.length - 2; a++) {
 		for(let b = a + 1; b < cards.length - 1; b++) {
 			for(let c = b + 1; c < cards.length; c++) {
-				// @ts-ignore
-				if(isSet(cards[a], cards[b], cards[c])) {
+				const cardA = cards[a];
+				const cardB = cards[b];
+				const cardC = cards[c];
+
+				if(!cardA || !cardB || !cardC) {
+					throw new Error(`Card index out of bounds: ${a}, ${b}, ${c}`);
+				}
+
+				if(isSet(cardA, cardB, cardC)) {
 					return true;
 				}
 			}
