@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Box, LinearProgress, Typography, keyframes } from '@mui/material';
-import { useComboCount, useLastMatchTime, useTime } from './game-play-area';
+import { useComboCount, useLastMatchTime } from './game-play-area';
 import { useIsPaused } from '@/atoms';
 import { resetComboState } from '@/core';
 
@@ -22,9 +22,10 @@ export default
 function GameComboIndicator() {
 	const comboCount = useComboCount();
 	const lastMatchTime = useLastMatchTime();
-	const currentTime = useTime();
 	const paused = useIsPaused();
-	const [animation, setAnimation] = useState({ baseTime: currentTime, offset: 0 });
+	const [elapsed, setElapsed] = useState(COMBO_THRESHOLD_SECONDS);
+	const prevLastMatchTimeRef = useRef(lastMatchTime);
+	const matchTimestampRef = useRef<number | null>(null);
 	const prevPausedRef = useRef(paused);
 
 	// Reset combo state when game becomes paused
@@ -35,45 +36,47 @@ function GameComboIndicator() {
 		prevPausedRef.current = paused;
 	}, [paused]);
 
-	// Continuous animation loop - tracks time elapsed since last database sync
-	// Also resets when lastMatchTime changes so the bar starts at 100% on new matches
-	// Stops when paused
+	// Synchronize elapsed state during render when lastMatchTime changes.
+	// This avoids the one-frame flash from waiting for an effect to reset the animation.
+	if (lastMatchTime !== prevLastMatchTimeRef.current) {
+		prevLastMatchTimeRef.current = lastMatchTime;
+		if (lastMatchTime > 0) {
+			matchTimestampRef.current = performance.now();
+			setElapsed(0);
+		} else {
+			matchTimestampRef.current = null;
+			setElapsed(COMBO_THRESHOLD_SECONDS);
+		}
+	}
+
+	// Wall-clock driven animation loop — fully decoupled from the integer game timer,
+	// eliminating jumps at second boundaries and ensuring the bar always starts at 100%.
 	useEffect(() => {
-		if (paused) {
+		if (paused || matchTimestampRef.current === null || lastMatchTime === 0) {
 			return;
 		}
 
-		const startTimestamp = performance.now();
+		const startTimestamp = matchTimestampRef.current;
 		let animationFrameId: number;
 
-		const animate = (timestamp: number) => {
-			const elapsedMs = timestamp - startTimestamp;
-			setAnimation({ baseTime: currentTime, offset: elapsedMs / 1000 });
-			animationFrameId = requestAnimationFrame(animate);
+		const animate = () => {
+			const wallElapsed = (performance.now() - startTimestamp) / 1000;
+			setElapsed(wallElapsed);
+			if (wallElapsed < COMBO_THRESHOLD_SECONDS) {
+				animationFrameId = requestAnimationFrame(animate);
+			}
 		};
 
-		setAnimation({ baseTime: currentTime, offset: 0 });
 		animationFrameId = requestAnimationFrame(animate);
 
 		return () => {
 			cancelAnimationFrame(animationFrameId);
 		};
-	}, [currentTime, lastMatchTime, paused]);
+	}, [lastMatchTime, paused]);
 
-	// Only apply offset if it corresponds to the current baseTime (avoids stale offset causing jerkiness)
-	const smoothTime = animation.baseTime === currentTime
-		? currentTime + animation.offset
-		: currentTime;
-
-	// Guard against invalid state (data loading race condition)
-	const isValidState = lastMatchTime > 0 && lastMatchTime <= smoothTime;
-
-	const timeElapsed = smoothTime - lastMatchTime;
-	const timeRemaining = Math.max(0, Math.min(COMBO_THRESHOLD_SECONDS, COMBO_THRESHOLD_SECONDS - timeElapsed));
-	const progress = Math.min(100, (timeRemaining / COMBO_THRESHOLD_SECONDS) * 100);
-
-	// Only show if valid state and combo is active
-	const isActive = isValidState && (comboCount > 0 || timeRemaining > 0);
+	const timeRemaining = Math.max(0, COMBO_THRESHOLD_SECONDS - elapsed);
+	const progress = (timeRemaining / COMBO_THRESHOLD_SECONDS) * 100;
+	const isActive = lastMatchTime > 0 && (comboCount > 0 || timeRemaining > 0);
 
 	const getBarColor = () => {
 		if (timeRemaining > 4) return '#4caf50'; // Green
