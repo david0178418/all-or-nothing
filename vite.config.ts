@@ -5,7 +5,13 @@ import { execSync } from 'child_process';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from "vite-plugin-svgr";
 
-const gitVersion = execSync('git describe --tags --always').toString().trimEnd();
+let gitVersion: string;
+
+try {
+	gitVersion = execSync('git describe --tags --always').toString().trimEnd();
+} catch {
+	gitVersion = 'dev';
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
