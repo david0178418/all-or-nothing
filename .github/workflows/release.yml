@@ -14,6 +14,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Sync package.json version from tag
+        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
@@ -81,3 +83,22 @@ jobs:
           files: |
             dist/desktop/all-or-nothing-${{ github.ref_name }}-linux-x86_64.AppImage
             dist/desktop/all-or-nothing-${{ github.ref_name }}-windows-x64.zip
+
+  sync_version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Update package.json version from tag
+        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
+      - name: Commit and push version update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git diff --staged --quiet && echo "package.json already up to date" && exit 0
+          git commit -m "chore: sync version to ${GITHUB_REF_NAME}"
+          git push origin main

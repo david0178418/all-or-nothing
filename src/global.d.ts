@@ -30,6 +30,8 @@ declare module '*.svg?react' {
 	export default content;
 }
 
+declare const __APP_VERSION__: string;
+
 interface Window {
 	forcePlatform?: (platform?: string) => void;
 }
