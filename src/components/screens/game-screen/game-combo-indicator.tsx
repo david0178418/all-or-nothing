@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Box, LinearProgress, Typography, keyframes } from '@mui/material';
 import { useComboCount, useLastMatchTime } from './game-play-area';
 import { useIsPaused } from '@/atoms';
-import { resetComboState } from '@/core';
+import { resetComboState, SCORE_CONFIG } from '@/core';
 
-const COMBO_THRESHOLD_SECONDS = 7;
+const { COMBO_THRESHOLD_SECONDS } = SCORE_CONFIG;
 
 const pulseAnimation = keyframes`
 	0% {
@@ -23,7 +23,7 @@ function GameComboIndicator() {
 	const comboCount = useComboCount();
 	const lastMatchTime = useLastMatchTime();
 	const paused = useIsPaused();
-	const [elapsed, setElapsed] = useState(COMBO_THRESHOLD_SECONDS);
+	const [elapsed, setElapsed] = useState<number>(COMBO_THRESHOLD_SECONDS);
 	const prevLastMatchTimeRef = useRef(lastMatchTime);
 	const matchTimestampRef = useRef<number | null>(null);
 	const prevPausedRef = useRef(paused);

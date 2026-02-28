@@ -305,7 +305,7 @@ function GamePlayArea() {
 		if(isSet(...newSelectedCards)) {
 			await awardMatchScore(time);
 			setDiscardingCards(prev => [...prev, ...newSelectedCardIds]);
-			discardCards(newSelectedCardIds, BoardCardCount);
+			await discardCards(newSelectedCardIds, BoardCardCount);
 			pushToastMsg('Set found!');
 			soundEffects('success');
 			setSelectedCards([]);

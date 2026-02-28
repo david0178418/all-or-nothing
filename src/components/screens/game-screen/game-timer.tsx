@@ -1,6 +1,6 @@
 import { useIsPaused } from '@/atoms';
 import { useInterval } from '@/hooks';
-import { updateTime, decayScoreValue, resetComboIfExpired } from '@/core';
+import { performTimerTick } from '@/core';
 import { useTimeout } from '@/utils';
 import { useState } from 'react';
 import { useTime } from './game-play-area';
@@ -26,11 +26,7 @@ function GameTimer(props: Props) {
 
 	useInterval(() => {
 		const newTime = time + 1;
-		Promise.all([
-			updateTime(newTime),
-			decayScoreValue(1),
-			resetComboIfExpired(newTime),
-		]);
+		performTimerTick(newTime);
 	}, runTimer ? 1000 : null);
 
 	const formattedTime = time ?

@@ -74,7 +74,7 @@ function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 }
 
 // Scoring system configuration
-const SCORE_CONFIG = {
+export const SCORE_CONFIG = {
 	BASE_VALUE: 10_000,
 	DECAY_PER_SECOND: 10,
 	COMBO_THRESHOLD_SECONDS: 7,
@@ -150,48 +150,48 @@ async function initDb() {;
 		return;
 	}
 
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataTime,
-		value: 0,
-	});
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataShuffleCount,
-		value: 0,
-	});
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataSoundEnabled,
-		value: 1,
-	});
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataMusicEnabled,
-		value: 1,
-	});
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataScore,
-		value: 0,
-	});
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataScoreValue,
-		value: SCORE_CONFIG.BASE_VALUE,
-	});
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataLastMatchTime,
-		value: 0,
-	});
-	db.gamedata.add({
-		id: DbCollectionItemNameGameDataComboCount,
-		value: 0,
-	});
-	db.setorders.add({
-		name: DbCollectionItemNameSetOrdersDeck,
-		order: generateDeck(),
-	});
-	db.setorders.add({
-		name: DbCollectionItemNameSetOrdersDiscard,
-		order: [],
-	});
-
-	return db;
+	await Promise.all([
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataTime,
+			value: 0,
+		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataShuffleCount,
+			value: 0,
+		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataSoundEnabled,
+			value: 1,
+		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataMusicEnabled,
+			value: 1,
+		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataScore,
+			value: 0,
+		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataScoreValue,
+			value: SCORE_CONFIG.BASE_VALUE,
+		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataLastMatchTime,
+			value: 0,
+		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataComboCount,
+			value: 0,
+		}),
+		db.setorders.add({
+			name: DbCollectionItemNameSetOrdersDeck,
+			order: generateDeck(),
+		}),
+		db.setorders.add({
+			name: DbCollectionItemNameSetOrdersDiscard,
+			order: [],
+		}),
+	]);
 }
 
 export
@@ -223,6 +223,38 @@ async function updateTime(newTime: number) {
 		value: newTime,
 	});
 
+	localStorage.setItem(SavedGameKey, newTime.toString());
+}
+
+export
+async function performTimerTick(newTime: number) {
+	const [scoreValueData, lastMatchData, comboData] = await Promise.all([
+		db.gamedata.get(DbCollectionItemNameGameDataScoreValue),
+		db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime),
+		db.gamedata.get(DbCollectionItemNameGameDataComboCount),
+	]);
+
+	if (!(scoreValueData && lastMatchData && comboData)) {
+		return;
+	}
+
+	const comboExpired = comboData.value > 0 && !isComboEligible(newTime, lastMatchData.value);
+	const newScoreValue = comboExpired
+		? SCORE_CONFIG.BASE_VALUE
+		: calculateDecayedScoreValue(scoreValueData.value, 1);
+
+	const writes: Promise<unknown>[] = [
+		db.gamedata.update(DbCollectionItemNameGameDataTime, { value: newTime }),
+		db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: newScoreValue }),
+	];
+
+	if (comboExpired) {
+		writes.push(
+			db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: 0 }),
+		);
+	}
+
+	await Promise.all(writes);
 	localStorage.setItem(SavedGameKey, newTime.toString());
 }
 
