@@ -138,6 +138,9 @@ function GameCardArea(props: Props) {
 					xs: '100%',
 					sm: 'none',
 				},
+				minHeight: {
+					sm: 'calc(min(100vw, 1536px) * 0.41 + 16px)',
+				},
 				'& > *': {
 					height: {
 						xs: 'calc(25% - 4px)',
