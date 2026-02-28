@@ -1,0 +1,83 @@
+name: Release on tag
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: dist/web
+
+  deploy_firebase:
+    needs: build_web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist/web
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MAKE_A_SET }}
+          channelId: live
+          projectId: make-a-set
+
+  build_desktop:
+    needs: build_web
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist/web
+
+      # Prepare desktop build from existing web build
+      - run: npm run build:desktop:prepare
+
+      # Build Linux and Windows in sequence (nw-builder downloads NW.js)
+      - run: node scripts/build-desktop.ts --platform=linux
+      - run: node scripts/build-desktop.ts --platform=win
+
+      # Package Linux AppImage
+      - run: npm run package:appimage
+        env:
+          ARCH: x86_64
+
+      # Zip Windows build
+      - name: Zip Windows build
+        run: cd dist/desktop/win32 && zip -r ../all-or-nothing-${{ github.ref_name }}-windows-x64.zip .
+
+      # Rename AppImage to include tag version
+      - name: Rename AppImage
+        run: mv dist/desktop/all-or-nothing-*-x86_64.AppImage dist/desktop/all-or-nothing-${{ github.ref_name }}-linux-x86_64.AppImage
+
+      # Create GitHub Release with both assets
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/desktop/all-or-nothing-${{ github.ref_name }}-linux-x86_64.AppImage
+            dist/desktop/all-or-nothing-${{ github.ref_name }}-windows-x64.zip
