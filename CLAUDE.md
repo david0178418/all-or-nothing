@@ -13,11 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev          # Start Vite development server
 npm run build        # Build for production
 npm run preview      # Preview production build locally
-```
-
-### TypeScript
-```bash
-npx tsc --noEmit     # Type check without emitting files
+npm run typecheck    # Ensure there are not typescript errors
 ```
 
 ## Architecture
@@ -76,8 +72,3 @@ npx tsc --noEmit     # Type check without emitting files
 - **Enum pattern**: Constants defined as objects with `as const`, accessed via `Enum<typeof T>` helper type
 - **Bitwise values**: Used for card attributes to enable efficient set validation (see `BitwiseValue` type)
 - Cards serialized as JSON strings for storage in IndexedDB
-
-## Sound/Music System
-- Sound effects managed via `use-sound` library with audio sprites (see `src/hooks.ts`)
-- Sound sprite map defines timing for deal, flip, and success sounds
-- Effects respect user's sound preference via `useIsSoundEnabled()` hook
