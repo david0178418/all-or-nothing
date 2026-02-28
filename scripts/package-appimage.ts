@@ -81,7 +81,7 @@ exec "\${HERE}/usr/bin/all-or-nothing/all-or-nothing" "$@"
 
 	try {
 		execSync(
-			`ARCH=x86_64 "${appimagetoolPath}" "${appImageDir}" "${appImageOutput}"`,
+			`ARCH=x86_64 "${appimagetoolPath}" --appimage-extract-and-run "${appImageDir}" "${appImageOutput}"`,
 			{ stdio: 'inherit' }
 		);
 
