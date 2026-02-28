@@ -1,6 +1,6 @@
 import PlayingCard from '../playing-card';
 import { Card, Screens } from '../../types';
-import { resetGame } from '../../utils';
+import { resetGame, randomChoice } from '../../utils';
 import { useInterval } from '../../hooks';
 import { useSetActiveScreen, useSetActiveGroup } from '../../atoms';
 import FormattedTime from '../formatted-time';
@@ -197,10 +197,5 @@ function generateRandomCard(): Card {
 }
 
 function chooseRandomAttribute() {
-	return chooseRandom<1 | 2 | 4>(1, 2, 4);
-}
-
-function chooseRandom<T>(...items: T[]) {
-    const randomIndex = Math.floor(Math.random() * items.length);
-    return items[randomIndex] as T;
+	return randomChoice<1 | 2 | 4>(1, 2, 4);
 }

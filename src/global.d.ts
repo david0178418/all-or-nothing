@@ -8,6 +8,7 @@ interface ImportMetaEnv {
 	readonly PUBLIC_DIR?: string;
 	readonly SSR: boolean;
 	readonly VITE_AD_CONTENT_URL: string;
+	readonly VITE_CHEAT?: string;
 	readonly VITE_GOOGLE_ANALYTICS_ID: string;
 }
 

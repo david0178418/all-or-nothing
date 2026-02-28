@@ -53,7 +53,7 @@ function setExists(cards: Card[]) {
 
 export
 function isSet(a: Card, b: Card, c: Card) {
-	if((import.meta.env as any).VITE_CHEAT) return true;
+	if(import.meta.env.VITE_CHEAT) return true;
 
 	return (
 		allSameOrDifferent(a.color, b.color, c.color) &&
@@ -423,9 +423,9 @@ async function discardCards(discardCardIds: string[], boardSize: number) {
 }
 
 function dealNewCards(cardOrderIds: string[], removeCardIndexes: [number, number, number], dealtCardCount: number) {
-	const foo1 = moveAndOverwriteItem(cardOrderIds, dealtCardCount, removeCardIndexes[0]);
-	const foo2 = moveAndOverwriteItem(foo1, dealtCardCount, removeCardIndexes[1]);
-	return moveAndOverwriteItem(foo2, dealtCardCount, removeCardIndexes[2]);
+	const afterFirst = moveAndOverwriteItem(cardOrderIds, dealtCardCount, removeCardIndexes[0]);
+	const afterSecond = moveAndOverwriteItem(afterFirst, dealtCardCount, removeCardIndexes[1]);
+	return moveAndOverwriteItem(afterSecond, dealtCardCount, removeCardIndexes[2]);
 }
 
 export

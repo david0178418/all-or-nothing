@@ -365,5 +365,3 @@ function useLastMatchTime() {
 	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime))?.value || 0;
 }
 
-// Debug
-(window as any).db = db

@@ -97,7 +97,7 @@ function GameOptionsMobile(props: Props) {
 								<ShuffleIcon />
 							</ListItemIcon>
 							<ListItemText>
-								Sufffle
+								Shuffle
 							</ListItemText>
 						</ListItemButton>
 					</ListItem>
