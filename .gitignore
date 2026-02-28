@@ -1,7 +1,7 @@
 node_modules
 .parcel-cache/
-.firebase*
-firebase*
+.firebase/
+firebase-debug.log
 dynamic/
 cache/
 dist/
