@@ -3,7 +3,7 @@ import { useInterval } from '@/hooks';
 import { performTimerTick } from '@/core';
 import { useTimeout } from '@/utils';
 import { useState } from 'react';
-import { useTime } from './game-play-area';
+import { useTime } from '@/game-queries';
 import { Box, Typography } from '@mui/material';
 import { AccessTime } from '@mui/icons-material';
 

@@ -16,11 +16,10 @@ import {
 	useActiveScreen,
 	useSetActiveController,
 	useUsingNavigationalInput,
-	useNavigate,
-	useSelectCurrent,
 	useLoadAudioSettings,
 	useSetupDebugUtilities,
 } from './atoms';
+import { useNavigate, useSelectCurrent } from './focus/focus-atoms';
 
 const Game = lazy(() => import('./components/screens/game-screen'));
 const About = lazy(() => import('./components/screens/about-screen'));

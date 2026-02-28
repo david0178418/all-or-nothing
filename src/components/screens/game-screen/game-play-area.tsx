@@ -5,7 +5,6 @@ import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
 import {
 	discardCards,
-	getDb,
 	isSet,
 	setExists,
 	shuffleDeck,
@@ -20,33 +19,22 @@ import GameOptions from './game-options';
 import GameOptionsMobile from './game-options-mobile';
 import GameCardArea from './game-card-area';
 import GameComboIndicator from './game-combo-indicator';
-import { useLiveQuery } from 'dexie-react-hooks';
 import {
 	Box,
 	Container,
 	Typography,
 } from '@mui/material';
-import {
-	DbCollectionItemNameGameDataShuffleCount,
-	DbCollectionItemNameGameDataTime,
-	DbCollectionItemNameGameDataScore,
-	DbCollectionItemNameGameDataScoreValue,
-	DbCollectionItemNameGameDataComboCount,
-	DbCollectionItemNameGameDataLastMatchTime,
-	DbCollectionItemNameSetOrdersDeck,
-	DbCollectionItemNameSetOrdersDiscard,
-} from '@/constants';
 import { useSoundEffects } from '@/hooks';
 import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
 import { InputAction, InputEvent } from '@/input/input-types';
+import { useDeck, useTime, useScore, useShuffleCount, useDeckOrder, useDiscardPile } from '@/game-queries';
 
 const {
 	VITE_AD_CONTENT_URL = '',
 } = import.meta.env;
 
-const BoardCardCount = 12
-const db = getDb();
+const BoardCardCount = 12;
 
 export default
 function GamePlayArea() {
@@ -320,48 +308,5 @@ function GamePlayArea() {
 			pushToastMsg('A set exists!') :
 			pushToastMsg('No set exists.');
 	}
-}
-
-function useDeck() {
-	const result = useLiveQuery(() => db.setorders.get(DbCollectionItemNameSetOrdersDeck));
-	return result?.order.map<Card>(id => ({ id, ...JSON.parse(id) })) || [];
-}
-
-export
-function useTime() {
-	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataTime))?.value || 0;
-}
-
-function useShuffleCount() {
-	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataShuffleCount))?.value || 0;
-}
-
-function useDeckOrder() {
-	return useLiveQuery(() => db.setorders.get(DbCollectionItemNameSetOrdersDeck));
-}
-
-export
-function useDiscardPile() {
-	return useLiveQuery(() => db.setorders.get(DbCollectionItemNameSetOrdersDiscard));
-}
-
-export
-function useScore() {
-	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataScore))?.value || 0;
-}
-
-export
-function useScoreValue() {
-	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataScoreValue))?.value || 1000;
-}
-
-export
-function useComboCount() {
-	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataComboCount))?.value || 0;
-}
-
-export
-function useLastMatchTime() {
-	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime))?.value || 0;
 }
 

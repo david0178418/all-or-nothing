@@ -2,10 +2,11 @@ import PlayingCard from '../playing-card';
 import { Card, Screens } from '../../types';
 import { resetGame, randomChoice } from '../../utils';
 import { useInterval } from '../../hooks';
-import { useSetActiveScreen, useSetActiveGroup } from '../../atoms';
+import { useSetActiveScreen } from '../../atoms';
+import { useSetActiveGroup } from '@/focus/focus-atoms';
 import FormattedTime from '../formatted-time';
 import { SavedGameKey } from '@/constants';
-import { useState, useEffect, ReactNode, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
 	RotateLeft as RotateLeftIcon,
 	PlayArrow as PlayArrowIcon,
@@ -13,73 +14,11 @@ import {
 	QuestionMark as QuestionMarkIcon,
 } from '@mui/icons-material';
 import {
-	Button,
 	Container,
 	Box,
 	Typography,
 } from "@mui/material";
-import { useFocusable } from '@/focus/useFocusable';
-import FocusIndicator from '@/components/focus-indicator';
-
-// Focusable button wrapper
-function FocusableButton({
-	id,
-	order,
-	onClick,
-	disabled,
-	startIcon,
-	children,
-	autoFocus,
-}: {
-	id: string;
-	order: number;
-	onClick: () => void;
-	disabled?: boolean;
-	startIcon?: ReactNode;
-	children: ReactNode;
-	autoFocus?: boolean;
-}) {
-	// Prevent double-activation from mouse and keyboard/controller
-	const isActivatingRef = useRef(false);
-
-	const handleActivation = useCallback(() => {
-		// Prevent double execution
-		if (isActivatingRef.current) {
-			return;
-		}
-
-		isActivatingRef.current = true;
-		onClick();
-
-		// Reset after a short delay
-		setTimeout(() => {
-			isActivatingRef.current = false;
-		}, 100);
-	}, [onClick]);
-
-	const { ref, isFocused } = useFocusable({
-		id,
-		group: 'menu',
-		order,
-		onSelect: handleActivation, // Use wrapped function for keyboard/controller
-		disabled,
-		autoFocus,
-	});
-
-	return (
-		<Box sx={{ position: 'relative' }} ref={ref}>
-			<FocusIndicator visible={isFocused} />
-			<Button
-				disabled={disabled}
-				startIcon={startIcon}
-				onClick={handleActivation} // Use same wrapped function for mouse
-				fullWidth
-			>
-				{children}
-			</Button>
-		</Box>
-	);
-}
+import FocusableButton from '@/components/focusable-button';
 
 export default function Landing() {
 	const [flipped, setFlipped] = useState(false);
@@ -145,6 +84,7 @@ export default function Landing() {
 				<Box display="flex" flexDirection="column" gap={2}>
 					<FocusableButton
 						id="menu-continue"
+						group="menu"
 						order={0}
 						disabled={!savedGameTime}
 						startIcon={<RotateLeftIcon/>}
@@ -154,6 +94,7 @@ export default function Landing() {
 					</FocusableButton>
 					<FocusableButton
 						id="menu-new-game"
+						group="menu"
 						order={1}
 						startIcon={<PlayArrowIcon />}
 						onClick={handleNewGame}
@@ -163,6 +104,7 @@ export default function Landing() {
 					</FocusableButton>
 					<FocusableButton
 						id="menu-how-to-play"
+						group="menu"
 						order={2}
 						startIcon={<QuestionMarkIcon />}
 						onClick={handleHowToPlay}
@@ -171,6 +113,7 @@ export default function Landing() {
 					</FocusableButton>
 					<FocusableButton
 						id="menu-about"
+						group="menu"
 						order={3}
 						startIcon={<InfoIcon />}
 						onClick={handleAbout}

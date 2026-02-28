@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Box, LinearProgress, Typography, keyframes } from '@mui/material';
-import { useComboCount, useLastMatchTime } from './game-play-area';
+import { useComboCount, useLastMatchTime } from '@/game-queries';
 import { useIsPaused } from '@/atoms';
 import { resetComboState, SCORE_CONFIG } from '@/core';
 

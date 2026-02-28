@@ -1,9 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useSound from 'use-sound';
 import { useIsSoundEnabled } from './atoms';
 import soundfx from './soundfx.mp3';
 
 export { useInterval } from 'usehooks-ts';
+
+export function useActivationGuard(handler: () => void) {
+	const isActivatingRef = useRef(false);
+
+	return useCallback(() => {
+		if (isActivatingRef.current) {
+			return;
+		}
+
+		isActivatingRef.current = true;
+		handler();
+
+		setTimeout(() => {
+			isActivatingRef.current = false;
+		}, 100);
+	}, [handler]);
+}
 
 const SpriteMap: Record<string, [number, number]> = {
 	deal1: [0, 120],

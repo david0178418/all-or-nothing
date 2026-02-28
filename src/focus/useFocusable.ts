@@ -6,7 +6,7 @@ import {
 	useRegisterElement,
 	useUnregisterElement,
 	useFocusElement,
-} from '@/atoms';
+} from '@/focus/focus-atoms';
 
 interface UseFocusableOptions {
 	id: string;

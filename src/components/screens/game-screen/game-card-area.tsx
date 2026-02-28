@@ -1,12 +1,12 @@
 import PlayingCard from '@/components/playing-card';
 import { Card } from '@/types';
-import { useInterval } from '@/hooks';
+import { useInterval, useActivationGuard } from '@/hooks';
 import { Grid, Box, useTheme, useMediaQuery } from '@mui/material';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDebouncedValue } from '@/hooks';
 import { useFocusable } from '@/focus/useFocusable';
-import { useSetActiveGroup } from '@/atoms';
+import { useSetActiveGroup } from '@/focus/focus-atoms';
 
 interface Props {
 	shuffleCount: number;
@@ -37,23 +37,11 @@ function FocusableCard({
 	onSelected: (card: Card) => void;
 	gridPosition: { row: number; col: number };
 }) {
-	// Prevent double-activation from mouse and keyboard/controller
-	const isActivatingRef = useRef(false);
-
-	const handleCardSelection = useCallback(() => {
-		// Prevent double execution
-		if (isActivatingRef.current) {
-			return;
-		}
-
-		isActivatingRef.current = true;
+	const handleSelect = useCallback(() => {
 		onSelected(card);
-
-		// Reset after a short delay
-		setTimeout(() => {
-			isActivatingRef.current = false;
-		}, 100);
 	}, [card, onSelected]);
+
+	const handleCardSelection = useActivationGuard(handleSelect);
 
 	const { ref, isFocused } = useFocusable({
 		id: `card-${card.id}`,
