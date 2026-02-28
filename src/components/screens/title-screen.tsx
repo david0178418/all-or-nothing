@@ -1,6 +1,7 @@
 import PlayingCard from '../playing-card';
 import { Card, Screens } from '../../types';
-import { resetGame, useInterval } from '../../utils';
+import { resetGame } from '../../utils';
+import { useInterval } from '../../hooks';
 import { useSetActiveScreen, useSetActiveGroup } from '../../atoms';
 import FormattedTime from '../formatted-time';
 import { SavedGameKey } from '@/constants';

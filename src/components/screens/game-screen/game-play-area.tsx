@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useIsPaused, usePushToastMsg, useSetIsPaused } from '@/atoms';
 import { Card } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
@@ -67,7 +67,10 @@ function GamePlayArea() {
 	const dealtCards = deck?.slice(0, BoardCardCount);
 	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount;
 
-	const gameComplete = (
+	// Memoize based on serialized card IDs to avoid running O(n³) setExists
+	// on every render caused by selectedCards/discardingCards/paused changes
+	const dealtCardKey = dealtCards.map(c => c.id).join(',');
+	const gameComplete = useMemo(() => (
 		!!discardPile &&
 		// TODO This is an arbitrary limit. But basically, it's a placeholder for
 		// "the game has loaded" flag since "deck" will initially be an empty array.
@@ -76,7 +79,8 @@ function GamePlayArea() {
 		!!deck &&
 		deck.length <= 12 &&
 		!setExists(dealtCards)
-	);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	), [discardPile?.order.length, deck.length, dealtCardKey]);
 
 	// Reset combo state when the game screen mounts (continuing a game should not preserve combo)
 	useEffect(() => {
@@ -98,29 +102,32 @@ function GamePlayArea() {
 		prevDiscardLengthRef.current = currentLength;
 	}, [discardPile?.order.length]);
 
-	// Handle controller/keyboard input for game actions
+	// Keep input handler in a ref so listeners don't need re-registration
+	// when paused/canShuffle/dealtCards change
+	const gameInputHandlerRef = useRef<(event: InputEvent) => void>(() => {});
+	gameInputHandlerRef.current = (event: InputEvent) => {
+		const { action } = event;
+
+		if (action === InputAction.PAUSE) {
+			setIsPaused(!paused);
+		}
+
+		if (action === InputAction.HINT && !paused) {
+			handleHintMessage(dealtCards);
+		}
+
+		if (action === InputAction.SHUFFLE && !paused && canShuffle) {
+			handleReshuffle();
+		}
+	};
+
+	// Register listeners once; the ref always points to the latest handler
 	useEffect(() => {
 		const gamepadManager = getGamepadManager();
 		const keyboardManager = getKeyboardManager();
 
 		const handleGameInput = (event: InputEvent) => {
-			const { action } = event;
-
-			switch (action) {
-				case InputAction.PAUSE:
-					setIsPaused(!paused);
-					break;
-				case InputAction.HINT:
-					if (!paused) {
-						handleHintMessage(dealtCards);
-					}
-					break;
-				case InputAction.SHUFFLE:
-					if (!paused && canShuffle) {
-						handleReshuffle();
-					}
-					break;
-			}
+			gameInputHandlerRef.current(event);
 		};
 
 		gamepadManager.addListener(handleGameInput);
@@ -130,7 +137,7 @@ function GamePlayArea() {
 			gamepadManager.removeListener(handleGameInput);
 			keyboardManager.removeListener(handleGameInput);
 		};
-	}, [paused, canShuffle, dealtCards]);
+	}, []);
 
 	return (
 		<>

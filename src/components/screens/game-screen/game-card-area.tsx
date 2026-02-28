@@ -1,6 +1,6 @@
 import PlayingCard from '@/components/playing-card';
 import { Card } from '@/types';
-import { useInterval } from '@/utils';
+import { useInterval } from '@/hooks';
 import { Grid, Box, useTheme, useMediaQuery } from '@mui/material';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +9,6 @@ import { useFocusable } from '@/focus/useFocusable';
 import { useSetActiveGroup } from '@/atoms';
 
 interface Props {
-	gameGeneration: number;
 	shuffleCount: number;
 	cards: Card[];
 	selectedCards: string[];

@@ -369,7 +369,7 @@ async function discardCards(discardCardIds: string[], boardSize: number) {
 		return;
 	}
 
-	const selectedIndexes = discardCardIds.map(selectedId => deckOrder.order.indexOf(selectedId) || 0) as [number, number, number];
+	const selectedIndexes = discardCardIds.map(selectedId => deckOrder.order.indexOf(selectedId)) as [number, number, number];
 
 	await Promise.all([
 		db.setorders.update(DbCollectionItemNameSetOrdersDeck, {
