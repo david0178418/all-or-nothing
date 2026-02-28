@@ -1,7 +1,6 @@
 const StorageVersion = 'v0.3';
 export const DbName = `all-or-nothing-${StorageVersion}`;
 export const SavedGameKey = `saved-game-time-${StorageVersion}`;
-export const DbCollectionNameGameData = 'gamedata';
 export const DbCollectionItemNameSetOrdersDeck = 'deck';
 export const DbCollectionItemNameSetOrdersDiscard = 'discard';
 export const DbCollectionItemNameGameDataShuffleCount = 'shuffle-count';
@@ -12,4 +11,3 @@ export const DbCollectionItemNameGameDataScore = 'score';
 export const DbCollectionItemNameGameDataScoreValue = 'score-value';
 export const DbCollectionItemNameGameDataLastMatchTime = 'last-match-time';
 export const DbCollectionItemNameGameDataComboCount = 'combo-count';
-export const DbCollectionNameSetOrders = 'setorders';

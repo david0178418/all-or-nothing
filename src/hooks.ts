@@ -1,35 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useSound from 'use-sound';
 import { useIsSoundEnabled } from './atoms';
 import soundfx from './soundfx.mp3';
 
-export
-// From https://usehooks-ts.com/react-hook/use-interval
-function useInterval(callback: () => void, delay: number | null) {
-	const savedCallback = useRef(callback)
-
-	// Remember the latest callback if it changes.
-	useEffect(() => {
-		savedCallback.current = callback
-	}, [callback])
-
-	// Set up the interval.
-	useEffect(() => {
-		// Don't schedule if no delay is specified.
-		// Note: 0 is a valid value for delay.
-		if (delay === null) {
-			return;
-		}
-
-		const id = setInterval(() => {
-			savedCallback.current()
-		}, delay);
-
-		return () => {
-			clearInterval(id)
-		}
-	}, [delay])
-}
+export { useInterval } from 'usehooks-ts';
 
 const SpriteMap: Record<string, [number, number]> = {
 	deal1: [0, 120],
@@ -58,39 +32,13 @@ export function useSoundEffects() {
 }
 
 export function useDebouncedValue<T>(value: T, delay = 250) {
-	// State and setters for debounced value
 	const [debouncedValue, setDebouncedValue] = useState(value);
 
 	useEffect(() => {
-		// Update debounced value after delay
 		const handler = setTimeout(() => {
 			setDebouncedValue(value);
 		}, delay);
-		// Cancel the timeout if value changes (also on delay change or unmount)
-		// This is how we prevent debounced value from updating if value is changed ...
-		// .. within the delay period. Timeout gets cleared and restarted.
-		return () => clearTimeout(handler);;
+		return () => clearTimeout(handler);
 	}, [value, delay]);
 	return debouncedValue;
-}
-
-type ControlFunctions = {
-	cancel: () => void
-	flush: () => void
-	isPending: () => boolean
-}
-
-export type DebouncedState<T extends (...args: any) => ReturnType<T>> = ((
-	...args: Parameters<T>
-) => ReturnType<T> | undefined) &
-	ControlFunctions
-
-export function useUnmount(func: () => void) {
-	const funcRef = useRef(func)
-
-	funcRef.current = func
-
-	useEffect(() => () => {
-		funcRef.current()
-	}, [])
 }

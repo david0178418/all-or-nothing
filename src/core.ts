@@ -316,21 +316,6 @@ async function awardMatchScore(currentTime: number) {
 }
 
 export
-async function decayScoreValue(secondsElapsed: number) {
-	const scoreValueData = await db.gamedata.get(DbCollectionItemNameGameDataScoreValue);
-
-	if (!scoreValueData || secondsElapsed <= 0) {
-		return;
-	}
-
-	const newValue = calculateDecayedScoreValue(scoreValueData.value, secondsElapsed);
-
-	await db.gamedata.update(DbCollectionItemNameGameDataScoreValue, {
-		value: newValue,
-	});
-}
-
-export
 async function penalizeInvalidSet() {
 	const scoreValueData = await db.gamedata.get(DbCollectionItemNameGameDataScoreValue);
 
@@ -358,26 +343,6 @@ async function penalizeUnnecessaryShuffle() {
 	await db.gamedata.update(DbCollectionItemNameGameDataScoreValue, {
 		value: newValue,
 	});
-}
-
-export
-async function resetComboIfExpired(currentTime: number) {
-	const [lastMatchData, comboData, scoreValueData] = await Promise.all([
-		db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime),
-		db.gamedata.get(DbCollectionItemNameGameDataComboCount),
-		db.gamedata.get(DbCollectionItemNameGameDataScoreValue),
-	]);
-
-	if (!(lastMatchData && comboData && scoreValueData)) {
-		return;
-	}
-
-	if (comboData.value > 0 && !isComboEligible(currentTime, lastMatchData.value)) {
-		await Promise.all([
-			db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: 0 }),
-			db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: SCORE_CONFIG.BASE_VALUE }),
-		]);
-	}
 }
 
 export
@@ -430,24 +395,15 @@ function dealNewCards(cardOrderIds: string[], removeCardIndexes: [number, number
 
 export
 function generateDeck() {
-	const newDeck: string[] = [];
+	const cards = Object.values(Fills).flatMap(fill =>
+		Object.values(Colors).flatMap(color =>
+			Object.values(Shapes).flatMap(shape =>
+				Object.values(Counts).map(count =>
+					JSON.stringify({ fill, color, shape, count })
+				)
+			)
+		)
+	);
 
-	Object.values(Fills).forEach(fill => {
-		Object.values(Colors).forEach(color => {
-			Object.values(Shapes).forEach(shape => {
-				Object.values(Counts).forEach(count => {
-					newDeck.push(
-						JSON.stringify({
-							fill,
-							color,
-							shape,
-							count,
-						}),
-					);
-				});
-			});
-		});
-	});
-
-	return randomizeArray(newDeck);
+	return randomizeArray(cards);
 }
