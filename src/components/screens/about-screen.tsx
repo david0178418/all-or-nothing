@@ -1,5 +1,4 @@
 import { Box, Button, Container, Typography } from "@mui/material";
-import {version} from '@/../package.json';
 import { useSetActiveScreen, useActiveController } from "@/atoms";
 import { Screens } from "@/types";
 import { useBackAction } from '@/input/useBackAction';
@@ -42,7 +41,7 @@ function AboutScreen() {
 				All <em>or</em> Nothing
 			</Typography>
 			<Typography>
-				version {version}
+				version {__APP_VERSION__}
 			</Typography>
 			<Typography>
 				By David Granado

@@ -1,11 +1,17 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
+import { execSync } from 'child_process';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from "vite-plugin-svgr";
 
+const gitVersion = execSync('git describe --tags --always').toString().trimEnd();
+
 // https://vitejs.dev/config/
 export default defineConfig({
+	define: {
+		__APP_VERSION__: JSON.stringify(gitVersion),
+	},
 	build: {
 		target: 'esnext',
 		outDir: 'dist/web',
