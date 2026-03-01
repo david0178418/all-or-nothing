@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useIsPaused, usePushToastMsg, useSetIsPaused } from '@/atoms';
-import { Card } from '@/types';
+import { Card, ScorePopup } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
 import {
@@ -19,6 +19,7 @@ import GameOptions from './game-options';
 import GameOptionsMobile from './game-options-mobile';
 import GameCardArea from './game-card-area';
 import GameComboIndicator from './game-combo-indicator';
+import GameScorePopups from './game-score-popups';
 import {
 	Box,
 	Container,
@@ -48,6 +49,7 @@ function GamePlayArea() {
 	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
 	const [discardingCards, setDiscardingCards] = useState<string[]>([]);
+	const [scorePopups, setScorePopups] = useState<ScorePopup[]>([]);
 	const [gameGeneration, setGameGeneration] = useState(0);
 	const prevDiscardLengthRef = useRef<number | null>(null);
 	const deckOrder = useDeckOrder();
@@ -154,6 +156,7 @@ function GamePlayArea() {
 			>
 				<Box
 					sx={{
+						position: 'relative',
 						flexGrow: {
 							xs: 1,
 							sm: 'unset',
@@ -188,6 +191,10 @@ function GamePlayArea() {
 						onDiscardAnimationComplete={cardIds => {
 							setDiscardingCards(prev => prev.filter(id => !cardIds.includes(id)));
 						}}
+					/>
+					<GameScorePopups
+						popups={scorePopups}
+						onComplete={removeScorePopup}
 					/>
 				</Box>
 				<GameComboIndicator />
@@ -250,6 +257,10 @@ function GamePlayArea() {
 		</>
 	);
 
+	function removeScorePopup(id: string) {
+		setScorePopups(prev => prev.filter(p => p.id !== id));
+	}
+
 	async function handleReshuffle() {
 		if (!(dealtCards && deckOrder)) {
 			return;
@@ -258,9 +269,25 @@ function GamePlayArea() {
 		const hasSet = setExists(dealtCards);
 
 		if (hasSet) {
-			await penalizeUnnecessaryShuffle();
+			const penalty = await penalizeUnnecessaryShuffle();
+			if (penalty !== null) {
+				setScorePopups(prev => [...prev, {
+					id: crypto.randomUUID(),
+					points: penalty,
+					comboCount: 0,
+					variant: 'penalty',
+				}]);
+			}
 		} else {
-			await awardMatchScore(time);
+			const result = await awardMatchScore(time);
+			if (result) {
+				setScorePopups(prev => [...prev, {
+					id: crypto.randomUUID(),
+					points: result.pointsAwarded,
+					comboCount: result.comboCount,
+					variant: 'reward',
+				}]);
+			}
 		}
 
 		setSelectedCards([]);
@@ -291,14 +318,30 @@ function GamePlayArea() {
 		) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
-			await awardMatchScore(time);
+			const result = await awardMatchScore(time);
+			if (result) {
+				setScorePopups(prev => [...prev, {
+					id: crypto.randomUUID(),
+					points: result.pointsAwarded,
+					comboCount: result.comboCount,
+					variant: 'reward',
+				}]);
+			}
 			setDiscardingCards(prev => [...prev, ...newSelectedCardIds]);
 			await discardCards(newSelectedCardIds, BoardCardCount);
 			pushToastMsg('Set found!');
 			soundEffects('success');
 			setSelectedCards([]);
 		} else {
-			await penalizeInvalidSet();
+			const penalty = await penalizeInvalidSet();
+			if (penalty !== null) {
+				setScorePopups(prev => [...prev, {
+					id: crypto.randomUUID(),
+					points: penalty,
+					comboCount: 0,
+					variant: 'penalty',
+				}]);
+			}
 			setSelectedCards(newSelectedCardIds);
 			pushToastMsg('Not a set.');
 		}

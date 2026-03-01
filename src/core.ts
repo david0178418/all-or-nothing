@@ -295,7 +295,7 @@ async function awardMatchScore(currentTime: number) {
 	]);
 
 	if (!(scoreData && scoreValueData && lastMatchData && comboData)) {
-		return;
+		return null;
 	}
 
 	const isCombo = isComboEligible(currentTime, lastMatchData.value);
@@ -313,6 +313,8 @@ async function awardMatchScore(currentTime: number) {
 		db.gamedata.update(DbCollectionItemNameGameDataLastMatchTime, { value: currentTime }),
 		db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: newComboCount }),
 	]);
+
+	return { pointsAwarded: currentScoreValue, comboCount: newComboCount };
 }
 
 export
@@ -320,7 +322,7 @@ async function penalizeInvalidSet() {
 	const scoreValueData = await db.gamedata.get(DbCollectionItemNameGameDataScoreValue);
 
 	if (!scoreValueData) {
-		return;
+		return null;
 	}
 
 	const newValue = applyPenalty(scoreValueData.value, SCORE_CONFIG.INVALID_SET_PENALTY);
@@ -328,6 +330,8 @@ async function penalizeInvalidSet() {
 	await db.gamedata.update(DbCollectionItemNameGameDataScoreValue, {
 		value: newValue,
 	});
+
+	return SCORE_CONFIG.INVALID_SET_PENALTY;
 }
 
 export
@@ -335,7 +339,7 @@ async function penalizeUnnecessaryShuffle() {
 	const scoreValueData = await db.gamedata.get(DbCollectionItemNameGameDataScoreValue);
 
 	if (!scoreValueData) {
-		return;
+		return null;
 	}
 
 	const newValue = applyPenalty(scoreValueData.value, SCORE_CONFIG.SHUFFLE_WITH_SET_PENALTY);
@@ -343,6 +347,8 @@ async function penalizeUnnecessaryShuffle() {
 	await db.gamedata.update(DbCollectionItemNameGameDataScoreValue, {
 		value: newValue,
 	});
+
+	return SCORE_CONFIG.SHUFFLE_WITH_SET_PENALTY;
 }
 
 export

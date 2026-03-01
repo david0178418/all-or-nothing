@@ -108,6 +108,14 @@ interface Card {
 }
 
 export
+interface ScorePopup {
+	id: string;
+	points: number;
+	comboCount: number;
+	variant: 'reward' | 'penalty';
+}
+
+export
 interface ToastMesssage {
 	message: ReactNode;
 	delay?: number;
