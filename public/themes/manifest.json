@@ -1,0 +1,15 @@
+[
+	{
+		"name": "fourth-of-july",
+		"schedule": { "startMonth": 6, "startDay": 28, "endMonth": 7, "endDay": 8 },
+		"colors": { "1": "#B31942", "2": "#002868", "4": "#FFB300" },
+		"colorNames": { "1": "Red", "2": "Blue", "4": "Gold" },
+		"shapeNames": { "1": "Star", "2": "Diamond", "4": "Flag" },
+		"shapes": { "1": "star.svg", "2": "diamond.svg", "4": "flag.svg" },
+		"cardBack": "card-back.svg",
+		"background": {
+			"body": "linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%)",
+			"gameScreen": "radial-gradient(ellipse at center, #1a2a4a 0%, #0a1628 100%)"
+		}
+	}
+]

@@ -1,0 +1,16 @@
+<svg viewBox="0 0 130 200" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<pattern id="st" width="14" height="16" patternUnits="userSpaceOnUse" x="0" y="120">
+			<polygon points="7,5.5 7.6,7.2 9.4,7.2 7.9,8.3 8.5,10 7,9 5.5,10 6.1,8.3 4.6,7.2 6.4,7.2" fill="white"/>
+		</pattern>
+	</defs>
+	<rect width="130" height="200" fill="#B31942"/>
+	<rect x="10" width="10" height="200" fill="white"/>
+	<rect x="30" width="10" height="200" fill="white"/>
+	<rect x="50" width="10" height="200" fill="white"/>
+	<rect x="70" width="10" height="200" fill="white"/>
+	<rect x="90" width="10" height="200" fill="white"/>
+	<rect x="110" width="10" height="200" fill="white"/>
+	<rect width="70" y="120" height="80" fill="#002868"/>
+	<rect width="70" y="120" height="80" fill="url(#st)"/>
+</svg>

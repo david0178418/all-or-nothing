@@ -5,6 +5,7 @@ import GamePlayArea from './game-play-area';
 import SoundToggle from '@/components/sound-toggle';
 import MusicToggle from '@/components/music-toggle';
 import { Box } from '@mui/material';
+import { useGameTheme } from '@/themes';
 
 const {
 	PROD,
@@ -20,6 +21,8 @@ const noisePattern = `data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='htt
 
 export default
 function Game() {
+	const gameTheme = useGameTheme();
+
 	return (
 		<Box
 			sx={{
@@ -31,7 +34,7 @@ function Game() {
 				background: `
 					url("${noisePattern}"),
 					radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%),
-					radial-gradient(ellipse at center, #c8d5c8 0%, #a8b8a8 100%)
+					${gameTheme.background.gameScreen}
 				`,
 				backgroundSize: '200px 200px, 100% 100%, 100% 100%',
 				backgroundPosition: '0 0, center, center',

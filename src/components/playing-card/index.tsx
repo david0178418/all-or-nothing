@@ -4,13 +4,12 @@ import { useSoundEffects } from '@/hooks';
 import { getRandom } from '@/utils';
 import {
 	Card,
-	ColorValues,
 	CountValues,
 	FillValues,
-	ShapeValues,
 } from '@/types';
 import Shape from './shape';
 import FocusIndicator from '@/components/focus-indicator';
+import { useGameTheme } from '@/themes';
 
 interface PlayingCardProps {
 	width?: number | string;
@@ -96,6 +95,7 @@ function PlayingCard(props: PlayingCardProps) {
 }
 
 function CardSurface(props: CardSurfaceProps) {
+	const gameTheme = useGameTheme();
 	const {
 		onClick,
 		selected,
@@ -126,23 +126,20 @@ function CardSurface(props: CardSurfaceProps) {
 			<FocusIndicator visible={focused} />
 			<Box
 				flex="1"
-				bgcolor="white"
 				display="flex"
 				flexDirection="column"
 				justifyContent="center"
 				alignItems="center"
 				sx={{
-					background: flipped ?
-						`repeating-linear-gradient(45deg, #606dbc, #606dbc 10px, #465298 10px,#465298 20px)` :
-						''
+					background: flipped ? gameTheme.cardBack : gameTheme.cardFace,
 				}}
 			>
 				{!flipped && card && Array(CountValues[card.count]).fill(0).map((_, i) => (
 					<Shape
 						key={i}
-						color={ColorValues[card.color]}
+						color={gameTheme.colors[card.color]}
 						fill={FillValues[card.fill]}
-						type={ShapeValues[card.shape]}
+						SvgComponent={gameTheme.shapes[card.shape]}
 					/>
 				))}
 			</Box>

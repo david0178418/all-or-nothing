@@ -34,4 +34,5 @@ declare const __APP_VERSION__: string;
 
 interface Window {
 	forcePlatform?: (platform?: string) => void;
+	setTheme?: (name?: string) => void;
 }

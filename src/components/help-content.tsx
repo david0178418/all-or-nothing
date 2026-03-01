@@ -2,9 +2,14 @@ import { Box, Grid, Typography } from '@mui/material';
 import PlayingCard from './playing-card';
 import { Colors, Counts, Fills, Shapes } from '@/types';
 import { Check, Clear } from '@mui/icons-material';
+import { useGameTheme } from '@/themes';
 
 export default
 function HelpContent() {
+	const gameTheme = useGameTheme();
+	const colorList = `${gameTheme.colorNames[1]}, ${gameTheme.colorNames[2]}, or ${gameTheme.colorNames[4]}`;
+	const shapeList = `${gameTheme.shapeNames[1]}s, ${gameTheme.shapeNames[2]}s, or ${gameTheme.shapeNames[4]}s`;
+
 	return (
 		<>
 			<Typography>
@@ -13,10 +18,10 @@ function HelpContent() {
 			</Typography>
 			<Box marginLeft={2} marginY={2}>
 				<Typography>
-					<strong>Color:</strong> Red, Green, or Purple.
+					<strong>Color:</strong> {colorList}.
 				</Typography>
 				<Typography>
-					<strong>Symbol:</strong> Circles, Squares, or Triangles.
+					<strong>Symbol:</strong> {shapeList}.
 				</Typography>
 				<Typography>
 					<strong>Count:</strong> One, Two, or Three Shapes
@@ -44,7 +49,7 @@ function HelpContent() {
 					</Grid>
 					<Grid size={1}>
 						<Typography>
-							<Check /> Color - All Red
+							<Check /> Color - All {gameTheme.colorNames[Colors.Red]}
 						</Typography>
 					</Grid>
 					<Grid size={1}>
@@ -145,7 +150,7 @@ function HelpContent() {
 					</Grid>
 					<Grid size={1}>
 						<Typography>
-							<Check /> Shapes - All Circles
+							<Check /> Shapes - All {gameTheme.shapeNames[Shapes.Circle]}s
 						</Typography>
 					</Grid>
 				</Grid>
@@ -231,7 +236,7 @@ function HelpContent() {
 					</Grid>
 					<Grid size={1}>
 						<Typography>
-							<Check /> Shapes - All Trangles
+							<Check /> Shapes - All {gameTheme.shapeNames[Shapes.Triangle]}s
 						</Typography>
 					</Grid>
 				</Grid>

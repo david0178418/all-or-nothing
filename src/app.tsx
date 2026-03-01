@@ -20,6 +20,7 @@ import {
 	useSetupDebugUtilities,
 } from './atoms';
 import { useNavigate, useSelectCurrent } from './focus/focus-atoms';
+import { useInitializeThemes, useGameTheme } from './themes';
 
 const Game = lazy(() => import('./components/screens/game-screen'));
 const About = lazy(() => import('./components/screens/about-screen'));
@@ -42,6 +43,13 @@ function App() {
 	const loadAudioSettings = useLoadAudioSettings();
 
 	useSetupDebugUtilities();
+	useInitializeThemes();
+
+	const gameTheme = useGameTheme();
+
+	useEffect(() => {
+		document.body.style.background = gameTheme.background.body;
+	}, [gameTheme]);
 
 	const ActiveScreenComponent = ScreenComponents[activeScreen];
 

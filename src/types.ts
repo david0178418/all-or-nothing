@@ -50,24 +50,10 @@ const Shapes = {
 } as const;
 
 export
-const ShapeValues = {
-	[Shapes.Triangle]: 'triangle',
-	[Shapes.Circle]: 'circle',
-	[Shapes.Square]: 'square',
-} as const;
-
-export
 const Colors = {
 	Red: BitwiseValues.One,
 	Green: BitwiseValues.Two,
 	Blue: BitwiseValues.Three,
-} as const;
-
-export
-const ColorValues = {
-	[Colors.Red]: '#C92020',
-	[Colors.Green]: '#17B321',
-	[Colors.Blue]: '#8A00A6',
 } as const;
 
 export
