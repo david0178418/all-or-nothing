@@ -9,6 +9,7 @@ const gitVersion = execSync('git describe --tags --always').toString().trimEnd()
 
 // https://vitejs.dev/config/
 export default defineConfig({
+	base: process.env.VITE_BASE ?? '/',
 	define: {
 		__APP_VERSION__: JSON.stringify(gitVersion),
 	},
