@@ -83,7 +83,7 @@ function PlayingCard(props: PlayingCardProps) {
 			>
 				<CardSurface
 					card={cardData}
-					flipped={flipped}
+					flipped={false}
 					onClick={onClick}
 					selected={selected}
 					focused={focused}
