@@ -71,7 +71,7 @@ async function main() {
 		if (shouldBuildLinux) {
 			await nwbuild({
 				mode: 'build',
-				version: 'latest',
+				version: 'stable',
 				flavor: 'normal',
 				platform: 'linux',
 				arch: 'x64',
@@ -90,7 +90,7 @@ async function main() {
 		if (shouldBuildWindows) {
 			await nwbuild({
 				mode: 'build',
-				version: 'latest',
+				version: 'stable',
 				flavor: 'normal',
 				platform: 'win',
 				arch: 'x64',
