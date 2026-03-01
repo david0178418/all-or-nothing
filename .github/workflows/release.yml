@@ -84,6 +84,56 @@ jobs:
             dist/desktop/all-or-nothing-${{ github.ref_name }}-linux-x86_64.AppImage
             dist/desktop/all-or-nothing-${{ github.ref_name }}-windows-x64.zip
 
+      # Upload desktop artifacts for itch.io deployment
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-linux
+          path: dist/desktop/all-or-nothing-${{ github.ref_name }}-linux-x86_64.AppImage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-windows
+          path: dist/desktop/all-or-nothing-${{ github.ref_name }}-windows-x64.zip
+
+  deploy_itchio:
+    needs: [build_web, build_desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download web build
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: web
+      - name: Download Linux build
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-linux
+          path: desktop-linux
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: desktop-windows
+          path: desktop-windows
+
+      - name: Install butler
+        run: |
+          curl -L -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+          ./butler -V
+
+      - name: Push web build
+        run: ./butler push web deegeegames/all-or-nothing:html5 --userversion "${{ github.ref_name }}"
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      - name: Push Linux build
+        run: ./butler push desktop-linux deegeegames/all-or-nothing:linux --userversion "${{ github.ref_name }}"
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      - name: Push Windows build
+        run: ./butler push desktop-windows deegeegames/all-or-nothing:windows --userversion "${{ github.ref_name }}"
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+
   sync_version:
     runs-on: ubuntu-latest
     permissions:
