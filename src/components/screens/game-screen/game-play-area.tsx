@@ -26,6 +26,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { useSoundEffects } from '@/hooks';
+import { fireMatchConfetti } from '@/confetti';
 import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
 import { InputAction, InputEvent } from '@/input/input-types';
@@ -318,6 +319,7 @@ function GamePlayArea() {
 		) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
+			fireMatchConfetti(newSelectedCards);
 			const result = await awardMatchScore(time);
 			if (result) {
 				setScorePopups(prev => [...prev, {

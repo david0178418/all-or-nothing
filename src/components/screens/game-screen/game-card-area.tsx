@@ -190,6 +190,7 @@ function GameCardArea(props: Props) {
 							}}
 						>
 							<Box
+								data-card-id={card.id}
 								sx={{
 									maxWidth: '80%',
 									width: '100%',
