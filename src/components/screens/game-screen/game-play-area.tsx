@@ -26,7 +26,6 @@ import {
 	Typography,
 } from '@mui/material';
 import { useSoundEffects } from '@/hooks';
-import { fireMatchConfetti } from '@/confetti';
 import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
 import { InputAction, InputEvent } from '@/input/input-types';
@@ -56,7 +55,7 @@ function GamePlayArea() {
 	const deckOrder = useDeckOrder();
 	const discardPile = useDiscardPile();
 	const dealtCards = deck?.slice(0, BoardCardCount);
-	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount;
+	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount && discardingCards.length === 0;
 
 	// Memoize based on serialized card IDs to avoid running O(n³) setExists
 	// on every render caused by selectedCards/discardingCards/paused changes
@@ -319,7 +318,6 @@ function GamePlayArea() {
 		) as [Card, Card, Card];
 
 		if(isSet(...newSelectedCards)) {
-			fireMatchConfetti(newSelectedCards);
 			const result = await awardMatchScore(time);
 			if (result) {
 				setScorePopups(prev => [...prev, {
@@ -330,7 +328,12 @@ function GamePlayArea() {
 				}]);
 			}
 			setDiscardingCards(prev => [...prev, ...newSelectedCardIds]);
-			await discardCards(newSelectedCardIds, BoardCardCount);
+			// Delay DB removal so convergence animation plays while cards
+			// are still grid items (avoids popLayout z-index issues).
+			// Timing: 350ms glow delay + 700ms animation + 50ms buffer
+			setTimeout(() => {
+				discardCards(newSelectedCardIds, BoardCardCount);
+			}, 1100);
 			pushToastMsg('Set found!');
 			soundEffects('success');
 			setSelectedCards([]);
