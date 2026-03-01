@@ -17,6 +17,7 @@ interface PlayingCardProps {
 	onClick?(): void;
 	raised?: boolean;
 	flipped?: boolean;
+	spin?: boolean;
 	dealt?: boolean;
 	focused?: boolean;
 	elementRef?: React.RefObject<HTMLElement | null>;
@@ -42,6 +43,7 @@ function PlayingCard(props: PlayingCardProps) {
 		width = 350,
 		raised,
 		flipped: flippedOverride,
+		spin,
 		card: cardData,
 		focused = false,
 		elementRef,
@@ -77,6 +79,7 @@ function PlayingCard(props: PlayingCardProps) {
 		>
 			<Flipper
 				flipped={flipped}
+				spin={spin}
 				backside={
 					<CardSurface flipped/>
 				}
@@ -151,9 +154,10 @@ interface FlipperProps {
 	children: ReactNode;
 	backside: ReactNode;
 	flipped?: boolean;
+	spin?: boolean;
 }
 
-function Flipper({ children, backside, flipped }: FlipperProps) {
+function Flipper({ children, backside, flipped, spin }: FlipperProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	return (
@@ -165,7 +169,7 @@ function Flipper({ children, backside, flipped }: FlipperProps) {
 				height: '100%',
 				transformStyle: 'preserve-3d',
 				transition: 'transform 0.6s',
-				transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+				transform: flipped ? `rotateY(${spin ? 360 : 180}deg)` : 'rotateY(0deg)',
 			}}
 		>
 			<Box

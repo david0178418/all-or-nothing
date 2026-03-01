@@ -34,6 +34,7 @@ function FocusableCard({
 	raised,
 	selected,
 	dealt,
+	spin,
 	onSelected,
 	gridPosition,
 }: {
@@ -42,6 +43,7 @@ function FocusableCard({
 	selected: boolean;
 	raised?: boolean;
 	dealt: boolean;
+	spin?: boolean;
 	onSelected: (card: Card) => void;
 	gridPosition: { row: number; col: number };
 }) {
@@ -65,6 +67,7 @@ function FocusableCard({
 			dealt={dealt}
 			raised={raised}
 			flipped={paused}
+			spin={spin}
 			selected={selected}
 			focused={isFocused}
 			onClick={handleCardSelection} // Use same wrapped function for mouse
@@ -328,6 +331,7 @@ function GameCardArea(props: Props) {
 									<FocusableCard
 										card={card}
 										raised={isDiscarding}
+										spin={isDiscarding}
 										dealt={!newCards.find(newCard => newCard.id === card.id)}
 										paused={paused || isDiscarding || !!newCards.find(newCard => newCard.id === card.id)}
 										selected={!!card.id && selectedCards.includes(card.id)}
