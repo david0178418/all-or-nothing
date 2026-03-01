@@ -66,7 +66,11 @@ function PlayingCard(props: PlayingCardProps) {
 			sx={{
 				aspectRatio: '.65',
 				translate: isRaised ? '-10px -16px' : '0 0',
-				filter: isRaised ? 'drop-shadow(6px 8px 12px rgba(0, 0, 0, 0.4))' : 'drop-shadow(3px 3px 4px #000)',
+				filter: raised
+				? 'brightness(1.2) drop-shadow(0 0 20px rgba(255, 200, 50, 0.8))'
+				: isRaised
+					? 'drop-shadow(6px 8px 12px rgba(0, 0, 0, 0.4))'
+					: 'drop-shadow(3px 3px 4px #000)',
 				transition: 'translate 0.25s ease-out, filter 0.25s ease-out',
 				position: 'relative',
 				zIndex: isRaised ? 2 : 1,

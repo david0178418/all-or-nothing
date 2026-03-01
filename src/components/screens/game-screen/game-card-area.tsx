@@ -180,6 +180,7 @@ function GameCardArea(props: Props) {
 								y: '-50vh',
 								zIndex: 1000,
 								transition: {
+									delay: .35,
 									duration: .5,
 								},
 							}}
