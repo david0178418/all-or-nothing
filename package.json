@@ -5,16 +5,20 @@
 	"browserslist": "chrome > 140",
 	"scripts": {
 		"dev": "vite",
+		"dev:electron": "BUILD_TARGET=electron vite",
 		"preview": "vite preview",
 		"typecheck": "tsc --noEmit",
 		"build": "tsc --noEmit && vite build",
 		"build:web": "tsc --noEmit && vite build",
+		"build:electron": "BUILD_TARGET=electron vite build && tsc -p electron/tsconfig.json",
 		"build:desktop": "npm run build:desktop:linux && npm run build:desktop:windows",
 		"build:desktop:linux": "npm run build:desktop:prepare && node scripts/build-desktop.ts --platform=linux",
 		"build:desktop:windows": "npm run build:desktop:prepare && node scripts/build-desktop.ts --platform=win",
 		"build:desktop:prepare": "node scripts/prepare-desktop.ts",
 		"package:appimage": "node scripts/package-appimage.ts",
 		"package:linux": "npm run package:appimage",
+		"package:electron:linux": "electron-builder --linux --config electron-builder.config.ts",
+		"package:electron:windows": "electron-builder --win --config electron-builder.config.ts",
 		"package:all": "npm run package:linux",
 		"release:linux": "npm run build && npm run build:desktop:linux && npm run package:linux",
 		"release:windows": "npm run build && npm run build:desktop:windows",
@@ -55,6 +59,9 @@
 		"vite-plugin-svgr": "^4.5.0"
 	},
 	"devDependencies": {
-		"@types/canvas-confetti": "^1.9.0"
+		"@types/canvas-confetti": "^1.9.0",
+		"electron": "^35.1.5",
+		"electron-builder": "^26.0.12",
+		"vite-plugin-electron": "^0.28.9"
 	}
 }

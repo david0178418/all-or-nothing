@@ -32,7 +32,12 @@ declare module '*.svg?react' {
 
 declare const __APP_VERSION__: string;
 
+interface ElectronAPI {
+	readonly platform: 'electron';
+}
+
 interface Window {
 	forcePlatform?: (platform?: string) => void;
 	setTheme?: (name?: string) => void;
+	electronAPI?: ElectronAPI;
 }
