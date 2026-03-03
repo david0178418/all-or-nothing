@@ -5,9 +5,12 @@ firebase-debug.log
 dynamic/
 cache/
 dist/
+dist-electron/
 .env*
 tsconfig.tsbuildinfo
 
 local
 *.local
 *.local.*
+
+.claude/worktrees/

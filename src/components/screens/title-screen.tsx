@@ -14,6 +14,7 @@ import {
 	PlayArrow as PlayArrowIcon,
 	Info as InfoIcon,
 	QuestionMark as QuestionMarkIcon,
+	Leaderboard as LeaderboardIcon,
 } from '@mui/icons-material';
 import {
 	Container,
@@ -22,6 +23,7 @@ import {
 	keyframes,
 } from "@mui/material";
 import FocusableButton from '@/components/focusable-button';
+import { usePlatform } from '@/platform';
 
 // --- Title text animation constants ---
 
@@ -183,6 +185,7 @@ export default function Landing() {
 	const setActiveGroup = useSetActiveGroup();
 	const prefersReducedMotion = useReducedMotion();
 	const gameTheme = useGameTheme();
+	const { isAvailable: showLeaderboard, isReady: isPlatformReady } = usePlatform();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -261,6 +264,10 @@ export default function Landing() {
 	const handleNewGame = useCallback(async () => {
 		await resetGame();
 		setActiveScreen(Screens.Game);
+	}, [setActiveScreen]);
+
+	const handleLeaderboard = useCallback(() => {
+		setActiveScreen(Screens.Leaderboard);
 	}, [setActiveScreen]);
 
 	const handleHowToPlay = useCallback(() => {
@@ -349,7 +356,7 @@ export default function Landing() {
 				<motion.div
 					variants={buttonContainerVariants}
 					initial={initialState}
-					animate="visible"
+					animate={isPlatformReady ? 'visible' : initialState}
 				>
 					<Box display="flex" flexDirection="column" gap={2}>
 						<motion.div variants={buttonVariants}>
@@ -376,11 +383,24 @@ export default function Landing() {
 								New Game
 							</FocusableButton>
 						</motion.div>
+						{showLeaderboard && (
+							<motion.div variants={buttonVariants}>
+								<FocusableButton
+									id="menu-leaderboard"
+									group="menu"
+									order={2}
+									startIcon={<LeaderboardIcon />}
+									onClick={handleLeaderboard}
+								>
+									Leaderboards
+								</FocusableButton>
+							</motion.div>
+						)}
 						<motion.div variants={buttonVariants}>
 							<FocusableButton
 								id="menu-how-to-play"
 								group="menu"
-								order={2}
+								order={showLeaderboard ? 3 : 2}
 								startIcon={<QuestionMarkIcon />}
 								onClick={handleHowToPlay}
 							>
@@ -391,7 +411,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-about"
 								group="menu"
-								order={3}
+								order={showLeaderboard ? 4 : 3}
 								startIcon={<InfoIcon />}
 								onClick={handleAbout}
 							>
