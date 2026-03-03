@@ -66,7 +66,6 @@ jobs:
         run: npm version "${{ github.ref_name }}" --no-git-tag-version
       - name: Build Electron app
         run: npm run build:electron
-        shell: bash
       - name: Package desktop (${{ matrix.platform }})
         run: ${{ matrix.package_cmd }}
       - uses: actions/upload-artifact@v4

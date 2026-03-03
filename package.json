@@ -6,11 +6,11 @@
 	"browserslist": "chrome > 140",
 	"scripts": {
 		"dev": "vite",
-		"dev:electron": "BUILD_TARGET=electron vite",
+		"dev:electron": "cross-env BUILD_TARGET=electron vite",
 		"preview": "vite preview",
 		"typecheck": "tsc --noEmit && tsc -p electron/tsconfig.json",
 		"build": "tsc --noEmit && vite build",
-		"build:electron": "tsc -p electron/tsconfig.json && BUILD_TARGET=electron vite build",
+		"build:electron": "tsc -p electron/tsconfig.json && cross-env BUILD_TARGET=electron vite build",
 		"package:electron:linux": "electron-builder --linux --config electron-builder.config.ts",
 		"package:electron:windows": "electron-builder --win --config electron-builder.config.ts"
 	},
@@ -49,6 +49,7 @@
 	},
 	"devDependencies": {
 		"@types/canvas-confetti": "^1.9.0",
+		"cross-env": "^10.1.0",
 		"electron": "^35.1.5",
 		"electron-builder": "^26.0.12",
 		"vite-plugin-electron": "^0.29.0"
