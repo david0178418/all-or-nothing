@@ -5,21 +5,14 @@
 	"browserslist": "chrome > 140",
 	"scripts": {
 		"dev": "vite",
+		"dev:electron": "BUILD_TARGET=electron vite",
 		"preview": "vite preview",
 		"typecheck": "tsc --noEmit",
 		"build": "tsc --noEmit && vite build",
 		"build:web": "tsc --noEmit && vite build",
-		"build:desktop": "npm run build:desktop:linux && npm run build:desktop:windows",
-		"build:desktop:linux": "npm run build:desktop:prepare && node scripts/build-desktop.ts --platform=linux",
-		"build:desktop:windows": "npm run build:desktop:prepare && node scripts/build-desktop.ts --platform=win",
-		"build:desktop:prepare": "node scripts/prepare-desktop.ts",
-		"package:appimage": "node scripts/package-appimage.ts",
-		"package:linux": "npm run package:appimage",
-		"package:all": "npm run package:linux",
-		"release:linux": "npm run build && npm run build:desktop:linux && npm run package:linux",
-		"release:windows": "npm run build && npm run build:desktop:windows",
-		"release:desktop": "npm run build && npm run build:desktop && npm run package:all",
-		"release:all": "npm run release:desktop"
+		"build:electron": "BUILD_TARGET=electron vite build && tsc -p electron/tsconfig.json",
+		"package:electron:linux": "electron-builder --linux --config electron-builder.config.ts",
+		"package:electron:windows": "electron-builder --win --config electron-builder.config.ts"
 	},
 	"author": "",
 	"license": "ISC",
@@ -43,7 +36,6 @@
 		"framer-motion": "^12.34.3",
 		"jotai": "^2.18.0",
 		"lodash.debounce": "^4.0.8",
-		"nw-builder": "^4.17.5",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
 		"react-ga4": "^2.1.0",
@@ -55,6 +47,8 @@
 		"vite-plugin-svgr": "^4.5.0"
 	},
 	"devDependencies": {
-		"@types/canvas-confetti": "^1.9.0"
+		"@types/canvas-confetti": "^1.9.0",
+		"electron": "^35.1.5",
+		"electron-builder": "^26.0.12"
 	}
 }
