@@ -11,3 +11,4 @@ export const DbCollectionItemNameGameDataScore = 'score';
 export const DbCollectionItemNameGameDataScoreValue = 'score-value';
 export const DbCollectionItemNameGameDataLastMatchTime = 'last-match-time';
 export const DbCollectionItemNameGameDataComboCount = 'combo-count';
+export const DbCollectionItemNameGameDataMaxCombo = 'max-combo';

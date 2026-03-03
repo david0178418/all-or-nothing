@@ -9,11 +9,13 @@ import {
 	DbCollectionItemNameGameDataScoreValue,
 	DbCollectionItemNameGameDataLastMatchTime,
 	DbCollectionItemNameGameDataComboCount,
+	DbCollectionItemNameGameDataMaxCombo,
 	DbCollectionItemNameSetOrdersDeck,
 	DbCollectionItemNameSetOrdersDiscard,
 	DbName,
 	SavedGameKey,
 } from './constants';
+import type { GameCompletionData } from './platform/types';
 import {
 	BitwiseValue,
 	Card,
@@ -147,6 +149,13 @@ async function initDb() {;
 	});
 
 	if(await db.setorders.get(DbCollectionItemNameSetOrdersDeck)) {
+		// Migration for existing databases that don't have max-combo
+		if (!(await db.gamedata.get(DbCollectionItemNameGameDataMaxCombo))) {
+			await db.gamedata.add({
+				id: DbCollectionItemNameGameDataMaxCombo,
+				value: 0,
+			});
+		}
 		return;
 	}
 
@@ -183,6 +192,10 @@ async function initDb() {;
 			id: DbCollectionItemNameGameDataComboCount,
 			value: 0,
 		}),
+		db.gamedata.add({
+			id: DbCollectionItemNameGameDataMaxCombo,
+			value: 0,
+		}),
 		db.setorders.add({
 			name: DbCollectionItemNameSetOrdersDeck,
 			order: generateDeck(),
@@ -204,6 +217,7 @@ async function resetGameCore() {
 		db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: SCORE_CONFIG.BASE_VALUE }),
 		db.gamedata.update(DbCollectionItemNameGameDataLastMatchTime, { value: 0 }),
 		db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: 0 }),
+		db.gamedata.update(DbCollectionItemNameGameDataMaxCombo, { value: 0 }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDeck, { order: generateDeck() }),
 		db.setorders.update(DbCollectionItemNameSetOrdersDiscard, { order: [] }),
 	])
@@ -287,19 +301,21 @@ async function updateMusicEnabled(enabled: boolean) {
 // Scoring database update functions
 export
 async function awardMatchScore(currentTime: number) {
-	const [scoreData, scoreValueData, lastMatchData, comboData] = await Promise.all([
+	const [scoreData, scoreValueData, lastMatchData, comboData, maxComboData] = await Promise.all([
 		db.gamedata.get(DbCollectionItemNameGameDataScore),
 		db.gamedata.get(DbCollectionItemNameGameDataScoreValue),
 		db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime),
 		db.gamedata.get(DbCollectionItemNameGameDataComboCount),
+		db.gamedata.get(DbCollectionItemNameGameDataMaxCombo),
 	]);
 
-	if (!(scoreData && scoreValueData && lastMatchData && comboData)) {
+	if (!(scoreData && scoreValueData && lastMatchData && comboData && maxComboData)) {
 		return null;
 	}
 
 	const isCombo = isComboEligible(currentTime, lastMatchData.value);
 	const newComboCount = isCombo ? comboData.value + 1 : 0;
+	const newMaxCombo = Math.max(maxComboData.value, newComboCount);
 	const currentScoreValue = scoreValueData.value;
 	const newScore = scoreData.value + currentScoreValue;
 	const newScoreValue = calculateScoreValueWithCombo(
@@ -312,9 +328,10 @@ async function awardMatchScore(currentTime: number) {
 		db.gamedata.update(DbCollectionItemNameGameDataScoreValue, { value: newScoreValue }),
 		db.gamedata.update(DbCollectionItemNameGameDataLastMatchTime, { value: currentTime }),
 		db.gamedata.update(DbCollectionItemNameGameDataComboCount, { value: newComboCount }),
+		db.gamedata.update(DbCollectionItemNameGameDataMaxCombo, { value: newMaxCombo }),
 	]);
 
-	return { pointsAwarded: currentScoreValue, comboCount: newComboCount };
+	return { pointsAwarded: currentScoreValue, comboCount: newComboCount, maxCombo: newMaxCombo };
 }
 
 export
@@ -412,4 +429,19 @@ function generateDeck() {
 	);
 
 	return randomizeArray(cards);
+}
+
+export
+async function getGameCompletionData(): Promise<GameCompletionData> {
+	const [scoreData, timeData, maxComboData] = await Promise.all([
+		db.gamedata.get(DbCollectionItemNameGameDataScore),
+		db.gamedata.get(DbCollectionItemNameGameDataTime),
+		db.gamedata.get(DbCollectionItemNameGameDataMaxCombo),
+	]);
+
+	return {
+		score: scoreData?.value ?? 0,
+		time: timeData?.value ?? 0,
+		maxCombo: maxComboData?.value ?? 0,
+	};
 }

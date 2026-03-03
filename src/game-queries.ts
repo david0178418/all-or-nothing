@@ -8,6 +8,7 @@ import {
 	DbCollectionItemNameGameDataScoreValue,
 	DbCollectionItemNameGameDataComboCount,
 	DbCollectionItemNameGameDataLastMatchTime,
+	DbCollectionItemNameGameDataMaxCombo,
 	DbCollectionItemNameSetOrdersDeck,
 	DbCollectionItemNameSetOrdersDiscard,
 } from '@/constants';
@@ -49,4 +50,8 @@ export function useComboCount() {
 
 export function useLastMatchTime() {
 	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataLastMatchTime))?.value || 0;
+}
+
+export function useMaxCombo() {
+	return useLiveQuery(() => db.gamedata.get(DbCollectionItemNameGameDataMaxCombo))?.value || 0;
 }

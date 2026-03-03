@@ -29,7 +29,7 @@ import { useSoundEffects } from '@/hooks';
 import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
 import { InputAction, InputEvent } from '@/input/input-types';
-import { useDeck, useTime, useScore, useShuffleCount, useDeckOrder, useDiscardPile } from '@/game-queries';
+import { useDeck, useTime, useScore, useShuffleCount, useDeckOrder, useDiscardPile, useMaxCombo } from '@/game-queries';
 
 const {
 	VITE_AD_CONTENT_URL = '',
@@ -42,6 +42,7 @@ function GamePlayArea() {
 	const deck = useDeck();
 	const time = useTime();
 	const score = useScore();
+	const maxCombo = useMaxCombo();
 	const soundEffects = useSoundEffects();
 	const shuffleCount = useShuffleCount();
 	const paused = useIsPaused();
@@ -247,6 +248,7 @@ function GamePlayArea() {
 				isGameOver={gameComplete}
 				time={time}
 				score={score}
+				maxCombo={maxCombo}
 			/>
 			{VITE_AD_CONTENT_URL && (
 				<AdLinkSection
