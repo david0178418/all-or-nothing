@@ -18,6 +18,7 @@ const config: Configuration = {
 	win: {
 		target: 'zip',
 	},
+	publish: null,
 	extraMetadata: {
 		main: 'dist-electron/main.js',
 	},
