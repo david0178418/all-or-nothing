@@ -32,7 +32,20 @@ declare module '*.svg?react' {
 
 declare const __APP_VERSION__: string;
 
+interface ElectronSteamAPI {
+	init(): Promise<boolean>;
+	submitScore(data: { score: number; time: number; maxCombo: number }): Promise<boolean>;
+	fetchLeaderboard(options: { leaderboard: string; fetchType: string; rangeStart: number; rangeEnd: number }): Promise<ReadonlyArray<{ rank: number; playerName: string; score: number }>>;
+	getPlayerName(): Promise<string | null>;
+}
+
+interface ElectronAPI {
+	readonly platform: 'electron';
+	readonly steam: ElectronSteamAPI;
+}
+
 interface Window {
+	electronAPI?: ElectronAPI;
 	forcePlatform?: (platform?: string) => void;
 	setTheme?: (name?: string) => void;
 }
