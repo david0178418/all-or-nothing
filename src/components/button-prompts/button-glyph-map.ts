@@ -40,7 +40,7 @@ import switchDpadRight from './assets/switch/dpad_right.svg?react';
 import keyboardEnter from './assets/keyboard/enter.svg?react';
 import keyboardEscape from './assets/keyboard/escape.svg?react';
 import keyboardH from './assets/keyboard/h.svg?react';
-import keyboardR from './assets/keyboard/r.svg?react';
+import keyboardE from './assets/keyboard/e.svg?react';
 import keyboardP from './assets/keyboard/p.svg?react';
 import keyboardArrowUp from './assets/keyboard/arrow_up.svg?react';
 import keyboardArrowDown from './assets/keyboard/arrow_down.svg?react';
@@ -99,7 +99,7 @@ export const ButtonGlyphMap: Record<ControllerType, Partial<Record<InputAction, 
 		[InputAction.SELECT]: keyboardEnter,
 		[InputAction.BACK]: keyboardEscape,
 		[InputAction.HINT]: keyboardH,
-		[InputAction.SHUFFLE]: keyboardR,
+		[InputAction.SHUFFLE]: keyboardE,
 		[InputAction.PAUSE]: keyboardP,
 		[InputAction.NAVIGATE_UP]: keyboardArrowUp,
 		[InputAction.NAVIGATE_DOWN]: keyboardArrowDown,

@@ -90,6 +90,8 @@ export const KeyboardMappings: Record<string, InputAction> = {
 	// Game actions
 	h: InputAction.HINT,
 	H: InputAction.HINT,
+	e: InputAction.SHUFFLE,
+	E: InputAction.SHUFFLE,
 	p: InputAction.PAUSE,
 	P: InputAction.PAUSE,
 };
@@ -146,7 +148,7 @@ export const ControllerButtonLabels: Record<ControllerType, Record<InputAction, 
 		[InputAction.SELECT]: 'Enter',
 		[InputAction.BACK]: 'Esc',
 		[InputAction.HINT]: 'H',
-		[InputAction.SHUFFLE]: 'R',
+		[InputAction.SHUFFLE]: 'E',
 		[InputAction.PAUSE]: 'P',
 		[InputAction.NAVIGATE_UP]: '↑',
 		[InputAction.NAVIGATE_DOWN]: '↓',
