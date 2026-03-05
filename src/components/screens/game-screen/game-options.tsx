@@ -158,7 +158,7 @@ function GameOptions(props: Props) {
 		},
 		{
 			id: 'shuffle',
-			label: 'Shuffle',
+			label: 'No sets',
 			mouseIcon: <ShuffleIcon />,
 			platformAction: InputAction.SHUFFLE,
 			onClick: onReshuffle,
