@@ -90,8 +90,6 @@ export const KeyboardMappings: Record<string, InputAction> = {
 	// Game actions
 	h: InputAction.HINT,
 	H: InputAction.HINT,
-	r: InputAction.SHUFFLE, // R for reshuffle
-	R: InputAction.SHUFFLE,
 	p: InputAction.PAUSE,
 	P: InputAction.PAUSE,
 };
