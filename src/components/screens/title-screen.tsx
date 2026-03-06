@@ -1,13 +1,15 @@
 import PlayingCard from '../playing-card';
 import { BitwiseValue, Card, Screens } from '../../types';
 import { resetGame, randomChoice } from '../../utils';
-import { useSetActiveScreen } from '../../atoms';
+import { useSetActiveScreen, useActiveController } from '../../atoms';
 import { useSetActiveGroup } from '@/focus/focus-atoms';
 import { useGameTheme } from '@/themes';
 import { fireConvergenceConfetti } from '@/confetti';
 import FormattedTime from '../formatted-time';
-import { SavedGameKey } from '@/constants';
+import { SavedGameKey, TutorialCompletedKey } from '@/constants';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useGamepadManager, useKeyboardManager } from '@/input/input-hooks';
+import { InputEvent, InputAction } from '@/input/input-types';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
 	RotateLeft as RotateLeftIcon,
@@ -15,14 +17,21 @@ import {
 	Info as InfoIcon,
 	QuestionMark as QuestionMarkIcon,
 	Leaderboard as LeaderboardIcon,
+	School as SchoolIcon,
 } from '@mui/icons-material';
 import {
 	Container,
 	Box,
 	Typography,
 	keyframes,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogContentText,
+	DialogActions,
 } from "@mui/material";
 import FocusableButton from '@/components/focusable-button';
+import PlatformButton from '@/components/platform-button';
 import { usePlatform } from '@/platform';
 
 // --- Title text animation constants ---
@@ -185,14 +194,16 @@ export default function Landing() {
 	const setActiveGroup = useSetActiveGroup();
 	const prefersReducedMotion = useReducedMotion();
 	const gameTheme = useGameTheme();
+	const activeController = useActiveController();
 	const { isAvailable: showLeaderboard, isReady: isPlatformReady } = usePlatform();
+	const [showFirstTimePrompt, setShowFirstTimePrompt] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-	// Set menu as active focus group when title screen loads
+	// Set focus group based on whether the tutorial prompt is open
 	useEffect(() => {
-		setActiveGroup('menu');
-	}, [setActiveGroup]);
+		setActiveGroup(showFirstTimePrompt ? 'tutorial-prompt' : 'menu');
+	}, [setActiveGroup, showFirstTimePrompt]);
 
 	// Timed phase transitions (dealing, idle, matched, empty)
 	useEffect(() => {
@@ -262,6 +273,11 @@ export default function Landing() {
 	}, [setActiveScreen]);
 
 	const handleNewGame = useCallback(async () => {
+		if (!localStorage.getItem(TutorialCompletedKey)) {
+			setShowFirstTimePrompt(true);
+			return;
+		}
+
 		await resetGame();
 		setActiveScreen(Screens.Game);
 	}, [setActiveScreen]);
@@ -274,9 +290,47 @@ export default function Landing() {
 		setActiveScreen(Screens.Help);
 	}, [setActiveScreen]);
 
+	const handleTutorial = useCallback(() => {
+		setActiveScreen(Screens.Tutorial);
+	}, [setActiveScreen]);
+
 	const handleAbout = useCallback(() => {
 		setActiveScreen(Screens.About);
 	}, [setActiveScreen]);
+
+	const handlePromptSkip = useCallback(async () => {
+		setShowFirstTimePrompt(false);
+		localStorage.setItem(TutorialCompletedKey, '1');
+		await resetGame();
+		setActiveScreen(Screens.Game);
+	}, [setActiveScreen]);
+
+	const handlePromptAccept = useCallback(() => {
+		setShowFirstTimePrompt(false);
+		localStorage.setItem(TutorialCompletedKey, '1');
+		setActiveScreen(Screens.Tutorial);
+	}, [setActiveScreen]);
+
+	// Handle controller/keyboard input for the tutorial prompt dialog
+	const promptInputRef = useRef<(event: InputEvent) => void>(() => {});
+	promptInputRef.current = (event: InputEvent) => {
+		if (!showFirstTimePrompt) return;
+
+		if (event.action === InputAction.SELECT) {
+			handlePromptAccept();
+		}
+
+		if (event.action === InputAction.BACK) {
+			handlePromptSkip();
+		}
+	};
+
+	const stablePromptInputHandler = useCallback((event: InputEvent) => {
+		promptInputRef.current(event);
+	}, []);
+
+	useGamepadManager(stablePromptInputHandler);
+	useKeyboardManager(stablePromptInputHandler);
 
 	const initialState = prefersReducedMotion ? false as const : 'hidden' as const;
 	const isMatched = phase === 'matched';
@@ -398,9 +452,20 @@ export default function Landing() {
 						)}
 						<motion.div variants={buttonVariants}>
 							<FocusableButton
-								id="menu-how-to-play"
+								id="menu-tutorial"
 								group="menu"
 								order={showLeaderboard ? 3 : 2}
+								startIcon={<SchoolIcon />}
+								onClick={handleTutorial}
+							>
+								Tutorial
+							</FocusableButton>
+						</motion.div>
+						<motion.div variants={buttonVariants}>
+							<FocusableButton
+								id="menu-how-to-play"
+								group="menu"
+								order={showLeaderboard ? 4 : 3}
 								startIcon={<QuestionMarkIcon />}
 								onClick={handleHowToPlay}
 							>
@@ -411,7 +476,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-about"
 								group="menu"
-								order={showLeaderboard ? 4 : 3}
+								order={showLeaderboard ? 5 : 4}
 								startIcon={<InfoIcon />}
 								onClick={handleAbout}
 							>
@@ -421,6 +486,51 @@ export default function Landing() {
 					</Box>
 				</motion.div>
 			</Box>
+			<Dialog open={showFirstTimePrompt} onClose={handlePromptSkip}>
+				<DialogTitle>Welcome!</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Would you like a quick tutorial to learn how to play?
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					{!activeController && (
+						<>
+							<FocusableButton
+								id="tutorial-prompt-skip"
+								group="tutorial-prompt"
+								order={0}
+								onClick={handlePromptSkip}
+							>
+								Skip
+							</FocusableButton>
+							<FocusableButton
+								id="tutorial-prompt-accept"
+								group="tutorial-prompt"
+								order={1}
+								onClick={handlePromptAccept}
+								autoFocus
+							>
+								Yes, show me
+							</FocusableButton>
+						</>
+					)}
+					{!!activeController && (
+						<>
+							<PlatformButton
+								label="Skip"
+								action={InputAction.BACK}
+								onClick={handlePromptSkip}
+							/>
+							<PlatformButton
+								label="Yes, show me"
+								action={InputAction.SELECT}
+								onClick={handlePromptAccept}
+							/>
+						</>
+					)}
+				</DialogActions>
+			</Dialog>
 		</Container>
 	);
 }

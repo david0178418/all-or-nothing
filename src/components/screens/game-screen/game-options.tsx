@@ -1,6 +1,6 @@
 import { useSetIsPaused, useActiveController } from '@/atoms';
 import { InputAction } from '@/input/input-types';
-import { ButtonGlyphMap } from '@/components/button-prompts/button-glyph-map';
+import PlatformButton from '@/components/platform-button';
 import { ReactNode } from 'react';
 import {
 	Pause as PauseIcon,
@@ -35,13 +35,6 @@ interface MouseButtonProps {
 	disabled?: boolean;
 }
 
-interface PlatformButtonProps {
-	label: string;
-	action: InputAction;
-	onClick: () => void;
-	disabled?: boolean;
-}
-
 // Mouse control button: outlined variant with icon only
 function MouseButton(props: MouseButtonProps) {
 	const { label, icon, onClick, disabled = false } = props;
@@ -52,41 +45,6 @@ function MouseButton(props: MouseButtonProps) {
 			variant="outlined"
 			onClick={onClick}
 			startIcon={icon}
-			disabled={disabled}
-		>
-			{label}
-		</Button>
-	);
-}
-
-// Platform control button: text variant with glyph
-function PlatformButton(props: PlatformButtonProps) {
-	const activeController = useActiveController();
-	const { label, action, onClick, disabled = false } = props;
-
-	if (!activeController) {
-		return null;
-	}
-
-	const GlyphComponent = ButtonGlyphMap[activeController]?.[action];
-
-	if (!GlyphComponent) {
-		return null;
-	}
-
-	return (
-		<Button
-			size="large"
-			variant="text"
-			onClick={onClick}
-			startIcon={
-				<GlyphComponent
-					width={40}
-					height={40}
-					viewBox="0 0 64 64"
-					display="block"
-				/>
-			}
 			disabled={disabled}
 		>
 			{label}
