@@ -3,7 +3,6 @@ import { useSetIsPaused } from '@/atoms';
 import {
 	Menu as MenuIcon,
 	Pause as PauseIcon,
-	QuestionMark as QuestionMarkIcon,
 	Shuffle as ShuffleIcon,
 } from '@mui/icons-material';
 import {
@@ -18,17 +17,13 @@ import {
 
 interface Props {
 	onReshuffle(): void;
-	onHintMessage(): void;
 }
 
 export default
 function GameOptionsMobile(props: Props) {
 	const setIsPaused = useSetIsPaused();
 	const [isOpen, setIsOpen] = useState(false);
-	const {
-		onReshuffle,
-		onHintMessage,
-	} = props;
+	const { onReshuffle } = props;
 
 	return (
 		<>
@@ -68,21 +63,6 @@ function GameOptionsMobile(props: Props) {
 							</ListItemIcon>
 							<ListItemText>
 								Pause
-							</ListItemText>
-						</ListItemButton>
-					</ListItem>
-					<ListItem>
-						<ListItemButton
-							onClick={() => {
-								setIsOpen(false);
-								onHintMessage();
-							}}
-						>
-							<ListItemIcon>
-								<QuestionMarkIcon />
-							</ListItemIcon>
-							<ListItemText>
-								Hint
 							</ListItemText>
 						</ListItemButton>
 					</ListItem>

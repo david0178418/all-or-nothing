@@ -1,6 +1,6 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
-import { Screens, ToastMesssage } from './types';
+import { Screens } from './types';
 import { ControllerType } from './input/input-types';
 import { getSoundEnabled, getMusicEnabled, updateSoundEnabled, updateMusicEnabled } from './core';
 import { useClearFocus } from './focus/focus-atoms';
@@ -113,37 +113,6 @@ function useIsPaused() {
 export
 function useSetIsPaused() {
 	return useSetAtom(pausedAtom);
-}
-const toastQueueAtom = atom<ToastMesssage[]>([]);
-
-export
-const toastMsgAtom = atom(get => get(toastQueueAtom)[0] || null);
-
-export
-const pushToastMsgAtom = atom(
-	null,
-	(get, set, message: ToastMesssage | string) => {
-
-		const addedMsg = (typeof message === 'string') ? { message } : message;
-
-		const tqa = get(toastQueueAtom);
-
-		set(toastQueueAtom, [ ...tqa, addedMsg ]);
-	},
-);
-
-export
-const clearCurrentToastMsgAtom = atom(
-	null,
-	(get, set) => {
-		const [, ...rest] = get(toastQueueAtom);
-		set(toastQueueAtom, rest);
-	},
-);
-
-export
-function usePushToastMsg() {
-	return useSetAtom(pushToastMsgAtom);
 }
 
 const usingNavigationalInputAtom = atom(get => get(activeControllerAtom) !== null);

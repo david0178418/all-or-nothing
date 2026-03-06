@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 export
 type Enum<T extends object> = T[keyof T];
 
@@ -101,11 +99,4 @@ interface ScorePopup {
 	points: number;
 	comboCount: number;
 	variant: 'reward' | 'penalty';
-}
-
-export
-interface ToastMesssage {
-	message: ReactNode;
-	delay?: number;
-	onClose?(): void;
 }

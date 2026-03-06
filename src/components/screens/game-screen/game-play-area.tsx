@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useIsPaused, usePushToastMsg, useSetIsPaused } from '@/atoms';
+import { useIsPaused, useSetIsPaused } from '@/atoms';
 import { Card, ScorePopup } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
@@ -47,7 +47,6 @@ function GamePlayArea() {
 	const shuffleCount = useShuffleCount();
 	const paused = useIsPaused();
 	const setIsPaused = useSetIsPaused();
-	const pushToastMsg = usePushToastMsg();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
 	const [discardingCards, setDiscardingCards] = useState<string[]>([]);
 	const [scorePopups, setScorePopups] = useState<ScorePopup[]>([]);
@@ -101,10 +100,6 @@ function GamePlayArea() {
 
 		if (action === InputAction.PAUSE) {
 			setIsPaused(!paused);
-		}
-
-		if (action === InputAction.HINT && !paused) {
-			handleHintMessage(dealtCards);
 		}
 
 		if (action === InputAction.SHUFFLE && !paused && canShuffle) {
@@ -232,12 +227,10 @@ function GamePlayArea() {
 				<GameOptions
 					canShuffle={canShuffle}
 					onReshuffle={handleReshuffle}
-					onHintMessage={() => handleHintMessage(dealtCards)}
-				/>
+					/>
 			</Container>
 			<GameOptionsMobile
 				onReshuffle={handleReshuffle}
-				onHintMessage={() => handleHintMessage(dealtCards)}
 			/>
 			<GameOverDialog
 				remainingCards={dealtCards.length}
@@ -332,7 +325,6 @@ function GamePlayArea() {
 			setTimeout(() => {
 				discardCards(newSelectedCardIds, BoardCardCount);
 			}, 1100);
-			pushToastMsg('Set found!');
 			soundEffects('success');
 			setSelectedCards([]);
 		} else {
@@ -346,13 +338,7 @@ function GamePlayArea() {
 				}]);
 			}
 			setSelectedCards(newSelectedCardIds);
-			pushToastMsg('Not a set.');
 		}
-	}
-	function handleHintMessage(cards: Card[]) {
-		setExists(cards) ?
-			pushToastMsg('A set exists!') :
-			pushToastMsg('No set exists.');
 	}
 }
 

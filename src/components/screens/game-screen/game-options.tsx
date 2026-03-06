@@ -4,7 +4,6 @@ import PlatformButton from '@/components/platform-button';
 import { ReactNode } from 'react';
 import {
 	Pause as PauseIcon,
-	QuestionMark as QuestionMarkIcon,
 	Shuffle as ShuffleIcon,
 } from '@mui/icons-material';
 import {
@@ -16,7 +15,6 @@ import {
 interface Props {
 	canShuffle?: boolean;
 	onReshuffle(): void;
-	onHintMessage(): void;
 }
 
 interface ButtonConfig {
@@ -95,7 +93,7 @@ export default
 function GameOptions(props: Props) {
 	const setIsPaused = useSetIsPaused();
 	const activeController = useActiveController();
-	const { canShuffle, onReshuffle, onHintMessage } = props;
+	const { canShuffle, onReshuffle } = props;
 
 	const buttonConfigs: ButtonConfig[] = [
 		{
@@ -104,14 +102,6 @@ function GameOptions(props: Props) {
 			mouseIcon: <PauseIcon />,
 			platformAction: InputAction.PAUSE,
 			onClick: () => setIsPaused(true),
-			disabled: false,
-		},
-		{
-			id: 'hint',
-			label: 'Hint',
-			mouseIcon: <QuestionMarkIcon />,
-			platformAction: InputAction.HINT,
-			onClick: onHintMessage,
 			disabled: false,
 		},
 		{
