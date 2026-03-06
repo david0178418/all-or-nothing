@@ -221,10 +221,6 @@ function GamePlayArea() {
 							xs: 0,
 							sm: 'unset',
 						},
-						backgroundColor: {
-							xs: 'background.default',
-							sm: 'transparent',
-						},
 					}}
 				>
 					<GameTimer gameComplete={gameComplete} />

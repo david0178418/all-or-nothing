@@ -2,8 +2,8 @@ import Toast from '@/components/toast';
 import ReactGA from "react-ga4";
 import PauseDialog from '@/components/pause-dialog';
 import GamePlayArea from './game-play-area';
-import SoundToggle from '@/components/sound-toggle';
-import MusicToggle from '@/components/music-toggle';
+import SoundSpeedDial from '@/components/sound-speed-dial';
+import { useMusic } from '@/components/music-toggle';
 import { Box } from '@mui/material';
 import { useGameTheme } from '@/themes';
 
@@ -22,6 +22,7 @@ const noisePattern = `data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='htt
 export default
 function Game() {
 	const gameTheme = useGameTheme();
+	useMusic();
 
 	return (
 		<Box
@@ -44,8 +45,7 @@ function Game() {
 			<GamePlayArea />
 			<Toast />
 			<PauseDialog/>
-			<MusicToggle />
-			<SoundToggle />
+			<SoundSpeedDial />
 		</Box>
 	);
 }
