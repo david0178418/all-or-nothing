@@ -9,6 +9,8 @@ import {
 	Grid,
 	LinearProgress,
 	Stack,
+	useTheme,
+	useMediaQuery,
 } from '@mui/material';
 import {
 	ArrowBack as ArrowBackIcon,
@@ -17,13 +19,15 @@ import {
 } from '@mui/icons-material';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useSetActiveScreen, useActiveController } from '@/atoms';
+import { useSetActiveGroup } from '@/focus/focus-atoms';
+import { useFocusable } from '@/focus/useFocusable';
 import { Screens, Card } from '@/types';
 import { InputAction, InputEvent } from '@/input/input-types';
 import { useGamepadManager, useKeyboardManager } from '@/input/input-hooks';
 import PlatformButton from '@/components/platform-button';
 import { isSet } from '@/core';
 import { TutorialCompletedKey } from '@/constants';
-import { useSoundEffects } from '@/hooks';
+import { useSoundEffects, useActivationGuard } from '@/hooks';
 import { TUTORIAL_CARDS, TUTORIAL_STEPS } from '@/tutorial/tutorial-data';
 import PlayingCard from '@/components/playing-card';
 
@@ -37,6 +41,7 @@ export default
 function TutorialScreen() {
 	const setActiveScreen = useSetActiveScreen();
 	const activeController = useActiveController();
+	const setActiveGroup = useSetActiveGroup();
 	const prefersReducedMotion = useReducedMotion();
 	const soundEffects = useSoundEffects();
 	const [step, setStep] = useState(0);
@@ -49,6 +54,16 @@ function TutorialScreen() {
 	}, []);
 
 	const currentStep = TUTORIAL_STEPS[step];
+	const isInteractiveStep = !!currentStep?.enableSelection;
+
+	// Set focus group for card navigation during interactive steps
+	useEffect(() => {
+		if (isInteractiveStep) {
+			setActiveGroup('tutorial-cards');
+		}
+		return () => setActiveGroup(null);
+	}, [isInteractiveStep, setActiveGroup]);
+
 	const totalSteps = TUTORIAL_STEPS.length;
 	const progress = ((step + 1) / totalSteps) * 100;
 
@@ -76,12 +91,18 @@ function TutorialScreen() {
 	// Input handler ref so gamepad/keyboard listeners always see latest state
 	const inputHandlerRef = useRef<(event: InputEvent) => void>(() => {});
 	inputHandlerRef.current = (event: InputEvent) => {
-		if (event.action === InputAction.SELECT) {
+		// During interactive steps, SELECT is handled by the focus system (card onSelect)
+		if (event.action === InputAction.SELECT && !isInteractiveStep) {
 			if (step >= totalSteps - 1) {
 				handleFinish();
 			} else {
 				goToNextStep();
 			}
+		}
+
+		// During interactive steps, PAUSE skips the step
+		if (event.action === InputAction.PAUSE && isInteractiveStep) {
+			goToNextStep();
 		}
 
 		if (event.action === InputAction.BACK) {
@@ -137,7 +158,6 @@ function TutorialScreen() {
 	const isCentered = currentStep.tooltipPosition === 'center';
 	const isLastStep = step === totalSteps - 1;
 	const isFirstStep = step === 0;
-	const isInteractive = !!currentStep.enableSelection;
 
 	return (
 		<Container sx={{
@@ -200,7 +220,7 @@ function TutorialScreen() {
 						>
 							{currentStep.content}
 
-							{!activeController && !isInteractive && (
+							{!activeController && !isInteractiveStep && (
 								<Box
 									display="flex"
 									justifyContent="space-between"
@@ -240,7 +260,7 @@ function TutorialScreen() {
 								</Box>
 							)}
 
-							{!activeController && isInteractive && (
+							{!activeController && isInteractiveStep && (
 								<Box
 									display="flex"
 									justifyContent="space-between"
@@ -285,30 +305,30 @@ function TutorialScreen() {
 												onClick={goBackToTitle}
 											/>
 										)}
-										{!isInteractive && !isLastStep && (
+										{!isInteractiveStep && !isLastStep && (
 											<PlatformButton
 												label="Next"
 												action={InputAction.SELECT}
 												onClick={goToNextStep}
 											/>
 										)}
-										{!isInteractive && isLastStep && (
+										{!isInteractiveStep && isLastStep && (
 											<PlatformButton
 												label="Start Playing"
 												action={InputAction.SELECT}
 												onClick={handleFinish}
 											/>
 										)}
-										{isInteractive && (
+										{isInteractiveStep && (
 											<PlatformButton
 												label="Skip"
-												action={InputAction.SELECT}
+												action={InputAction.PAUSE}
 												onClick={goToNextStep}
 											/>
 										)}
 									</Stack>
 									<Typography variant="caption" color="text.secondary" display="block" textAlign="center" sx={{ mt: 0.5 }}>
-										{isInteractive
+										{isInteractiveStep
 											? `${selectedCardIndexes.length} / 3 selected`
 											: `${step + 1} / ${totalSteps}`
 										}
@@ -353,6 +373,10 @@ function TutorialBoard({
 	foundSet,
 	onCardClick,
 }: TutorialBoardProps) {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+	const columns = isMobile ? 3 : 6;
+
 	return (
 		<Grid
 			container
@@ -365,6 +389,10 @@ function TutorialBoard({
 				const isSelected = selectedCardIndexes.includes(index);
 				const isClickable = !!enableSelection && !foundSet;
 				const isDimmed = !!highlightCards && !isHighlighted && !enableSelection;
+				const gridPosition = {
+					row: Math.floor(index / columns),
+					col: index % columns,
+				};
 
 				return (
 					<Grid
@@ -381,19 +409,75 @@ function TutorialBoard({
 								transition: 'opacity 0.3s ease',
 								cursor: isClickable ? 'pointer' : 'default',
 							}}
-							onClick={isClickable ? () => onCardClick(index) : undefined}
 						>
-							<PlayingCard
-								card={card}
-								raised={isHighlighted || (isSelected && foundSet)}
-								selected={isSelected}
-								spin={isSelected && foundSet}
-								flipped={isSelected && foundSet}
-							/>
+							{enableSelection ? (
+								<FocusableTutorialCard
+									index={index}
+									card={card}
+									isHighlighted={isHighlighted}
+									isSelected={isSelected}
+									foundSet={foundSet}
+									onCardClick={onCardClick}
+									gridPosition={gridPosition}
+								/>
+							) : (
+								<PlayingCard
+									card={card}
+									raised={isHighlighted}
+									selected={isSelected}
+									spin={isSelected && foundSet}
+									flipped={isSelected && foundSet}
+								/>
+							)}
 						</Box>
 					</Grid>
 				);
 			})}
 		</Grid>
+	);
+}
+
+function FocusableTutorialCard({
+	index,
+	card,
+	isHighlighted,
+	isSelected,
+	foundSet,
+	onCardClick,
+	gridPosition,
+}: {
+	index: number;
+	card: Card;
+	isHighlighted: boolean;
+	isSelected: boolean;
+	foundSet: boolean;
+	onCardClick: (index: number) => void;
+	gridPosition: { row: number; col: number };
+}) {
+	const handleSelect = useCallback(() => {
+		onCardClick(index);
+	}, [index, onCardClick]);
+
+	const handleCardSelection = useActivationGuard(handleSelect);
+
+	const { ref, isFocused } = useFocusable({
+		id: `tutorial-card-${index}`,
+		group: 'tutorial-cards',
+		gridPosition,
+		onSelect: handleCardSelection,
+		disabled: foundSet,
+	});
+
+	return (
+		<PlayingCard
+			card={card}
+			raised={isHighlighted || (isSelected && foundSet)}
+			selected={isSelected}
+			focused={isFocused}
+			spin={isSelected && foundSet}
+			flipped={isSelected && foundSet}
+			onClick={handleCardSelection}
+			elementRef={ref}
+		/>
 	);
 }
