@@ -172,7 +172,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
 				<Typography variant="h6" gutterBottom>Color</Typography>
 				<Typography variant="body2">
 					Cards come in three colors: <strong>red</strong>, <strong>green</strong>,
-					and <strong>blue</strong>.
+					and <strong>purple</strong>.
 				</Typography>
 				<Typography variant="body2" sx={{ mt: 1 }}>
 					These three cards each have a different color.
