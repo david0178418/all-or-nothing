@@ -155,7 +155,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
 				<Typography variant="h6" gutterBottom>Card Attributes</Typography>
 				<Typography variant="body2">
 					Every card has 4 attributes: <strong>shape</strong>, <strong>color</strong>,{' '}
-					<strong>count</strong>, and <strong>shading</strong>.
+					<strong>count</strong>, and <strong>fill</strong>.
 				</Typography>
 				<Typography variant="body2" sx={{ mt: 1 }}>
 					This card is a <strong>red solid circle</strong> with a count of <strong>1</strong>.
@@ -197,18 +197,18 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
 		),
 	},
 	{
-		id: 'shading-attribute',
+		id: 'fill-attribute',
 		highlightCards: [0, 1, 2],
 		tooltipPosition: 'bottom',
 		content: (
 			<>
-				<Typography variant="h6" gutterBottom>Shading</Typography>
+				<Typography variant="h6" gutterBottom>Fill</Typography>
 				<Typography variant="body2">
-					Each shape is either <strong>solid</strong>, <strong>outline</strong>,
-					or <strong>filled</strong> (striped).
+					Each shape's fill is either <strong>none</strong>, <strong>shaded</strong>,
+					or <strong>solid</strong>.
 				</Typography>
 				<Typography variant="body2" sx={{ mt: 1 }}>
-					These three cards show all three shadings.
+					These three cards show all three fills.
 				</Typography>
 			</>
 		),
@@ -242,7 +242,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
 				</Typography>
 				<AttributeRow label="Color" value="All red" valid />
 				<AttributeRow label="Shape" value="All circles" valid />
-				<AttributeRow label="Shading" value="All different (solid, outline, filled)" valid />
+				<AttributeRow label="Fill" value="All different (solid, none, shaded)" valid />
 				<AttributeRow label="Count" value="All different (1, 2, 3)" valid />
 			</>
 		),
@@ -259,7 +259,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
 				</Typography>
 				<AttributeRow label="Color" value="All different (red, green, blue)" valid />
 				<AttributeRow label="Shape" value="All different (circle, triangle, triangle)" valid={false} />
-				<AttributeRow label="Shading" value="Solid, solid, outline" valid={false} />
+				<AttributeRow label="Fill" value="Solid, solid, none" valid={false} />
 				<AttributeRow label="Count" value="1, 1, 2" valid={false} />
 			</>
 		),

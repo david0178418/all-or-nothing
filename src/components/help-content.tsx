@@ -27,7 +27,7 @@ function HelpContent() {
 					<strong>Count:</strong> One, Two, or Three Shapes
 				</Typography>
 				<Typography>
-					<strong>Shading:</strong> Solid, Clear, or Shaded
+					<strong>Fill:</strong> None, Shaded, or Solid
 				</Typography>
 			</Box>
 			<Typography>
@@ -231,7 +231,7 @@ function HelpContent() {
 					</Grid>
 					<Grid size={1} color="red">
 						<Typography>
-							<Clear /> Fill - Two Solid, One Outline
+							<Clear /> Fill - Two Solid, One None
 						</Typography>
 					</Grid>
 					<Grid size={1}>
