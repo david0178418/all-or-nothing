@@ -291,6 +291,51 @@ function HelpContent() {
 					</Grid>
 				</Grid>
 			</Grid>
+			<Typography variant="h5" marginTop={4} marginBottom={1}>
+				Scoring
+			</Typography>
+			<Typography>
+				Each time you find a valid set, you earn points. The number of points
+				you receive is shown as the "Next" value below your score.
+			</Typography>
+			<Box marginLeft={2} marginY={2}>
+				<Typography>
+					<strong>Starting Value:</strong> Each match starts at 10,000 points.
+				</Typography>
+				<Typography>
+					<strong>Time Decay:</strong> The longer you take, the fewer points
+					you earn. The value decreases over time, but never drops below
+					1,000 points.
+				</Typography>
+				<Typography>
+					<strong>Penalties:</strong> Selecting an invalid set or shuffling
+					when a valid set exists each reduce your next match value by 500
+					points.
+				</Typography>
+			</Box>
+			<Typography variant="h5" marginTop={4} marginBottom={1}>
+				Combos
+			</Typography>
+			<Typography>
+				Finding another valid set within 7 seconds of your last match triggers
+				a combo. A combo timer bar appears after each match showing how much
+				time remains.
+			</Typography>
+			<Box marginLeft={2} marginY={2}>
+				<Typography>
+					<strong>Combo Bonus:</strong> Each combo adds a bonus to your next
+					match value. The first combo adds 500 points, and each subsequent
+					combo increases the bonus further.
+				</Typography>
+				<Typography>
+					<strong>Combo Chain:</strong> Keep finding sets within the time
+					limit to build your combo chain higher for even bigger bonuses.
+				</Typography>
+				<Typography>
+					<strong>Combo Reset:</strong> The combo resets if you run out of
+					time, pause the game, or shuffle.
+				</Typography>
+			</Box>
 		</>
 	);
 }

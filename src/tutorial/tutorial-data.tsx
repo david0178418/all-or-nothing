@@ -1,10 +1,94 @@
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, LinearProgress } from '@mui/material';
 import {
 	Check as CheckIcon,
 	Close as CloseIcon,
 } from '@mui/icons-material';
 import { Card, Colors, Shapes, Fills, Counts } from '@/types';
 import type { TutorialStep } from './tutorial-types';
+
+const highlightSx = {
+	border: '2px solid',
+	borderColor: '#90caf9',
+	borderRadius: 1,
+	boxShadow: '0 0 8px rgba(144, 202, 249, 0.6)',
+	px: 1,
+	py: 0.5,
+} as const;
+
+const dimSx = {
+	opacity: 0.4,
+	px: 1,
+	py: 0.5,
+} as const;
+
+const mockBarSx = {
+	backgroundColor: 'rgba(0, 0, 0, 0.3)',
+	borderRadius: 1,
+	p: 1.5,
+	mt: 2,
+} as const;
+
+function MockScoreBar({ highlighted, nextValue, penaltyLabel }: {
+	highlighted?: boolean;
+	nextValue?: string;
+	penaltyLabel?: string;
+}) {
+	return (
+		<Box
+			sx={{
+				...mockBarSx,
+				display: 'flex',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+			}}
+		>
+			<Typography variant="body2" color="text.secondary" sx={dimSx}>0:42</Typography>
+			<Box sx={highlighted ? highlightSx : dimSx}>
+				<Typography variant="body1" fontWeight="bold">
+					Score: 25,000
+				</Typography>
+				<Typography variant="body2" color="text.secondary">
+					Next: {nextValue ?? '8,500'}
+				</Typography>
+				{penaltyLabel && (
+					<Typography variant="caption" color="error.main" fontWeight="bold">
+						{penaltyLabel}
+					</Typography>
+				)}
+			</Box>
+			<Typography variant="body2" color="text.secondary" sx={dimSx}>54 cards left</Typography>
+		</Box>
+	);
+}
+
+function MockComboDisplay() {
+	return (
+		<Box sx={mockBarSx}>
+			<Box sx={{ ...highlightSx, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+				<Typography variant="body2" fontWeight="bold" whiteSpace="nowrap">
+					×2 Combo
+				</Typography>
+				<LinearProgress
+					variant="determinate"
+					value={65}
+					sx={{
+						flexGrow: 1,
+						height: 6,
+						borderRadius: 1,
+						backgroundColor: 'rgba(255, 255, 255, 0.1)',
+						'& .MuiLinearProgress-bar': {
+							backgroundColor: '#4caf50',
+						},
+					}}
+				/>
+				<Typography variant="caption" sx={{ minWidth: '28px', textAlign: 'right' }}>
+					4.6s
+				</Typography>
+			</Box>
+			<MockScoreBar nextValue="9,500" />
+		</Box>
+	);
+}
 
 export const TUTORIAL_CARDS: readonly Card[] = [
 	{ color: Colors.Red, shape: Shapes.Circle, fill: Fills.Solid, count: Counts.One },       // 0
@@ -191,6 +275,74 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
 					Try to find a valid set. Select 3 cards that follow the rule:
 					each attribute must be all the same or all different.
 				</Typography>
+			</>
+		),
+	},
+	{
+		id: 'scoring',
+		tooltipPosition: 'center',
+		content: (
+			<>
+				<Typography variant="h6" gutterBottom>Scoring</Typography>
+				<Typography variant="body2">
+					Each match earns you points. The <strong>"Next"</strong> value
+					below your score shows how many points your next match is worth.
+				</Typography>
+				<Typography variant="body2" sx={{ mt: 1 }}>
+					It starts at <strong>10,000</strong> and decreases over time, but
+					never drops below <strong>1,000</strong>. Act fast for more points!
+				</Typography>
+				<MockScoreBar highlighted />
+			</>
+		),
+	},
+	{
+		id: 'no-sets',
+		tooltipPosition: 'center',
+		content: (
+			<>
+				<Typography variant="h6" gutterBottom>No Sets</Typography>
+				<Typography variant="body2">
+					Sometimes no valid set exists among the dealt cards. When this
+					happens, press the <strong>"No sets"</strong> button to shuffle
+					the board.
+				</Typography>
+				<Typography variant="body2" sx={{ mt: 1 }}>
+					Correctly identifying that no sets exist counts as finding a
+					set — you earn points and it contributes to your combo chain.
+				</Typography>
+			</>
+		),
+	},
+	{
+		id: 'penalties',
+		tooltipPosition: 'center',
+		content: (
+			<>
+				<Typography variant="h6" gutterBottom>Penalties</Typography>
+				<Typography variant="body2">
+					Selecting an invalid set or shuffling when a valid set exists
+					each reduce your next match value by <strong>500</strong> points.
+				</Typography>
+				<MockScoreBar highlighted nextValue="8,000" penaltyLabel="-500" />
+			</>
+		),
+	},
+	{
+		id: 'combos',
+		tooltipPosition: 'center',
+		content: (
+			<>
+				<Typography variant="h6" gutterBottom>Combos</Typography>
+				<Typography variant="body2">
+					Find another set within <strong>7 seconds</strong> of your last
+					match to start a combo. A timer bar shows how much time remains.
+				</Typography>
+				<Typography variant="body2" sx={{ mt: 1 }}>
+					Each combo adds a <strong>bonus</strong> to your next match value.
+					Keep chaining sets to build bigger combos and earn even more points!
+				</Typography>
+				<MockComboDisplay />
 			</>
 		),
 	},
