@@ -258,9 +258,9 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
 					These 3 cards do NOT form a valid set:
 				</Typography>
 				<AttributeRow label="Color" value="All different (red, green, blue)" valid />
-				<AttributeRow label="Shape" value="All different (circle, triangle, triangle)" valid={false} />
-				<AttributeRow label="Fill" value="Solid, solid, none" valid={false} />
-				<AttributeRow label="Count" value="1, 1, 2" valid={false} />
+				<AttributeRow label="Shape" value="One different, two same (circle, triangle, triangle)" valid={false} />
+				<AttributeRow label="Fill" value="Two same, one different (solid, solid, none)" valid={false} />
+				<AttributeRow label="Count" value="Two same, one different (1, 1, 2)" valid={false} />
 			</>
 		),
 	},
