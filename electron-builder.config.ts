@@ -20,6 +20,7 @@ const config: Configuration = {
 		'!steam_appid.txt',
 	],
 	electronLanguages: ['en-US'],
+	icon: 'public/assets/android-chrome-512x512.png',
 	linux: {
 		target: 'AppImage',
 		category: 'Game',
