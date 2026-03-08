@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Box, Container, Typography } from '@mui/material';
-import { Card, ScorePopup } from '@/types';
+import { Card, ScorePopup, createScorePopup } from '@/types';
 import {
 	isSet,
 	setExists,
@@ -89,7 +89,7 @@ export default function MultiplayerPlayArea({ players, onQuit }: MultiplayerPlay
 		pendingTimeoutsRef.current.add(id);
 	}
 
-	function adjustScore(playerId: PlayerId, delta: number) {
+	function scoreAndNotify(playerId: PlayerId, delta: number) {
 		setScores(s => {
 			const newScores = new Map(s);
 			newScores.set(playerId, (newScores.get(playerId) ?? 0) + delta);
@@ -97,13 +97,8 @@ export default function MultiplayerPlayArea({ players, onQuit }: MultiplayerPlay
 		});
 
 		const player = players.find(p => p.id === playerId);
-		setScorePopups(prev => [...prev, {
-			id: `${playerId}-${Date.now()}`,
-			points: Math.abs(delta),
-			comboCount: 0,
-			variant: delta > 0 ? 'reward' : 'penalty',
-			color: player?.color,
-		}]);
+		const variant: 'reward' | 'penalty' = delta > 0 ? 'reward' : 'penalty';
+		setScorePopups(prev => [...prev, createScorePopup(variant, Math.abs(delta), 0, player?.color)]);
 	}
 
 	const removeScorePopup = useCallback((id: string) => {
@@ -160,7 +155,7 @@ export default function MultiplayerPlayArea({ players, onQuit }: MultiplayerPlay
 					}
 				}
 
-				adjustScore(playerId, 1);
+				scoreAndNotify(playerId, 1);
 				setDiscardingCards(prev => [...prev, ...newSelection]);
 				soundEffects('success');
 
@@ -173,7 +168,7 @@ export default function MultiplayerPlayArea({ players, onQuit }: MultiplayerPlay
 			}
 
 			// Invalid set — penalize
-			adjustScore(playerId, -1);
+			scoreAndNotify(playerId, -1);
 
 			trackTimeout(() => {
 				setSelections(prev => {
@@ -197,11 +192,11 @@ export default function MultiplayerPlayArea({ players, onQuit }: MultiplayerPlay
 		const deckExhausted = (deckOrder?.order.length ?? 0) <= BoardCardCount;
 
 		if (hasSet) {
-			adjustScore(playerId, -1);
+			scoreAndNotify(playerId, -1);
 			return;
 		}
 
-		adjustScore(playerId, 1);
+		scoreAndNotify(playerId, 1);
 
 		if (deckExhausted) {
 			setGameOver(true);

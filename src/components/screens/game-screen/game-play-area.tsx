@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useIsPaused, useSetIsPaused } from '@/atoms';
-import { Card, ScorePopup } from '@/types';
+import { Card, ScorePopup, createScorePopup } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
 import {
@@ -253,23 +253,13 @@ function GamePlayArea() {
 		if (hasSet) {
 			const penalty = await penalizeUnnecessaryShuffle();
 			if (penalty !== null) {
-				setScorePopups(prev => [...prev, {
-					id: crypto.randomUUID(),
-					points: penalty,
-					comboCount: 0,
-					variant: 'penalty',
-				}]);
+				setScorePopups(prev => [...prev, createScorePopup('penalty', penalty)]);
 			}
 			if (deckExhausted) return;
 		} else {
 			const result = await awardMatchScore(time);
 			if (result) {
-				setScorePopups(prev => [...prev, {
-					id: crypto.randomUUID(),
-					points: result.pointsAwarded,
-					comboCount: result.comboCount,
-					variant: 'reward',
-				}]);
+				setScorePopups(prev => [...prev, createScorePopup('reward', result.pointsAwarded, result.comboCount)]);
 			}
 			if (deckExhausted) {
 				setManualGameComplete(true);
@@ -307,12 +297,7 @@ function GamePlayArea() {
 		if(isSet(...newSelectedCards)) {
 			const result = await awardMatchScore(time);
 			if (result) {
-				setScorePopups(prev => [...prev, {
-					id: crypto.randomUUID(),
-					points: result.pointsAwarded,
-					comboCount: result.comboCount,
-					variant: 'reward',
-				}]);
+				setScorePopups(prev => [...prev, createScorePopup('reward', result.pointsAwarded, result.comboCount)]);
 			}
 			setDiscardingCards(prev => [...prev, ...newSelectedCardIds]);
 			// Delay DB removal so convergence animation plays while cards
@@ -326,12 +311,7 @@ function GamePlayArea() {
 		} else {
 			const penalty = await penalizeInvalidSet();
 			if (penalty !== null) {
-				setScorePopups(prev => [...prev, {
-					id: crypto.randomUUID(),
-					points: penalty,
-					comboCount: 0,
-					variant: 'penalty',
-				}]);
+				setScorePopups(prev => [...prev, createScorePopup('penalty', penalty)]);
 			}
 			setSelectedCards(newSelectedCardIds);
 		}

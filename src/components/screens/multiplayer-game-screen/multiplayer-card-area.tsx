@@ -1,18 +1,10 @@
 import PlayingCard from '@/components/playing-card';
 import { Card } from '@/types';
-import { useGameTheme } from '@/themes';
-import { fireConvergenceConfetti } from '@/confetti';
 import { Grid, Box, useTheme, useMediaQuery } from '@mui/material';
-import { useState, useLayoutEffect, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMultiplayerFocusable } from '@/focus/useMultiplayerFocusable';
+import { useConvergenceAnimation } from '@/useConvergenceAnimation';
 import type { Player, PlayerId } from '@/multiplayer/multiplayer-types';
-
-interface ConvergenceData {
-	offsets: Map<string, { dx: number; dy: number }>;
-	center: { x: number; y: number };
-	colors: string[];
-}
 
 interface MultiplayerCardAreaProps {
 	cards: readonly Card[];
@@ -83,76 +75,9 @@ export default function MultiplayerCardArea({
 	onCardSelected,
 }: MultiplayerCardAreaProps) {
 	const theme = useTheme();
-	const gameTheme = useGameTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const columns = isMobile ? 3 : 6;
-	const [convergenceData, setConvergenceData] = useState<ConvergenceData | null>(null);
-	const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-	const cardsRef = useRef(cards);
-	cardsRef.current = cards;
-
-	// Compute convergence offsets when cards are being discarded
-	useLayoutEffect(() => {
-		if (discardingCardIds.length === 0) {
-			setConvergenceData(null);
-			clearTimeout(confettiTimeoutRef.current);
-			return;
-		}
-
-		if (discardingCardIds.length < 3) {
-			return;
-		}
-
-		const batchIds = discardingCardIds.slice(-3);
-
-		const positions = batchIds
-			.map(id => {
-				const el = document.querySelector(`[data-card-id="${CSS.escape(id)}"]`);
-				if (!el) return null;
-				const rect = el.getBoundingClientRect();
-				return { id, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-			})
-			.filter((p): p is NonNullable<typeof p> => p !== null);
-
-		if (positions.length < 3) return;
-
-		const centerX = positions.reduce((sum, p) => sum + p.x, 0) / positions.length;
-		const centerY = positions.reduce((sum, p) => sum + p.y, 0) / positions.length;
-
-		const offsets = new Map<string, { dx: number; dy: number }>();
-		positions.forEach(p => {
-			offsets.set(p.id, {
-				dx: centerX - p.x,
-				dy: centerY - p.y,
-			});
-		});
-
-		const batchColors = batchIds
-			.map(id => cardsRef.current.find(c => c.id === id))
-			.filter((c): c is Card => !!c)
-			.map(c => gameTheme.colors[c.color]);
-
-		const data: ConvergenceData = {
-			offsets,
-			center: {
-				x: centerX / window.innerWidth,
-				y: centerY / window.innerHeight,
-			},
-			colors: batchColors,
-		};
-
-		setConvergenceData(data);
-
-		clearTimeout(confettiTimeoutRef.current);
-		confettiTimeoutRef.current = setTimeout(() => {
-			fireConvergenceConfetti(data.center, data.colors);
-		}, 780);
-	}, [discardingCardIds, gameTheme.colors]);
-
-	// Cleanup confetti timeout on unmount
-	useEffect(() => {
-		return () => clearTimeout(confettiTimeoutRef.current);
-	}, []);
+	const convergenceData = useConvergenceAnimation(discardingCardIds, cards);
 
 	return (
 		<Grid

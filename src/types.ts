@@ -102,3 +102,19 @@ interface ScorePopup {
 	variant: 'reward' | 'penalty';
 	color?: string;
 }
+
+export
+function createScorePopup(
+	variant: 'reward' | 'penalty',
+	points: number,
+	comboCount = 0,
+	color?: string,
+): ScorePopup {
+	return {
+		id: crypto.randomUUID(),
+		points,
+		comboCount,
+		variant,
+		color,
+	};
+}
