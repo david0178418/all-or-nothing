@@ -48,6 +48,13 @@ function ScorePopupItem({ popup, index, onComplete }: ScorePopupItemProps) {
 		? `+${popup.points.toLocaleString()}`
 		: `-${popup.points.toLocaleString()}`;
 
+	const textColor = popup.color ?? (isReward ? '#fff' : '#ff6b6b');
+	const textShadow = popup.color
+		? `0 0 12px ${popup.color}99, 0 2px 4px rgba(0, 0, 0, 0.8)`
+		: isReward
+			? '0 0 12px rgba(76, 175, 80, 0.9), 0 2px 4px rgba(0, 0, 0, 0.8)'
+			: '0 0 12px rgba(244, 67, 54, 0.7), 0 2px 4px rgba(0, 0, 0, 0.8)';
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 20, scale: 0.5 }}
@@ -68,10 +75,8 @@ function ScorePopupItem({ popup, index, onComplete }: ScorePopupItemProps) {
 				variant="h2"
 				sx={{
 					fontWeight: 900,
-					color: isReward ? '#fff' : '#ff6b6b',
-					textShadow: isReward
-						? '0 0 12px rgba(76, 175, 80, 0.9), 0 2px 4px rgba(0, 0, 0, 0.8)'
-						: '0 0 12px rgba(244, 67, 54, 0.7), 0 2px 4px rgba(0, 0, 0, 0.8)',
+					color: textColor,
+					textShadow,
 					textAlign: 'center',
 					lineHeight: 1,
 				}}

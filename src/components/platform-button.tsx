@@ -1,9 +1,7 @@
 import { useActiveController } from '@/atoms';
 import { InputAction, ControllerType } from '@/input/input-types';
-import { ButtonGlyphMap } from '@/components/button-prompts/button-glyph-map';
+import { ButtonGlyphMap, keyboardGlyphStyle } from '@/components/button-prompts/button-glyph-map';
 import { Button } from '@mui/material';
-
-const keyboardGlyphStyle = { filter: 'drop-shadow(0 0 1px rgba(0,0,0,0.6)) drop-shadow(0 0 0.5px rgba(0,0,0,0.4))' } as const;
 
 interface Props {
 	label: string;

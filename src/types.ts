@@ -100,4 +100,5 @@ interface ScorePopup {
 	points: number;
 	comboCount: number;
 	variant: 'reward' | 'penalty';
+	color?: string;
 }

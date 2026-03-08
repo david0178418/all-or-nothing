@@ -58,6 +58,9 @@ import steamdeckDpadDown from './assets/steamdeck/dpad_down.svg?react';
 import steamdeckDpadLeft from './assets/steamdeck/dpad_left.svg?react';
 import steamdeckDpadRight from './assets/steamdeck/dpad_right.svg?react';
 
+/** Style applied to keyboard glyphs for legibility on light backgrounds */
+export const keyboardGlyphStyle = { filter: 'drop-shadow(0 0 1px rgba(0,0,0,0.6)) drop-shadow(0 0 0.5px rgba(0,0,0,0.4))' } as const;
+
 /**
  * Maps ControllerType + InputAction to SVG component
  */
