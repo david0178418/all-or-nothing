@@ -107,16 +107,22 @@ export const setActiveGroupAtom = atom(
 	(get, set, group: string | null) => {
 		set(activeGroupAtom, group);
 
-		// Auto-focus first element in group
-		if (group) {
-			const elements = get(focusableElementsAtom);
-			const currentFocusId = get(currentFocusIdAtom);
-			const elementsInGroup = getElementsInGroup(elements, group);
-			const firstElement = elementsInGroup[0];
+		if (!group) return;
 
-			if (firstElement && !currentFocusId) {
-				set(focusElementAtom, firstElement.id);
-			}
+		const elements = get(focusableElementsAtom);
+		const currentFocusId = get(currentFocusIdAtom);
+
+		// If current focus is already in the new group, keep it
+		const currentElement = currentFocusId ? elements.get(currentFocusId) : null;
+		if (currentElement?.group === group) return;
+
+		// Auto-focus first element in new group, or clear stale focus
+		const elementsInGroup = getElementsInGroup(elements, group);
+		const firstElement = elementsInGroup[0];
+		if (firstElement) {
+			set(focusElementAtom, firstElement.id);
+		} else {
+			set(clearFocusAtom);
 		}
 	}
 );
