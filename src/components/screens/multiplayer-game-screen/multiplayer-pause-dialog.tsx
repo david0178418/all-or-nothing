@@ -27,7 +27,7 @@ function MultiplayerPauseDialog({ onQuit }: MultiplayerPauseDialogProps) {
 	return (
 		<SharedPauseDialog
 			focusGroup="mp-pause-dialog"
-			soundMusicStartOrder={1}
+			soundMusicStartOrder={2}
 			onClose={handleResume}
 		>
 			<FocusableButton
@@ -43,7 +43,7 @@ function MultiplayerPauseDialog({ onQuit }: MultiplayerPauseDialogProps) {
 			<FocusableButton
 				id="mp-pause-quit"
 				group="mp-pause-dialog"
-				order={3}
+				order={1}
 				startIcon={<BackIcon />}
 				onClick={handleQuit}
 			>
