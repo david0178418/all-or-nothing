@@ -51,7 +51,7 @@ export function useFocusable({
 	// Register/unregister the element
 	useEffect(() => {
 		if (disabled) {
-			unregisterElement(id);
+			unregisterElement({ id });
 			return;
 		}
 
@@ -74,7 +74,7 @@ export function useFocusable({
 		registerElement(focusableElement);
 
 		return () => {
-			unregisterElement(id);
+			unregisterElement({ id, element: focusableElement });
 		};
 	}, [id, group, gridPosition?.row, gridPosition?.col, order, disabled, registerElement, unregisterElement]);
 

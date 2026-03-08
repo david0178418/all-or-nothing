@@ -63,19 +63,26 @@ export const registerElementAtom = atom(
 	}
 );
 
-// Unregister a focusable element
+// Unregister a focusable element. When `element` is provided, only removes if
+// the currently registered instance matches (prevents AnimatePresence
+// exit-animating components from removing registrations created by newly
+// mounted replacements).
 export const unregisterElementAtom = atom(
 	null,
-	(get, set, id: string) => {
-		const elements = new Map(get(focusableElementsAtom));
+	(get, set, { id, element }: { id: string; element?: FocusableElement }) => {
+		const elements = get(focusableElementsAtom);
+
+		if (element && elements.get(id) !== element) return;
+
+		const newElements = new Map(elements);
 		const currentFocusId = get(currentFocusIdAtom);
 
 		if (currentFocusId === id) {
 			set(currentFocusIdAtom, null);
 		}
 
-		elements.delete(id);
-		set(focusableElementsAtom, elements);
+		newElements.delete(id);
+		set(focusableElementsAtom, newElements);
 	}
 );
 

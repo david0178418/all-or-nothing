@@ -33,21 +33,23 @@ export function useMultiplayerFocusable({
 
 	useEffect(() => {
 		if (disabled) {
-			unregisterElement(id);
+			unregisterElement({ id });
 			return;
 		}
 
-		registerElement({
+		const element = {
 			id,
 			gridPosition,
 			order,
 			onSelect: (playerId: PlayerId) => {
 				onSelectRef.current?.(playerId);
 			},
-		});
+		};
+
+		registerElement(element);
 
 		return () => {
-			unregisterElement(id);
+			unregisterElement({ id, element });
 		};
 	}, [id, gridPosition?.row, gridPosition?.col, order, disabled, registerElement, unregisterElement]);
 

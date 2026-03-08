@@ -26,13 +26,18 @@ const registerMultiplayerElementAtom = atom(
 	}
 );
 
-// Unregister a multiplayer focusable element
+// Unregister a multiplayer focusable element. When `element` is provided, only
+// removes if the currently registered instance matches.
 const unregisterMultiplayerElementAtom = atom(
 	null,
-	(get, set, id: string) => {
-		const elements = new Map(get(multiplayerElementsAtom));
-		elements.delete(id);
-		set(multiplayerElementsAtom, elements);
+	(get, set, { id, element }: { id: string; element?: MultiplayerFocusableElement }) => {
+		const elements = get(multiplayerElementsAtom);
+
+		if (element && elements.get(id) !== element) return;
+
+		const newElements = new Map(elements);
+		newElements.delete(id);
+		set(multiplayerElementsAtom, newElements);
 
 		// Clear focus for any player focused on this element
 		const currentFocus = get(playerFocusAtom);
