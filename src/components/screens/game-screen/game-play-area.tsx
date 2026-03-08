@@ -220,6 +220,7 @@ function GamePlayArea() {
 					/>
 			</Container>
 			<GameOptionsMobile
+				canShuffle={canShuffle}
 				onReshuffle={handleReshuffle}
 			/>
 			<GameOverDialog

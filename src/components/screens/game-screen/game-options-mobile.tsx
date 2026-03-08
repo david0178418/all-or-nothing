@@ -1,88 +1,61 @@
-import { useState } from 'react';
 import { useSetIsPaused } from '@/atoms';
 import {
-	Menu as MenuIcon,
 	Pause as PauseIcon,
 	Shuffle as ShuffleIcon,
 } from '@mui/icons-material';
 import {
+	Box,
+	Button,
 	Fab,
-	SwipeableDrawer,
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemText,
-	ListItemIcon,
 } from '@mui/material';
 
 interface Props {
+	canShuffle: boolean;
 	onReshuffle(): void;
 }
 
 export default
 function GameOptionsMobile(props: Props) {
 	const setIsPaused = useSetIsPaused();
-	const [isOpen, setIsOpen] = useState(false);
-	const { onReshuffle } = props;
+	const { canShuffle, onReshuffle } = props;
 
 	return (
-		<>
+		<Box
+			sx={{
+				position: 'fixed',
+				bottom: 16,
+				left: 0,
+				right: 0,
+				display: {
+					xs: 'flex',
+					sm: 'none',
+				},
+				justifyContent: 'center',
+				zIndex: (theme) => theme.zIndex.speedDial,
+				pointerEvents: 'none',
+			}}
+		>
 			<Fab
 				color="primary"
 				size="small"
 				sx={{
-					position: 'fixed',
-					bottom: 16,
+					position: 'absolute',
 					left: 16,
-					zIndex: (theme) => theme.zIndex.speedDial,
-					display: {
-						sm: 'none',
-					}
+					pointerEvents: 'auto',
 				}}
-				onClick={() => setIsOpen(true)}
+				onClick={() => setIsPaused(true)}
 			>
-				<MenuIcon />
+				<PauseIcon />
 			</Fab>
-			<SwipeableDrawer
-				anchor="bottom"
-				open={isOpen}
-				onClose={() => setIsOpen(false)}
-				onOpen={() => {}}
-
+			<Button
+				variant="outlined"
+				startIcon={<ShuffleIcon />}
+				disabled={!canShuffle}
+				sx={{ pointerEvents: 'auto' }}
+				onClick={onReshuffle}
 			>
-				<List sx={{paddingBottom: 5}}>
-					<ListItem>
-						<ListItemButton
-							onClick={() => {
-								setIsOpen(false);
-								setIsPaused(true);
-							}}
-						>
-							<ListItemIcon>
-								<PauseIcon />
-							</ListItemIcon>
-							<ListItemText>
-								Pause
-							</ListItemText>
-						</ListItemButton>
-					</ListItem>
-					<ListItem>
-						<ListItemButton
-							onClick={() => {
-								setIsOpen(false);
-								onReshuffle();
-							}}
-						>
-							<ListItemIcon>
-								<ShuffleIcon />
-							</ListItemIcon>
-							<ListItemText>
-								No sets
-							</ListItemText>
-						</ListItemButton>
-					</ListItem>
-				</List>
-			</SwipeableDrawer>
-		</>
+				No sets
+			</Button>
+		</Box>
 	);
 }
