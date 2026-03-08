@@ -1,7 +1,7 @@
 import { useState, useLayoutEffect, useEffect, useRef } from 'react';
 import { Card } from '@/types';
 import { useGameTheme } from '@/themes';
-import { fireConvergenceConfetti } from '@/confetti';
+import { fireConvergenceConfetti, fireConvergenceTrails } from '@/confetti';
 
 export interface ConvergenceData {
 	offsets: Map<string, { dx: number; dy: number }>;
@@ -16,6 +16,7 @@ export function useConvergenceAnimation(
 	const gameTheme = useGameTheme();
 	const [convergenceData, setConvergenceData] = useState<ConvergenceData | null>(null);
 	const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+	const trailCleanupRef = useRef<(() => void) | undefined>(undefined);
 	const cardsRef = useRef(cards);
 	cardsRef.current = cards;
 
@@ -24,6 +25,7 @@ export function useConvergenceAnimation(
 		if (discardingCardIds.length === 0) {
 			setConvergenceData(null);
 			clearTimeout(confettiTimeoutRef.current);
+			trailCleanupRef.current?.();
 			return;
 		}
 
@@ -71,17 +73,35 @@ export function useConvergenceAnimation(
 
 		setConvergenceData(data);
 
+		// Fire particle trails during convergence phase (starts after 350ms glow delay)
+		trailCleanupRef.current?.();
+		const cardScreenPositions = positions.map(p => ({
+			x: p.x / window.innerWidth,
+			y: p.y / window.innerHeight,
+		}));
+		const trailTimeout = setTimeout(() => {
+			trailCleanupRef.current = fireConvergenceTrails(
+				cardScreenPositions,
+				data.center,
+			);
+		}, 350);
+
 		// Fire confetti when convergence reaches center:
 		// 350ms glow delay + 420ms convergence phase (60% of 700ms)
 		clearTimeout(confettiTimeoutRef.current);
 		confettiTimeoutRef.current = setTimeout(() => {
 			fireConvergenceConfetti(data.center, data.colors);
 		}, 780);
+
+		return () => clearTimeout(trailTimeout);
 	}, [discardingCardIds, gameTheme.colors]);
 
-	// Cleanup confetti timeout on unmount
+	// Cleanup confetti timeout and trail particles on unmount
 	useEffect(() => {
-		return () => clearTimeout(confettiTimeoutRef.current);
+		return () => {
+			clearTimeout(confettiTimeoutRef.current);
+			trailCleanupRef.current?.();
+		};
 	}, []);
 
 	return convergenceData;

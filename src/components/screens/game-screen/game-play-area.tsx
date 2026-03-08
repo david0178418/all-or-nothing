@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { useAnimatedNumber } from '@/useAnimatedNumber';
 import { useIsPaused, useSetIsPaused } from '@/atoms';
 import { Card, ScorePopup, createScorePopup } from '@/types';
 import AdLinkSection from '@/components/ad-link-section';
@@ -55,6 +57,7 @@ function GamePlayArea() {
 	const deckOrder = useDeckOrder();
 	const discardPile = useDiscardPile();
 	const dealtCards = deck?.slice(0, BoardCardCount);
+	const animatedCardsLeft = useAnimatedNumber(deck.length);
 	const canShuffle = deck.length > 0 && discardingCards.length === 0;
 
 	const gameComplete = useMemo(() => (
@@ -210,8 +213,8 @@ function GamePlayArea() {
 				>
 					<GameTimer gameComplete={gameComplete} />
 					<GameScore gameComplete={gameComplete} />
-					<Typography variant="h5">
-						{deck.length} cards left
+					<Typography variant="h5" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+						<motion.span>{animatedCardsLeft}</motion.span> cards left
 					</Typography>
 				</Box>
 				<GameOptions
