@@ -45,6 +45,7 @@ export type ControllerType = Enum<typeof ControllerType>;
 export interface InputEvent {
 	action: InputAction;
 	source: ControllerType;
+	sourceIndex?: number | 'keyboard';
 	timestamp: number;
 }
 
@@ -67,6 +68,16 @@ export const NavigationDirection = {
 	RIGHT: 'RIGHT',
 } as const;
 export type NavigationDirection = Enum<typeof NavigationDirection>;
+
+/**
+ * Maps navigation InputActions to NavigationDirections
+ */
+export const InputActionToDirection: Partial<Record<InputAction, NavigationDirection>> = {
+	[InputAction.NAVIGATE_UP]: NavigationDirection.UP,
+	[InputAction.NAVIGATE_DOWN]: NavigationDirection.DOWN,
+	[InputAction.NAVIGATE_LEFT]: NavigationDirection.LEFT,
+	[InputAction.NAVIGATE_RIGHT]: NavigationDirection.RIGHT,
+} as const;
 
 /**
  * Input listener callback type

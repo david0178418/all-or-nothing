@@ -27,6 +27,8 @@ const About = lazy(() => import('./components/screens/about-screen'));
 const Help = lazy(() => import('./components/screens/help-screen'));
 const Leaderboard = lazy(() => import('./components/screens/leaderboard-screen'));
 const Tutorial = lazy(() => import('./components/screens/tutorial-screen'));
+const Lobby = lazy(() => import('./components/screens/lobby-screen'));
+const MultiplayerGame = lazy(() => import('./components/screens/multiplayer-game-screen'));
 
 const ScreenComponents = {
 	[Screens.Title]: TitleScreen,
@@ -35,6 +37,8 @@ const ScreenComponents = {
 	[Screens.Help]: Help,
 	[Screens.Leaderboard]: Leaderboard,
 	[Screens.Tutorial]: Tutorial,
+	[Screens.Lobby]: Lobby,
+	[Screens.Multiplayer]: MultiplayerGame,
 } as const;
 
 export default

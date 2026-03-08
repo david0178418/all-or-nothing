@@ -29,13 +29,12 @@ import { useSoundEffects } from '@/hooks';
 import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
 import { InputAction, InputEvent } from '@/input/input-types';
+import { BoardCardCount } from '@/constants';
 import { useDeck, useTime, useScore, useShuffleCount, useDeckOrder, useDiscardPile, useMaxCombo } from '@/game-queries';
 
 const {
 	VITE_AD_CONTENT_URL = '',
 } = import.meta.env;
-
-const BoardCardCount = 12;
 
 export default
 function GamePlayArea() {
@@ -51,26 +50,16 @@ function GamePlayArea() {
 	const [discardingCards, setDiscardingCards] = useState<string[]>([]);
 	const [scorePopups, setScorePopups] = useState<ScorePopup[]>([]);
 	const [gameGeneration, setGameGeneration] = useState(0);
+	const [manualGameComplete, setManualGameComplete] = useState(false);
 	const prevDiscardLengthRef = useRef<number | null>(null);
 	const deckOrder = useDeckOrder();
 	const discardPile = useDiscardPile();
 	const dealtCards = deck?.slice(0, BoardCardCount);
-	const canShuffle = (deckOrder?.order.length || 0) > BoardCardCount && discardingCards.length === 0;
+	const canShuffle = deck.length > 0 && discardingCards.length === 0;
 
-	// Memoize based on serialized card IDs to avoid running O(n³) setExists
-	// on every render caused by selectedCards/discardingCards/paused changes
-	const dealtCardKey = dealtCards.map(c => c.id).join(',');
 	const gameComplete = useMemo(() => (
-		!!discardPile &&
-		// TODO This is an arbitrary limit. But basically, it's a placeholder for
-		// "the game has loaded" flag since "deck" will initially be an empty array.
-		// But this works well enough for now.
-		discardPile.order.length > 10 &&
-		!!deck &&
-		deck.length <= 12 &&
-		!setExists(dealtCards)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	), [discardPile?.order.length, deck.length, dealtCardKey]);
+		manualGameComplete || deck.length === 0
+	), [manualGameComplete, deck.length]);
 
 	// Reset combo state when the game screen mounts (continuing a game should not preserve combo)
 	useEffect(() => {
@@ -86,6 +75,7 @@ function GamePlayArea() {
 		if (prevLength !== null && prevLength > 0 && currentLength === 0) {
 			setSelectedCards([]);
 			setDiscardingCards([]);
+			setManualGameComplete(false);
 			setGameGeneration(g => g + 1);
 		}
 
@@ -258,6 +248,7 @@ function GamePlayArea() {
 		}
 
 		const hasSet = setExists(dealtCards);
+		const deckExhausted = deckOrder.order.length <= BoardCardCount;
 
 		if (hasSet) {
 			const penalty = await penalizeUnnecessaryShuffle();
@@ -269,6 +260,7 @@ function GamePlayArea() {
 					variant: 'penalty',
 				}]);
 			}
+			if (deckExhausted) return;
 		} else {
 			const result = await awardMatchScore(time);
 			if (result) {
@@ -278,6 +270,10 @@ function GamePlayArea() {
 					comboCount: result.comboCount,
 					variant: 'reward',
 				}]);
+			}
+			if (deckExhausted) {
+				setManualGameComplete(true);
+				return;
 			}
 		}
 

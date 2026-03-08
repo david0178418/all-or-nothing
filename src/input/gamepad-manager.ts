@@ -26,10 +26,10 @@ export class GamepadManager {
 	private previousButtonStates: Map<number, boolean[]> = new Map();
 	private previousAxisStates: Map<number, { x: boolean; y: boolean }> = new Map();
 	private animationFrameId: number | null = null;
-	private connectedGamepad: Gamepad | null = null;
-	private controllerType: ControllerType = ControllerType.GENERIC;
-	private onControllerConnected: ((type: ControllerType) => void) | null = null;
-	private onControllerDisconnected: (() => void) | null = null;
+	private connectedGamepads: Map<number, Gamepad> = new Map();
+	private controllerTypes: Map<number, ControllerType> = new Map();
+	private onControllerConnected: ((type: ControllerType, index: number) => void) | null = null;
+	private onControllerDisconnected: ((index: number) => void) | null = null;
 
 	constructor() {
 		this.handleGamepadConnected = this.handleGamepadConnected.bind(this);
@@ -49,7 +49,6 @@ export class GamepadManager {
 		for (const gamepad of gamepads) {
 			if (gamepad) {
 				this.handleGamepadConnected({ gamepad } as GamepadEvent);
-				break; // Use first connected gamepad
 			}
 		}
 
@@ -85,7 +84,7 @@ export class GamepadManager {
 	/**
 	 * Set callback for controller connection
 	 */
-	public setOnControllerConnected(callback: (type: ControllerType) => void) {
+	public setOnControllerConnected(callback: (type: ControllerType, index: number) => void) {
 		this.onControllerConnected = callback;
 		return this;
 	}
@@ -93,36 +92,56 @@ export class GamepadManager {
 	/**
 	 * Set callback for controller disconnection
 	 */
-	public setOnControllerDisconnected(callback: () => void) {
+	public setOnControllerDisconnected(callback: (index: number) => void) {
 		this.onControllerDisconnected = callback;
 
 		return this;
 	}
 
 	/**
-	 * Get the currently connected controller type
+	 * Get the first connected controller's type (backward compatible)
 	 */
 	public getControllerType(): ControllerType | null {
-		return this.connectedGamepad ? this.controllerType : null;
+		if (this.connectedGamepads.size === 0) return null;
+		const firstIndex = this.getConnectedGamepadIndexes()[0];
+		if (firstIndex === undefined) return null;
+		return this.controllerTypes.get(firstIndex) ?? null;
+	}
+
+	/**
+	 * Get the controller type for a specific gamepad index
+	 */
+	public getControllerTypeForIndex(index: number): ControllerType | null {
+		return this.controllerTypes.get(index) ?? null;
+	}
+
+	/**
+	 * Get all connected gamepad indices
+	 */
+	public getConnectedGamepadIndexes(): number[] {
+		return Array.from(this.connectedGamepads.keys());
 	}
 
 	/**
 	 * Handle gamepad connection
 	 */
 	private handleGamepadConnected(event: GamepadEvent): void {
-		console.log('Gamepad connected:', event.gamepad.id);
-		this.connectedGamepad = event.gamepad;
-		this.controllerType = detectControllerType(event.gamepad.id);
-		console.log('Detected controller type:', this.controllerType);
+		const gamepad = event.gamepad;
+		const controllerType = detectControllerType(gamepad.id);
+		console.log('Gamepad connected:', gamepad.id);
+		console.log('Detected controller type:', controllerType);
+
+		this.connectedGamepads.set(gamepad.index, gamepad);
+		this.controllerTypes.set(gamepad.index, controllerType);
 
 		// Initialize button states for this gamepad
-		this.previousButtonStates.set(event.gamepad.index, new Array(event.gamepad.buttons.length).fill(false));
-		this.previousAxisStates.set(event.gamepad.index, { x: false, y: false });
+		this.previousButtonStates.set(gamepad.index, new Array(gamepad.buttons.length).fill(false));
+		this.previousAxisStates.set(gamepad.index, { x: false, y: false });
 
 		this.startPolling();
 
 		if (this.onControllerConnected) {
-			this.onControllerConnected(this.controllerType);
+			this.onControllerConnected(controllerType, gamepad.index);
 		}
 	}
 
@@ -130,17 +149,20 @@ export class GamepadManager {
 	 * Handle gamepad disconnection
 	 */
 	private handleGamepadDisconnected(event: GamepadEvent): void {
-		console.log('Gamepad disconnected:', event.gamepad.id);
+		const gamepad = event.gamepad;
+		console.log('Gamepad disconnected:', gamepad.id);
 
-		if (this.connectedGamepad && this.connectedGamepad.index === event.gamepad.index) {
-			this.connectedGamepad = null;
-			this.previousButtonStates.delete(event.gamepad.index);
-			this.previousAxisStates.delete(event.gamepad.index);
+		this.connectedGamepads.delete(gamepad.index);
+		this.controllerTypes.delete(gamepad.index);
+		this.previousButtonStates.delete(gamepad.index);
+		this.previousAxisStates.delete(gamepad.index);
+
+		if (this.connectedGamepads.size === 0) {
 			this.stopPolling();
+		}
 
-			if (this.onControllerDisconnected) {
-				this.onControllerDisconnected();
-			}
+		if (this.onControllerDisconnected) {
+			this.onControllerDisconnected(gamepad.index);
 		}
 	}
 
@@ -167,21 +189,20 @@ export class GamepadManager {
 	 * Poll gamepad state and emit input events
 	 */
 	private poll(): void {
-		if (!this.connectedGamepad) {
+		if (this.connectedGamepads.size === 0) {
 			return;
 		}
 
 		// Get fresh gamepad state (must be called each frame)
 		const gamepads = navigator.getGamepads();
-		const gamepad = gamepads[this.connectedGamepad.index];
 
-		if (!gamepad) {
-			this.animationFrameId = requestAnimationFrame(this.poll);
-			return;
-		}
+		this.connectedGamepads.forEach((_, index) => {
+			const gamepad = gamepads[index];
+			if (!gamepad) return;
 
-		this.processButtons(gamepad);
-		this.processAnalogStick(gamepad);
+			this.processButtons(gamepad);
+			this.processAnalogStick(gamepad);
+		});
 
 		this.animationFrameId = requestAnimationFrame(this.poll);
 	}
@@ -191,7 +212,8 @@ export class GamepadManager {
 	 */
 	private processButtons(gamepad: Gamepad): void {
 		const previousStates = this.previousButtonStates.get(gamepad.index) || [];
-		const mapping = ControllerMappings[this.controllerType];
+		const controllerType = this.controllerTypes.get(gamepad.index) ?? ControllerType.GENERIC;
+		const mapping = ControllerMappings[controllerType];
 
 		gamepad.buttons.forEach((button, index) => {
 			const isPressed = button.pressed;
@@ -201,7 +223,7 @@ export class GamepadManager {
 			if (isPressed && !wasPressed) {
 				const action = mapping[index as GamepadButton];
 				if (action) {
-					this.emitInputEvent(action);
+					this.emitInputEvent(action, gamepad.index);
 				}
 			}
 
@@ -229,9 +251,9 @@ export class GamepadManager {
 
 		if (xPressed && !previousState.x) {
 			if (xAxis < 0) {
-				this.emitInputEvent(InputAction.NAVIGATE_LEFT);
+				this.emitInputEvent(InputAction.NAVIGATE_LEFT, gamepad.index);
 			} else {
-				this.emitInputEvent(InputAction.NAVIGATE_RIGHT);
+				this.emitInputEvent(InputAction.NAVIGATE_RIGHT, gamepad.index);
 			}
 		}
 
@@ -244,9 +266,9 @@ export class GamepadManager {
 
 		if (yPressed && !previousState.y) {
 			if (yAxis < 0) {
-				this.emitInputEvent(InputAction.NAVIGATE_UP);
+				this.emitInputEvent(InputAction.NAVIGATE_UP, gamepad.index);
 			} else {
-				this.emitInputEvent(InputAction.NAVIGATE_DOWN);
+				this.emitInputEvent(InputAction.NAVIGATE_DOWN, gamepad.index);
 			}
 		}
 
@@ -259,10 +281,11 @@ export class GamepadManager {
 	/**
 	 * Emit an input event to all listeners
 	 */
-	private emitInputEvent(action: InputAction): void {
+	private emitInputEvent(action: InputAction, gamepadIndex: number): void {
 		const event: InputEvent = {
 			action,
-			source: this.controllerType,
+			source: this.controllerTypes.get(gamepadIndex) ?? ControllerType.GENERIC,
+			sourceIndex: gamepadIndex,
 			timestamp: Date.now(),
 		};
 

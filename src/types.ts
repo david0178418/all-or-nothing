@@ -23,7 +23,8 @@ const Screens = {
 	Help: 'help',
 	Leaderboard: 'leaderboard',
 	Tutorial: 'tutorial',
-	// TODO: Settings: 'settings',
+	Lobby: 'lobby',
+	Multiplayer: 'multiplayer',
 } as const;
 
 export

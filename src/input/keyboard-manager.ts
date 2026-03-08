@@ -99,6 +99,7 @@ export class KeyboardManager {
 			const inputEvent: InputEvent = {
 				action,
 				source: ControllerType.KEYBOARD,
+				sourceIndex: 'keyboard',
 				timestamp: Date.now(),
 			};
 

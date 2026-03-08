@@ -4,12 +4,10 @@ import { useUsingNavigationalInput } from '@/atoms';
 
 interface FocusIndicatorProps {
 	visible: boolean;
+	colors?: readonly string[];
 }
 
-/**
- * Visual indicator for focused elements (keyboard/controller navigation)
- */
-export default function FocusIndicator({ visible }: FocusIndicatorProps) {
+export default function FocusIndicator({ visible, colors }: FocusIndicatorProps) {
 	const usingNavigationalInput = useUsingNavigationalInput();
 	const shouldShow = visible && usingNavigationalInput;
 
@@ -29,11 +27,16 @@ export default function FocusIndicator({ visible }: FocusIndicatorProps) {
 						right: 0,
 						bottom: 0,
 						border: '3px solid',
-						borderColor: 'primary.main',
+						borderColor: colors?.length ? colors[0] : 'primary.main',
 						borderRadius: 1,
 						pointerEvents: 'none',
 						zIndex: 10,
-						boxShadow: '0 0 10px rgba(33, 150, 243, 0.5)',
+						boxShadow: colors?.length
+							? `0 0 10px ${colors[0]}80`
+							: '0 0 10px rgba(33, 150, 243, 0.5)',
+						...(colors && colors.length > 1 ? {
+							borderImage: `linear-gradient(135deg, ${colors.join(', ')}) 1`,
+						} : {}),
 					}}
 				/>
 			)}

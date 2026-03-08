@@ -9,6 +9,7 @@ import {
 } from '@/types';
 import Shape from './shape';
 import FocusIndicator from '@/components/focus-indicator';
+import MultiSelectIndicator from './multi-select-indicator';
 import { useGameTheme } from '@/themes';
 
 interface PlayingCardProps {
@@ -22,6 +23,8 @@ interface PlayingCardProps {
 	focused?: boolean;
 	elementRef?: React.RefObject<HTMLElement | null>;
 	selected?: boolean;
+	focusedByColors?: readonly string[];
+	selectedByColors?: readonly string[];
 }
 
 interface CardSurfaceProps {
@@ -31,6 +34,8 @@ interface CardSurfaceProps {
 	flipped: boolean;
 	focused?: boolean;
 	elementRef?: React.RefObject<HTMLElement | null>;
+	focusedByColors?: readonly string[];
+	selectedByColors?: readonly string[];
 }
 
 export default
@@ -47,6 +52,8 @@ function PlayingCard(props: PlayingCardProps) {
 		card: cardData,
 		focused = false,
 		elementRef,
+		focusedByColors,
+		selectedByColors,
 	} = props;
 	const flipped = flippedOverride || !cardData;
 
@@ -91,6 +98,8 @@ function PlayingCard(props: PlayingCardProps) {
 					selected={selected}
 					focused={focused}
 					elementRef={elementRef}
+					focusedByColors={focusedByColors}
+					selectedByColors={selectedByColors}
 				/>
 			</Flipper>
 		</Box>
@@ -106,7 +115,12 @@ function CardSurface(props: CardSurfaceProps) {
 		card,
 		focused = false,
 		elementRef,
+		focusedByColors,
+		selectedByColors,
 	} = props;
+
+	const useMultiplayerSelection = selectedByColors && selectedByColors.length > 0;
+	const bgColor = useMultiplayerSelection ? 'white' : (selected ? 'red' : 'white');
 
 	return (
 		<Box
@@ -118,7 +132,7 @@ function CardSurface(props: CardSurfaceProps) {
 			borderRadius="10px"
 			boxShadow="3px 3px 4px #000"
 			onClick={onClick}
-			bgcolor={selected ? 'red' : 'white'}
+			bgcolor={bgColor}
 			width="100%"
 			height="100%"
 			sx={{
@@ -126,7 +140,8 @@ function CardSurface(props: CardSurfaceProps) {
 				position: 'relative',
 			}}
 		>
-			<FocusIndicator visible={focused} />
+			{useMultiplayerSelection && <MultiSelectIndicator colors={selectedByColors} />}
+			<FocusIndicator visible={focused} colors={focusedByColors} />
 			<Box
 				flex="1"
 				display="flex"

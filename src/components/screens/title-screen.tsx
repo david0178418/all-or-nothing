@@ -18,6 +18,7 @@ import {
 	QuestionMark as QuestionMarkIcon,
 	Leaderboard as LeaderboardIcon,
 	School as SchoolIcon,
+	Groups as GroupsIcon,
 } from '@mui/icons-material';
 import {
 	Container,
@@ -282,6 +283,10 @@ export default function Landing() {
 		setActiveScreen(Screens.Game);
 	}, [setActiveScreen]);
 
+	const handleMultiplayer = useCallback(() => {
+		setActiveScreen(Screens.Lobby);
+	}, [setActiveScreen]);
+
 	const handleLeaderboard = useCallback(() => {
 		setActiveScreen(Screens.Leaderboard);
 	}, [setActiveScreen]);
@@ -437,12 +442,23 @@ export default function Landing() {
 								New Game
 							</FocusableButton>
 						</motion.div>
+						<motion.div variants={buttonVariants}>
+							<FocusableButton
+								id="menu-multiplayer"
+								group="menu"
+								order={2}
+								startIcon={<GroupsIcon />}
+								onClick={handleMultiplayer}
+							>
+								Multiplayer
+							</FocusableButton>
+						</motion.div>
 						{showLeaderboard && (
 							<motion.div variants={buttonVariants}>
 								<FocusableButton
 									id="menu-leaderboard"
 									group="menu"
-									order={2}
+									order={3}
 									startIcon={<LeaderboardIcon />}
 									onClick={handleLeaderboard}
 								>
@@ -454,7 +470,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-tutorial"
 								group="menu"
-								order={showLeaderboard ? 3 : 2}
+								order={showLeaderboard ? 4 : 3}
 								startIcon={<SchoolIcon />}
 								onClick={handleTutorial}
 							>
@@ -465,7 +481,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-how-to-play"
 								group="menu"
-								order={showLeaderboard ? 4 : 3}
+								order={showLeaderboard ? 5 : 4}
 								startIcon={<QuestionMarkIcon />}
 								onClick={handleHowToPlay}
 							>
@@ -476,7 +492,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-about"
 								group="menu"
-								order={showLeaderboard ? 5 : 4}
+								order={showLeaderboard ? 6 : 5}
 								startIcon={<InfoIcon />}
 								onClick={handleAbout}
 							>
