@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Container, Box, Typography, Button } from '@mui/material';
-import { useSetActiveScreen } from '@/atoms';
+import { useSetActiveScreen, useUsingNavigationalInput } from '@/atoms';
 import { Screens } from '@/types';
 import { detectControllerType } from '@/input/controller-mappings';
 import { InputAction, ControllerType } from '@/input/input-types';
@@ -14,6 +14,7 @@ import ControllerSlot from './controller-slot';
 
 export default function LobbyScreen() {
 	const setActiveScreen = useSetActiveScreen();
+	const usingNavigationalInput = useUsingNavigationalInput();
 	const setPlayerRoster = useSetPlayerRoster();
 	const [players, setPlayers] = useState<readonly Player[]>([]);
 	const [keyboardDetected, setKeyboardDetected] = useState(false);
@@ -172,12 +173,14 @@ export default function LobbyScreen() {
 			</Box>
 
 			<Box display="flex" gap={2} justifyContent="center">
-				<Button
-					variant="outlined"
-					onClick={() => setActiveScreen(Screens.Title)}
-				>
-					Back
-				</Button>
+				{!usingNavigationalInput && (
+					<Button
+						variant="outlined"
+						onClick={() => setActiveScreen(Screens.Title)}
+					>
+						Back
+					</Button>
+				)}
 				<Button
 					variant="contained"
 					disabled={!canStart}
