@@ -4,21 +4,35 @@ import { Screens } from '../types';
 import {
 	useSetActiveScreen,
 	useSetIsPaused,
+	useIsSoundEnabled,
+	useSetIsSoundEnabled,
+	useIsMusicEnabled,
+	useSetIsMusicEnabled,
 } from '../atoms';
 import {
 	PlayArrow as PlayArrowIcon,
 	RestartAlt as RestartIcon,
 	ArrowBack as BackIcon,
+	VolumeUp as VolumeUpIcon,
+	VolumeOff as VolumeOffIcon,
+	MusicNote as MusicNoteIcon,
+	MusicOff as MusicOffIcon,
 } from '@mui/icons-material';
 import HelpDialogTrigger from './help-dialog-trigger';
 import { useCallback } from 'react';
 import FocusableButton from '@/components/focusable-button';
 import SharedPauseDialog from '@/components/shared-pause-dialog';
 
+const FOCUS_GROUP = 'pause-dialog';
+
 export default
 function PauseDialog() {
 	const setPaused = useSetIsPaused();
 	const setActiveScreen = useSetActiveScreen();
+	const isSoundEnabled = useIsSoundEnabled();
+	const setIsSoundEnabled = useSetIsSoundEnabled();
+	const isMusicEnabled = useIsMusicEnabled();
+	const setIsMusicEnabled = useSetIsMusicEnabled();
 
 	const handleUnpause = useCallback(async () => {
 		await resetComboState();
@@ -39,15 +53,22 @@ function PauseDialog() {
 		setPaused(false);
 	}, [setPaused]);
 
+	const handleToggleSound = useCallback(() => {
+		setIsSoundEnabled(!isSoundEnabled);
+	}, [isSoundEnabled, setIsSoundEnabled]);
+
+	const handleToggleMusic = useCallback(() => {
+		setIsMusicEnabled(!isMusicEnabled);
+	}, [isMusicEnabled, setIsMusicEnabled]);
+
 	return (
 		<SharedPauseDialog
-			focusGroup="pause-dialog"
-			soundMusicStartOrder={3}
+			focusGroup={FOCUS_GROUP}
 			onClose={handleClose}
 		>
 			<FocusableButton
 				id="pause-unpause"
-				group="pause-dialog"
+				group={FOCUS_GROUP}
 				order={0}
 				startIcon={<PlayArrowIcon />}
 				onClick={handleUnpause}
@@ -57,7 +78,7 @@ function PauseDialog() {
 			</FocusableButton>
 			<FocusableButton
 				id="pause-new-game"
-				group="pause-dialog"
+				group={FOCUS_GROUP}
 				order={1}
 				startIcon={<RestartIcon />}
 				onClick={handleNewGame}
@@ -69,8 +90,26 @@ function PauseDialog() {
 				order={2}
 			/>
 			<FocusableButton
+				id="pause-sound"
+				group={FOCUS_GROUP}
+				order={3}
+				startIcon={isSoundEnabled ? <VolumeUpIcon /> : <VolumeOffIcon />}
+				onClick={handleToggleSound}
+			>
+				Sound: {isSoundEnabled ? 'On' : 'Off'}
+			</FocusableButton>
+			<FocusableButton
+				id="pause-music"
+				group={FOCUS_GROUP}
+				order={4}
+				startIcon={isMusicEnabled ? <MusicNoteIcon /> : <MusicOffIcon />}
+				onClick={handleToggleMusic}
+			>
+				Music: {isMusicEnabled ? 'On' : 'Off'}
+			</FocusableButton>
+			<FocusableButton
 				id="pause-back"
-				group="pause-dialog"
+				group={FOCUS_GROUP}
 				order={5}
 				startIcon={<BackIcon />}
 				onClick={handleBackToTitle}
