@@ -24,6 +24,12 @@ import MultiplayerResults from './multiplayer-results';
 import MultiplayerPauseDialog from './multiplayer-pause-dialog';
 import GameScorePopups from '@/components/screens/game-screen/game-score-popups';
 
+const GAME_ACTIONS = [
+	{ action: InputAction.SELECT, label: 'Select' },
+	{ action: InputAction.SHUFFLE, label: 'No Sets' },
+	{ action: InputAction.PAUSE, label: 'Pause' },
+] as const;
+
 interface MultiplayerPlayAreaProps {
 	players: readonly Player[];
 	onQuit: () => void;
@@ -332,7 +338,10 @@ export default function MultiplayerPlayArea({ players, onQuit }: MultiplayerPlay
 				<Typography variant="h5">
 					{deck.length} cards left
 				</Typography>
-				<MultiplayerButtonPrompts controllerTypes={players.map(p => p.controllerType)} />
+				<MultiplayerButtonPrompts
+					controllerTypes={players.map(p => p.controllerType)}
+					actions={GAME_ACTIONS}
+				/>
 			</Box>
 			<MultiplayerPauseDialog onQuit={onQuit} />
 		</Container>

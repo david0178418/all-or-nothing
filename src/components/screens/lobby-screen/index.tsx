@@ -9,12 +9,14 @@ import { getGamepadManager } from '@/input/gamepad-manager';
 import { getKeyboardManager } from '@/input/keyboard-manager';
 import { useSetPlayerRoster } from '@/multiplayer/multiplayer-atoms';
 import { Player, PLAYER_COLORS, PLAYER_IDS } from '@/multiplayer/multiplayer-types';
+import MultiplayerButtonPrompts from '@/components/screens/multiplayer-game-screen/multiplayer-button-prompts';
 import ControllerSlot from './controller-slot';
 
 export default function LobbyScreen() {
 	const setActiveScreen = useSetActiveScreen();
 	const setPlayerRoster = useSetPlayerRoster();
 	const [players, setPlayers] = useState<readonly Player[]>([]);
+	const [keyboardDetected, setKeyboardDetected] = useState(false);
 	const [connectedGamepads, setConnectedGamepads] = useState<ReadonlyMap<number, ControllerType>>(new Map());
 
 	// Track connected gamepads for UI display
@@ -91,6 +93,10 @@ export default function LobbyScreen() {
 			const sourceIndex = event.sourceIndex;
 			if (sourceIndex === undefined) return;
 
+			if (sourceIndex === 'keyboard') {
+				setKeyboardDetected(true);
+			}
+
 			const isJoined = playersRef.current.some(p => p.sourceIndex === sourceIndex);
 
 			if (event.action === InputAction.SELECT) {
@@ -105,7 +111,7 @@ export default function LobbyScreen() {
 			if (event.action === InputAction.BACK) {
 				if (isJoined) {
 					handleLeaveRef.current(sourceIndex);
-				} else if (sourceIndex === 'keyboard') {
+				} else {
 					setActiveScreen(Screens.Title);
 				}
 				return;
@@ -125,9 +131,9 @@ export default function LobbyScreen() {
 		};
 	}, [handleJoin, handleLeave, handleStart, setActiveScreen]);
 
-	// Build available inputs list
+	// Build available inputs list — keyboard only shown after a key is pressed
 	const availableInputs = [
-		{ sourceIndex: 'keyboard' as const, controllerType: ControllerType.KEYBOARD },
+		...(keyboardDetected ? [{ sourceIndex: 'keyboard' as const, controllerType: ControllerType.KEYBOARD }] : []),
 		...Array.from(connectedGamepads.entries()).map(([index, type]) => ({
 			sourceIndex: index,
 			controllerType: type,
@@ -135,15 +141,19 @@ export default function LobbyScreen() {
 	];
 
 	const canStart = players.length >= 2;
+	const activeControllerTypes = [...new Set(availableInputs.map(i => i.controllerType))];
 
 	return (
 		<Container maxWidth="sm" sx={{ textAlign: 'center', paddingTop: 4 }}>
 			<Typography variant="h3" fontWeight={300} gutterBottom>
 				Multiplayer Lobby
 			</Typography>
-			<Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-				Press A to join. Any joined player presses START to begin.
-			</Typography>
+			{activeControllerTypes.length > 0
+				? <MultiplayerButtonPrompts controllerTypes={activeControllerTypes} actions={LOBBY_ACTIONS} sx={{ mb: 4 }} />
+				: <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+					Press a button to join.
+				</Typography>
+			}
 
 			<Box display="flex" flexDirection="column" gap={2} sx={{ mb: 4 }}>
 				{availableInputs.map(input => {
@@ -185,3 +195,9 @@ export default function LobbyScreen() {
 		</Container>
 	);
 }
+
+const LOBBY_ACTIONS = [
+	{ action: InputAction.SELECT, label: 'Join' },
+	{ action: InputAction.BACK, label: 'Leave / Back' },
+	{ action: InputAction.PAUSE, label: 'Start' },
+] as const;
