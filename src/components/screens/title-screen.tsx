@@ -450,7 +450,7 @@ export default function Landing() {
 								startIcon={<GroupsIcon />}
 								onClick={handleMultiplayer}
 							>
-								Multiplayer
+								Local Multiplayer
 							</FocusableButton>
 						</motion.div>
 						{showLeaderboard && (

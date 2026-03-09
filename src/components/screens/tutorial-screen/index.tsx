@@ -2,7 +2,6 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import {
 	Container,
 	Box,
-	Fab,
 	Typography,
 	Button,
 	Paper,
@@ -13,7 +12,6 @@ import {
 	useMediaQuery,
 } from '@mui/material';
 import {
-	ArrowBack as ArrowBackIcon,
 	NavigateNext as NextIcon,
 	NavigateBefore as PrevIcon,
 } from '@mui/icons-material';
@@ -56,13 +54,13 @@ function TutorialScreen() {
 	const currentStep = TUTORIAL_STEPS[step];
 	const isInteractiveStep = !!currentStep?.enableSelection;
 
-	// Set focus group for card navigation during interactive steps
+	// Set focus group for card navigation during interactive steps (controller only)
 	useEffect(() => {
-		if (isInteractiveStep) {
+		if (isInteractiveStep && activeController) {
 			setActiveGroup('tutorial-cards');
 		}
 		return () => setActiveGroup(null);
-	}, [isInteractiveStep, setActiveGroup]);
+	}, [isInteractiveStep, activeController, setActiveGroup]);
 
 	const totalSteps = TUTORIAL_STEPS.length;
 	const progress = ((step + 1) / totalSteps) * 100;
@@ -197,7 +195,8 @@ function TutorialScreen() {
 			)}
 
 			<Box sx={{
-				pb: 10,
+				pb: { xs: 4, sm: 10 },
+				mt: { xs: 'auto', sm: 0 },
 				display: 'flex',
 				justifyContent: 'center',
 			}}>
@@ -339,21 +338,6 @@ function TutorialScreen() {
 					</motion.div>
 				</AnimatePresence>
 			</Box>
-
-			{!activeController && (
-				<Fab
-					color="primary"
-					aria-label="back"
-					onClick={goBackToTitle}
-					sx={{
-						position: 'fixed',
-						bottom: 16,
-						right: 16,
-					}}
-				>
-					<ArrowBackIcon />
-				</Fab>
-			)}
 		</Container>
 	);
 }
