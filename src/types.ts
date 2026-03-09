@@ -101,6 +101,7 @@ interface ScorePopup {
 	comboCount: number;
 	variant: 'reward' | 'penalty';
 	color?: string;
+	mismatchedAttributes?: string[];
 }
 
 export
@@ -109,6 +110,7 @@ function createScorePopup(
 	points: number,
 	comboCount = 0,
 	color?: string,
+	mismatchedAttributes?: string[],
 ): ScorePopup {
 	return {
 		id: crypto.randomUUID(),
@@ -116,5 +118,6 @@ function createScorePopup(
 		comboCount,
 		variant,
 		color,
+		mismatchedAttributes,
 	};
 }

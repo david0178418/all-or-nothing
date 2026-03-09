@@ -96,6 +96,20 @@ function ScorePopupItem({ popup, index, onComplete }: ScorePopupItemProps) {
 					×{popup.comboCount} Combo!
 				</Typography>
 			)}
+			{!isReward && popup.mismatchedAttributes && popup.mismatchedAttributes.length > 0 && (
+				<Typography
+					variant="h2"
+					sx={{
+						fontWeight: 'bold',
+						color: '#ff8a80',
+						textShadow: '0 0 10px rgba(244, 67, 54, 0.5), 0 2px 4px rgba(0, 0, 0, 0.8)',
+						textAlign: 'center',
+						textTransform: 'capitalize',
+					}}
+				>
+					{popup.mismatchedAttributes.join(', ')}
+				</Typography>
+			)}
 		</motion.div>
 	);
 }

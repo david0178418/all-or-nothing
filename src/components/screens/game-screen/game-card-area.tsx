@@ -14,10 +14,12 @@ interface Props {
 	shuffleCount: number;
 	cards: Card[];
 	selectedCards: string[];
+	mismatchingCardIds: string[];
 	discardingCardIds: string[];
 	raised?: boolean;
 	paused?: boolean;
 	onSelected(card: Card): void;
+	onMismatchAnimationComplete(): void;
 	onDiscardAnimationComplete(cardIds: string[]): void;
 }
 
@@ -27,18 +29,22 @@ function FocusableCard({
 	paused,
 	raised,
 	selected,
+	mismatching,
 	dealt,
 	spin,
 	onSelected,
+	onMismatchAnimationComplete,
 	gridPosition,
 }: {
 	card: Card;
 	paused: boolean;
 	selected: boolean;
+	mismatching?: boolean;
 	raised?: boolean;
 	dealt: boolean;
 	spin?: boolean;
 	onSelected: (card: Card) => void;
+	onMismatchAnimationComplete?: () => void;
 	gridPosition: { row: number; col: number };
 }) {
 	const handleSelect = useCallback(() => {
@@ -63,8 +69,10 @@ function FocusableCard({
 			flipped={paused}
 			spin={spin}
 			selected={selected}
+			mismatching={mismatching}
 			focused={isFocused}
 			onClick={handleCardSelection} // Use same wrapped function for mouse
+			onMismatchAnimationComplete={onMismatchAnimationComplete}
 			elementRef={ref}
 		/>
 	);
@@ -77,8 +85,10 @@ function GameCardArea(props: Props) {
 		cards: unDebouncedRawCards,
 		paused,
 		selectedCards,
+		mismatchingCardIds,
 		discardingCardIds,
 		onSelected,
+		onMismatchAnimationComplete,
 		onDiscardAnimationComplete,
 	} = props;
 	const rawCards = useDebouncedValue(unDebouncedRawCards, 100);
@@ -159,6 +169,8 @@ function GameCardArea(props: Props) {
 				{cards.map((card, index) => {
 					const gridPosition = getGridPosition(index, columns);
 					const isDiscarding = !!card.id && discardingCardIds.includes(card.id);
+					const isMismatching = !!card.id && mismatchingCardIds.includes(card.id);
+					const isFirstMismatching = isMismatching && card.id === mismatchingCardIds[0];
 					const convergenceOffset = convergenceData?.offsets.get(card.id ?? '');
 
 					return (
@@ -257,9 +269,11 @@ function GameCardArea(props: Props) {
 										raised={isDiscarding}
 										spin={isDiscarding}
 										dealt={!newCards.find(newCard => newCard.id === card.id)}
-										paused={paused || isDiscarding || !!newCards.find(newCard => newCard.id === card.id)}
+										paused={paused || isDiscarding || isMismatching || !!newCards.find(newCard => newCard.id === card.id)}
 										selected={!!card.id && selectedCards.includes(card.id)}
+										mismatching={isMismatching}
 										onSelected={onSelected}
+										onMismatchAnimationComplete={isFirstMismatching ? onMismatchAnimationComplete : undefined}
 										gridPosition={gridPosition}
 									/>
 								)}

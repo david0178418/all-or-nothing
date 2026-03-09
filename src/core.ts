@@ -66,6 +66,20 @@ function isSet(a: Card, b: Card, c: Card) {
 }
 
 export
+function getMismatchedAttributes(a: Card, b: Card, c: Card): string[] {
+	const attributes = [
+		['color', a.color, b.color, c.color],
+		['fill', a.fill, b.fill, c.fill],
+		['shape', a.shape, b.shape, c.shape],
+		['count', a.count, b.count, c.count],
+	] as const;
+
+	return attributes
+		.filter(([, x, y, z]) => !allSameOrDifferent(x, y, z))
+		.map(([name]) => name);
+}
+
+export
 function allSameOrDifferent(a: BitwiseValue, b: BitwiseValue, c: BitwiseValue) {
 	return (
 		// all are the same (bits AND to 'a'")

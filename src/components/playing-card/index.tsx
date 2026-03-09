@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { useSoundEffects } from '@/hooks';
 import { getRandom } from '@/utils';
 import {
@@ -21,10 +21,12 @@ interface PlayingCardProps {
 	spin?: boolean;
 	dealt?: boolean;
 	focused?: boolean;
+	mismatching?: boolean;
 	elementRef?: React.RefObject<HTMLElement | null>;
 	selected?: boolean;
 	focusedByColors?: readonly string[];
 	selectedByColors?: readonly string[];
+	onMismatchAnimationComplete?(): void;
 }
 
 interface CardSurfaceProps {
@@ -49,11 +51,13 @@ function PlayingCard(props: PlayingCardProps) {
 		raised,
 		flipped: flippedOverride,
 		spin,
+		mismatching,
 		card: cardData,
 		focused = false,
 		elementRef,
 		focusedByColors,
 		selectedByColors,
+		onMismatchAnimationComplete,
 	} = props;
 	const flipped = flippedOverride || !cardData;
 
@@ -87,6 +91,8 @@ function PlayingCard(props: PlayingCardProps) {
 			<Flipper
 				flipped={flipped}
 				spin={spin}
+				mismatching={mismatching}
+				onMismatchAnimationComplete={onMismatchAnimationComplete}
 				backside={
 					<CardSurface flipped/>
 				}
@@ -165,15 +171,85 @@ function CardSurface(props: CardSurfaceProps) {
 	);
 }
 
+const MISMATCH_TRANSFORMS: Record<string, string | undefined> = {
+	'to-back': 'rotateY(180deg)',
+	'to-front': 'rotateY(360deg)',
+	'resetting': 'rotateY(0deg)',
+};
+
 interface FlipperProps {
 	children: ReactNode;
 	backside: ReactNode;
 	flipped?: boolean;
 	spin?: boolean;
+	mismatching?: boolean;
+	onMismatchAnimationComplete?(): void;
 }
 
-function Flipper({ children, backside, flipped, spin }: FlipperProps) {
+function Flipper({ children, backside, flipped, spin, mismatching, onMismatchAnimationComplete }: FlipperProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [mismatchPhase, setMismatchPhase] = useState<'idle' | 'to-back' | 'to-front' | 'resetting'>('idle');
+
+	useEffect(() => {
+		if (!mismatching) {
+			setMismatchPhase('idle');
+			return;
+		}
+
+		// Start phase 1: flip to back
+		// Use rAF to ensure the initial transform (0deg) is painted before transitioning
+		const frameId = requestAnimationFrame(() => {
+			setMismatchPhase('to-back');
+		});
+
+		return () => cancelAnimationFrame(frameId);
+	}, [mismatching]);
+
+	useEffect(() => {
+		if (mismatchPhase === 'to-back' || mismatchPhase === 'to-front') {
+			const el = containerRef.current;
+			if (!el) {
+				return undefined;
+			}
+
+			const handleTransitionEnd = (e: TransitionEvent) => {
+				if (e.propertyName !== 'transform') {
+					return;
+				}
+
+				if (mismatchPhase === 'to-back') {
+					setMismatchPhase('to-front');
+				} else {
+					// Disable transition, snap transform back to 0deg
+					setMismatchPhase('resetting');
+				}
+			};
+
+			el.addEventListener('transitionend', handleTransitionEnd);
+
+			return () => {
+				el.removeEventListener('transitionend', handleTransitionEnd);
+			};
+		}
+
+		if (mismatchPhase === 'resetting') {
+			// Force a reflow so the browser paints at 0deg with no transition,
+			// then notify completion on the next frame
+			containerRef.current?.getBoundingClientRect();
+			const frameId = requestAnimationFrame(() => {
+				setMismatchPhase('idle');
+				onMismatchAnimationComplete?.();
+			});
+
+			return () => cancelAnimationFrame(frameId);
+		}
+
+		return undefined;
+	}, [mismatchPhase, onMismatchAnimationComplete]);
+
+	const mismatchTransform = MISMATCH_TRANSFORMS[mismatchPhase];
+	const baseTransform = flipped ? `rotateY(${spin ? 360 : 180}deg)` : 'rotateY(0deg)';
+	const skipTransition = mismatchPhase === 'resetting';
 
 	return (
 		<Box
@@ -183,8 +259,8 @@ function Flipper({ children, backside, flipped, spin }: FlipperProps) {
 				width: '100%',
 				height: '100%',
 				transformStyle: 'preserve-3d',
-				transition: 'transform 0.6s',
-				transform: flipped ? `rotateY(${spin ? 360 : 180}deg)` : 'rotateY(0deg)',
+				transition: skipTransition ? 'none' : `transform ${mismatching ? '0.25s' : '0.6s'}`,
+				transform: mismatchTransform ?? baseTransform,
 			}}
 		>
 			<Box

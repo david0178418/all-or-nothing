@@ -7,6 +7,7 @@ import AdLinkSection from '@/components/ad-link-section';
 import GameOverDialog from './game-over-dialog';
 import {
 	discardCards,
+	getMismatchedAttributes,
 	isSet,
 	setExists,
 	shuffleDeck,
@@ -49,6 +50,7 @@ function GamePlayArea() {
 	const paused = useIsPaused();
 	const setIsPaused = useSetIsPaused();
 	const [selectedCards, setSelectedCards] = useState<string[]>([]);
+	const [mismatchingCards, setMismatchingCards] = useState<string[]>([]);
 	const [discardingCards, setDiscardingCards] = useState<string[]>([]);
 	const [scorePopups, setScorePopups] = useState<ScorePopup[]>([]);
 	const [gameGeneration, setGameGeneration] = useState(0);
@@ -174,9 +176,14 @@ function GamePlayArea() {
 						shuffleCount={shuffleCount}
 						cards={dealtCards}
 						selectedCards={selectedCards}
+						mismatchingCardIds={mismatchingCards}
 						discardingCardIds={discardingCards}
 						paused={paused}
 						onSelected={card => card.id && toggleSelected(card.id)}
+						onMismatchAnimationComplete={() => {
+							setMismatchingCards([]);
+							setSelectedCards([]);
+						}}
 						onDiscardAnimationComplete={cardIds => {
 							setDiscardingCards(prev => prev.filter(id => !cardIds.includes(id)));
 						}}
@@ -313,11 +320,12 @@ function GamePlayArea() {
 			soundEffects('success');
 			setSelectedCards([]);
 		} else {
+			const mismatched = getMismatchedAttributes(...newSelectedCards);
 			const penalty = await penalizeInvalidSet();
 			if (penalty !== null) {
-				setScorePopups(prev => [...prev, createScorePopup('penalty', penalty)]);
+				setScorePopups(prev => [...prev, createScorePopup('penalty', penalty, 0, undefined, mismatched)]);
 			}
-			setSelectedCards(newSelectedCardIds);
+			setMismatchingCards(newSelectedCardIds);
 		}
 	}
 }
