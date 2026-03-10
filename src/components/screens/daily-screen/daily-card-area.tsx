@@ -84,7 +84,6 @@ function DailyCardArea(props: Props) {
 								card={card}
 								flipped={isFlipped}
 								selected={isSelected}
-								disabled={isFlipped}
 								onSelected={onSelected}
 								gridPosition={{
 									row: Math.floor(index / columns),
@@ -103,14 +102,12 @@ function FocusableDailyCard({
 	card,
 	flipped,
 	selected,
-	disabled,
 	onSelected,
 	gridPosition,
 }: {
 	card: Card;
 	flipped: boolean;
 	selected: boolean;
-	disabled?: boolean;
 	onSelected: (card: Card) => void;
 	gridPosition: { row: number; col: number };
 }) {
@@ -126,7 +123,6 @@ function FocusableDailyCard({
 		group: 'daily-cards',
 		gridPosition,
 		onSelect: handleCardSelection,
-		disabled,
 	});
 
 	return (
