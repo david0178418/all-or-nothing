@@ -19,6 +19,7 @@ import {
 	Leaderboard as LeaderboardIcon,
 	School as SchoolIcon,
 	Groups as GroupsIcon,
+	Today as TodayIcon,
 } from '@mui/icons-material';
 import {
 	Container,
@@ -34,6 +35,7 @@ import {
 import FocusableButton from '@/components/focusable-button';
 import PlatformButton from '@/components/platform-button';
 import { usePlatform } from '@/platform';
+import { getCurrentStreak } from '@/daily/daily-streaks';
 
 // --- Title text animation constants ---
 
@@ -198,6 +200,7 @@ export default function Landing() {
 	const activeController = useActiveController();
 	const { isAvailable: showLeaderboard, isReady: isPlatformReady } = usePlatform();
 	const [showFirstTimePrompt, setShowFirstTimePrompt] = useState(false);
+	const [dailyStreak] = useState(getCurrentStreak);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -281,6 +284,10 @@ export default function Landing() {
 
 		await resetGame();
 		setActiveScreen(Screens.Game);
+	}, [setActiveScreen]);
+
+	const handleDaily = useCallback(() => {
+		setActiveScreen(Screens.Daily);
 	}, [setActiveScreen]);
 
 	const handleMultiplayer = useCallback(() => {
@@ -444,9 +451,20 @@ export default function Landing() {
 						</motion.div>
 						<motion.div variants={buttonVariants}>
 							<FocusableButton
-								id="menu-multiplayer"
+								id="menu-daily"
 								group="menu"
 								order={2}
+								startIcon={<TodayIcon />}
+								onClick={handleDaily}
+							>
+								Daily Board{dailyStreak > 0 ? ` (${dailyStreak} day streak)` : ''}
+							</FocusableButton>
+						</motion.div>
+						<motion.div variants={buttonVariants}>
+							<FocusableButton
+								id="menu-multiplayer"
+								group="menu"
+								order={3}
 								startIcon={<GroupsIcon />}
 								onClick={handleMultiplayer}
 							>
@@ -458,7 +476,7 @@ export default function Landing() {
 								<FocusableButton
 									id="menu-leaderboard"
 									group="menu"
-									order={3}
+									order={4}
 									startIcon={<LeaderboardIcon />}
 									onClick={handleLeaderboard}
 								>
@@ -470,7 +488,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-tutorial"
 								group="menu"
-								order={showLeaderboard ? 4 : 3}
+								order={showLeaderboard ? 5 : 4}
 								startIcon={<SchoolIcon />}
 								onClick={handleTutorial}
 							>
@@ -481,7 +499,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-how-to-play"
 								group="menu"
-								order={showLeaderboard ? 5 : 4}
+								order={showLeaderboard ? 6 : 5}
 								startIcon={<QuestionMarkIcon />}
 								onClick={handleHowToPlay}
 							>
@@ -492,7 +510,7 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-about"
 								group="menu"
-								order={showLeaderboard ? 6 : 5}
+								order={showLeaderboard ? 7 : 6}
 								startIcon={<InfoIcon />}
 								onClick={handleAbout}
 							>

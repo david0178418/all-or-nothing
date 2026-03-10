@@ -25,6 +25,7 @@ const Screens = {
 	Tutorial: 'tutorial',
 	Lobby: 'lobby',
 	Multiplayer: 'multiplayer',
+	Daily: 'daily',
 } as const;
 
 export

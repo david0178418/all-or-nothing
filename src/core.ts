@@ -431,8 +431,8 @@ function dealNewCards(cardOrderIds: string[], removeCardIndexes: [number, number
 }
 
 export
-function generateDeck() {
-	const cards = Object.values(Fills).flatMap(fill =>
+function generateCanonicalDeck(): string[] {
+	return Object.values(Fills).flatMap(fill =>
 		Object.values(Colors).flatMap(color =>
 			Object.values(Shapes).flatMap(shape =>
 				Object.values(Counts).map(count =>
@@ -441,8 +441,11 @@ function generateDeck() {
 			)
 		)
 	);
+}
 
-	return randomizeArray(cards);
+export
+function generateDeck() {
+	return randomizeArray(generateCanonicalDeck());
 }
 
 export

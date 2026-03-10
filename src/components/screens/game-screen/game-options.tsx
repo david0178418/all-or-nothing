@@ -1,6 +1,7 @@
 import { useSetIsPaused, useActiveController } from '@/atoms';
 import { InputAction } from '@/input/input-types';
 import PlatformButton from '@/components/platform-button';
+import FixedBottomLeftContainer from '@/components/fixed-bottom-left-container';
 import { ReactNode } from 'react';
 import {
 	Pause as PauseIcon,
@@ -47,45 +48,6 @@ function MouseButton(props: MouseButtonProps) {
 		>
 			{label}
 		</Button>
-	);
-}
-
-// Fixed bottom-left container for platform controls
-function FixedBottomLeftContainer({ children }: { children: ReactNode }) {
-	return (
-		<Box
-			sx={{
-				position: 'fixed',
-				bottom: 0,
-				left: 0,
-				right: 0,
-				pointerEvents: 'none',
-				display: {
-					xs: 'none',
-					sm: 'block',
-				},
-			}}
-		>
-			<Box
-				sx={{
-					maxWidth: 'xl',
-					margin: '0 auto',
-					position: 'relative',
-					height: 0,
-				}}
-			>
-				<Box
-					sx={{
-						position: 'absolute',
-						bottom: 16,
-						left: 16,
-						pointerEvents: 'auto',
-					}}
-				>
-					{children}
-				</Box>
-			</Box>
-		</Box>
 	);
 }
 
