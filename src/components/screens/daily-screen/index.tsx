@@ -18,6 +18,7 @@ import DailyCardArea from './daily-card-area';
 import {
 	Shuffle as ShuffleIcon,
 	Replay as ReplayIcon,
+	ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
 import {
 	Box,
@@ -214,6 +215,11 @@ function DailyScreen() {
 					<FixedBottomLeftContainer>
 						<Stack direction="row" spacing={1}>
 							<PlatformButton
+								label="Back"
+								action={InputAction.BACK}
+								onClick={handleBack}
+							/>
+							<PlatformButton
 								label="Reset"
 								action={InputAction.HINT}
 								onClick={handleReset}
@@ -243,6 +249,14 @@ function DailyScreen() {
 							<Button
 								size="large"
 								variant="outlined"
+								startIcon={<ArrowBackIcon />}
+								onClick={handleBack}
+							>
+								Back
+							</Button>
+							<Button
+								size="large"
+								variant="outlined"
 								startIcon={<ReplayIcon />}
 								onClick={handleReset}
 								disabled={resetDisabled}
@@ -265,6 +279,7 @@ function DailyScreen() {
 			{/* Mobile buttons (always shown on mobile, no controller) */}
 			{!activeController && (
 				<MobileButtons
+					onBack={handleBack}
 					onReset={handleReset}
 					onNoSets={handleNoSets}
 					resetDisabled={resetDisabled}
@@ -277,11 +292,13 @@ function DailyScreen() {
 
 // Mobile floating buttons (same pattern as game-options-mobile.tsx)
 function MobileButtons({
+	onBack,
 	onReset,
 	onNoSets,
 	resetDisabled,
 	noSetsDisabled,
 }: {
+	onBack: () => void;
 	onReset: () => void;
 	onNoSets: () => void;
 	resetDisabled: boolean;
@@ -304,6 +321,14 @@ function MobileButtons({
 				pointerEvents: 'none',
 			}}
 		>
+			<Button
+				variant="outlined"
+				startIcon={<ArrowBackIcon />}
+				sx={{ pointerEvents: 'auto' }}
+				onClick={onBack}
+			>
+				Back
+			</Button>
 			<Button
 				variant="outlined"
 				startIcon={<ReplayIcon />}
