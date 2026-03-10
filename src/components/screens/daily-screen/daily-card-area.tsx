@@ -4,6 +4,7 @@ import { Grid, Box, useTheme, useMediaQuery } from '@mui/material';
 import { useCallback } from 'react';
 import { useFocusable } from '@/focus/useFocusable';
 import { useActivationGuard } from '@/hooks';
+import { useUsingNavigationalInput } from '@/atoms';
 
 interface Props {
 	cards: Card[];
@@ -17,6 +18,7 @@ function DailyCardArea(props: Props) {
 	const { cards, flippedCardIds, selectedCardIds, onSelected } = props;
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+	const usingNavigationalInput = useUsingNavigationalInput();
 	const columns = isMobile ? 3 : 6;
 
 	return (
@@ -84,6 +86,7 @@ function DailyCardArea(props: Props) {
 								card={card}
 								flipped={isFlipped}
 								selected={isSelected}
+								showFocus={usingNavigationalInput}
 								onSelected={onSelected}
 								gridPosition={{
 									row: Math.floor(index / columns),
@@ -102,12 +105,14 @@ function FocusableDailyCard({
 	card,
 	flipped,
 	selected,
+	showFocus,
 	onSelected,
 	gridPosition,
 }: {
 	card: Card;
 	flipped: boolean;
 	selected: boolean;
+	showFocus: boolean;
 	onSelected: (card: Card) => void;
 	gridPosition: { row: number; col: number };
 }) {
@@ -132,7 +137,7 @@ function FocusableDailyCard({
 			flipped={flipped}
 			selected={selected}
 			raised={selected}
-			focused={isFocused}
+			focused={isFocused && showFocus}
 			onClick={handleCardSelection}
 			elementRef={ref}
 		/>

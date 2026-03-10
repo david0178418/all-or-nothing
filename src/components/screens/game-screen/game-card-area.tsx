@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDebouncedValue } from '@/hooks';
 import { useFocusable } from '@/focus/useFocusable';
 import { useSetActiveGroup } from '@/focus/focus-atoms';
+import { useUsingNavigationalInput } from '@/atoms';
 import { useConvergenceAnimation } from '@/useConvergenceAnimation';
 import type { ConvergenceData } from '@/useConvergenceAnimation';
 
@@ -32,6 +33,7 @@ function FocusableCard({
 	mismatching,
 	dealt,
 	spin,
+	showFocus,
 	onSelected,
 	onMismatchAnimationComplete,
 	gridPosition,
@@ -43,6 +45,7 @@ function FocusableCard({
 	raised?: boolean;
 	dealt: boolean;
 	spin?: boolean;
+	showFocus: boolean;
 	onSelected: (card: Card) => void;
 	onMismatchAnimationComplete?: () => void;
 	gridPosition: { row: number; col: number };
@@ -70,7 +73,7 @@ function FocusableCard({
 			spin={spin}
 			selected={selected}
 			mismatching={mismatching}
-			focused={isFocused}
+			focused={isFocused && showFocus}
 			onClick={handleCardSelection} // Use same wrapped function for mouse
 			onMismatchAnimationComplete={onMismatchAnimationComplete}
 			elementRef={ref}
@@ -98,6 +101,7 @@ function GameCardArea(props: Props) {
 	const setActiveGroup = useSetActiveGroup();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+	const usingNavigationalInput = useUsingNavigationalInput();
 	const convergenceData = useConvergenceAnimation(discardingCardIds, cards);
 
 	useEffect(() => {
@@ -272,6 +276,7 @@ function GameCardArea(props: Props) {
 										paused={paused || isDiscarding || isMismatching || !!newCards.find(newCard => newCard.id === card.id)}
 										selected={!!card.id && selectedCards.includes(card.id)}
 										mismatching={isMismatching}
+										showFocus={usingNavigationalInput}
 										onSelected={onSelected}
 										onMismatchAnimationComplete={isFirstMismatching ? onMismatchAnimationComplete : undefined}
 										gridPosition={gridPosition}
