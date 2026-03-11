@@ -46,12 +46,12 @@ jobs:
             platform: linux
             package_cmd: "npx electron-builder --linux --config electron-builder.config.ts"
             artifact_name: desktop-linux
-            asset_glob: "dist/desktop/*.AppImage"
+            asset_glob: "dist/desktop/*.{AppImage,flatpak}"
           - os: windows-latest
             platform: win
             package_cmd: "npx electron-builder --win --config electron-builder.config.ts"
             artifact_name: desktop-windows
-            asset_glob: "dist/desktop/*.zip"
+            asset_glob: "dist/desktop/*.{exe,zip}"
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
@@ -61,6 +61,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Install Flatpak SDK (Linux only)
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder elfutils
+          flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 org.electronjs.Electron2.BaseApp//24.08
       - run: npm ci
       - name: Sync package.json version from tag
         run: npm version "${{ github.ref_name }}" --no-git-tag-version
@@ -115,6 +122,8 @@ jobs:
   deploy_itchio:
     needs: [build_web_itchio, build_desktop, create_release]
     runs-on: ubuntu-latest
+    env:
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
     steps:
       - name: Download web build
         uses: actions/download-artifact@v4
@@ -141,16 +150,12 @@ jobs:
 
       - name: Push web build
         run: ./butler push web deegeegames/all-or-nothing:html5 --userversion "${{ github.ref_name }}"
-        env:
-          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-      - name: Push Linux build
-        run: ./butler push desktop-linux deegeegames/all-or-nothing:linux --userversion "${{ github.ref_name }}"
-        env:
-          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      - name: Push Linux AppImage build
+        run: ./butler push desktop-linux/*.AppImage deegeegames/all-or-nothing:linux --userversion "${{ github.ref_name }}"
+      - name: Push Linux Flatpak build
+        run: ./butler push desktop-linux/*.flatpak deegeegames/all-or-nothing:linux-flatpak --userversion "${{ github.ref_name }}"
       - name: Push Windows build
         run: ./butler push desktop-windows deegeegames/all-or-nothing:windows --userversion "${{ github.ref_name }}"
-        env:
-          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
 
   sync_version:
     runs-on: ubuntu-latest

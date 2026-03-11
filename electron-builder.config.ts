@@ -22,11 +22,17 @@ const config: Configuration = {
 	electronLanguages: ['en-US'],
 	icon: 'public/assets/android-chrome-512x512.png',
 	linux: {
-		target: 'AppImage',
+		target: ['AppImage', 'flatpak'],
 		category: 'Game',
 	},
+	flatpak: {
+		runtimeVersion: '24.08',
+	},
 	win: {
-		target: 'zip',
+		target: ['nsis', 'zip'],
+	},
+	nsis: {
+		oneClick: true,
 	},
 	publish: null,
 	extraMetadata: {

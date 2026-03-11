@@ -3,6 +3,10 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { registerSteamHandlers } from './steam-handlers';
 
+if (process.platform === 'linux') {
+	app.commandLine.appendSwitch('no-sandbox');
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const STEAM_APP_ID = 480; // Replace with real app ID
