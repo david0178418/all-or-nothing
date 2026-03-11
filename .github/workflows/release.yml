@@ -46,12 +46,16 @@ jobs:
             platform: linux
             package_cmd: "npx electron-builder --linux --config electron-builder.config.ts"
             artifact_name: desktop-linux
-            asset_glob: "dist/desktop/*.{AppImage,flatpak}"
+            asset_glob: |
+              dist/desktop/*.AppImage
+              dist/desktop/*.flatpak
           - os: windows-latest
             platform: win
             package_cmd: "npx electron-builder --win --config electron-builder.config.ts"
             artifact_name: desktop-windows
-            asset_glob: "dist/desktop/*.{exe,zip}"
+            asset_glob: |
+              dist/desktop/*.exe
+              dist/desktop/*.zip
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
