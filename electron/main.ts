@@ -3,10 +3,6 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { registerSteamHandlers } from './steam-handlers';
 
-if (process.platform === 'linux') {
-	app.commandLine.appendSwitch('no-sandbox');
-	app.commandLine.appendSwitch('disable-gpu-sandbox');
-}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
