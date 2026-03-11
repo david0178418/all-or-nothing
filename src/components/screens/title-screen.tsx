@@ -427,9 +427,21 @@ export default function Landing() {
 					<Box display="flex" flexDirection="column" gap={2}>
 						<motion.div variants={buttonVariants}>
 							<FocusableButton
-								id="menu-continue"
+								id="menu-daily"
 								group="menu"
 								order={0}
+								startIcon={<TodayIcon />}
+								onClick={handleDaily}
+								autoFocus={!savedGameTime}
+							>
+								Daily Board{dailyStreak > 0 ? ` (${dailyStreak} day streak)` : ''}
+							</FocusableButton>
+						</motion.div>
+						<motion.div variants={buttonVariants}>
+							<FocusableButton
+								id="menu-continue"
+								group="menu"
+								order={1}
 								disabled={!savedGameTime}
 								startIcon={<RotateLeftIcon/>}
 								onClick={handleContinue}
@@ -441,23 +453,11 @@ export default function Landing() {
 							<FocusableButton
 								id="menu-new-game"
 								group="menu"
-								order={1}
+								order={2}
 								startIcon={<PlayArrowIcon />}
 								onClick={handleNewGame}
-								autoFocus={!savedGameTime}
 							>
 								New Game
-							</FocusableButton>
-						</motion.div>
-						<motion.div variants={buttonVariants}>
-							<FocusableButton
-								id="menu-daily"
-								group="menu"
-								order={2}
-								startIcon={<TodayIcon />}
-								onClick={handleDaily}
-							>
-								Daily Board{dailyStreak > 0 ? ` (${dailyStreak} day streak)` : ''}
 							</FocusableButton>
 						</motion.div>
 						<motion.div variants={buttonVariants}>
